@@ -1,0 +1,37 @@
+# Current Sprint State
+
+**Sprint:** 01  
+**Phase:** 1 — Foundation & MVP  
+**Start:** 2026-05-04  
+**End:** 2026-05-15  
+**Sprint Goal:** Bootstrap monorepo, CI/CD, auth scaffolding, and core DB schema
+
+---
+
+## Active Tasks
+
+| Task ID | Title | Owner Role | Priority | Status | Progress / Blocker |
+|---|---|---|---|---|---|
+| P1-T01 | Initialize Turborepo monorepo (web, mobile, backend, shared) | Tech Lead | P0 | pending | |
+| P1-T02 | Set up GitHub Actions CI pipeline (lint, type-check, test) | Tech Lead | P0 | pending | |
+| P1-T03 | Configure Terraform + AWS ECS Fargate baseline (dev env) | DevOps | P0 | pending | |
+| P1-T04 | Auth0 integration — COPPA-compliant student/teacher/parent roles | Backend | P0 | pending | |
+| P1-T05 | Prisma schema — core tables (users, students, parents, teachers, schools) | Backend | P0 | pending | |
+| P1-T06 | NestJS app bootstrap — Auth, User, Content modules skeleton | Backend | P1 | pending | |
+| P1-T07 | Next.js 15 app bootstrap — teacher dashboard shell | Frontend | P1 | pending | |
+| P1-T08 | Flutter app bootstrap — student app shell (GoRouter, Riverpod, Rive) | Mobile | P1 | pending | |
+
+---
+
+## Carry-Over from Previous Sprint
+None — first sprint.
+
+---
+
+## Sprint Blockers
+None currently.
+
+---
+
+## Last Updated
+2026-04-16 by PM Agent (initial setup)

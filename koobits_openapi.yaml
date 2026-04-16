@@ -1,0 +1,1365 @@
+openapi: 3.1.0
+info:
+  title: KooBits-Clone Platform API
+  version: 0.1.0-skeleton
+  description: |
+    Skeleton OpenAPI 3.1 specification for the KooBits-style gamified math
+    learning platform. This is a SKELETON — core flows are specified with
+    representative schemas and examples, but edge cases and less-critical
+    endpoints are intentionally left to be fleshed out during implementation.
+
+    **Scope:** Phase 1 + Phase 2 + key Phase 3 endpoints. Phase 4 ML-specific
+    endpoints (IRT calibration admin) and Phase 5 AI features are out of scope.
+
+    **Purpose:** Unblocks parallel frontend/mobile/backend work, enables the
+    P2-T07 Dart codegen task, provides the canonical contract for integration
+    testing.
+
+    **Conventions:**
+    - All times are ISO 8601 UTC
+    - All IDs are UUIDs v4 unless otherwise noted (except `problem_id` which
+      is a MongoDB ObjectId string)
+    - All endpoints except `/auth/*` and `/billing/stripe/webhook` require
+      Bearer JWT auth
+    - Errors follow RFC 7807 problem+json
+    - Pagination: `?limit=<n>&cursor=<opaque>` with `next_cursor` in response
+
+  contact:
+    name: KooBits Platform Team
+servers:
+  - url: https://api.koobits-clone.example/v1
+    description: Production
+  - url: https://api-staging.koobits-clone.example/v1
+    description: Staging
+  - url: http://localhost:3001/v1
+    description: Local dev
+
+security:
+  - bearerAuth: []
+
+tags:
+  - name: Auth
+  - name: Users
+  - name: Content
+  - name: Adaptive
+  - name: Gamification
+  - name: Classrooms
+  - name: Dashboard
+  - name: Billing
+  - name: SchoolAdmin
+
+paths:
+
+  # ================= AUTH =================
+
+  /auth/register/parent:
+    post:
+      tags: [Auth]
+      summary: Register a new parent account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ParentRegistration' }
+      responses:
+        '201':
+          description: Account created; email verification sent
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthSuccess' }
+        '409':
+          description: Email already registered
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /auth/register/teacher:
+    post:
+      tags: [Auth]
+      summary: Register a new teacher account
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TeacherRegistration' }
+      responses:
+        '201':
+          description: Teacher account created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthSuccess' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /auth/login:
+    post:
+      tags: [Auth]
+      summary: Login (students, parents, or teachers)
+      description: |
+        Students authenticate with username + password OR class code + picture
+        password. Parents and teachers use email + password.
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/EmailLoginRequest'
+                - $ref: '#/components/schemas/StudentLoginRequest'
+                - $ref: '#/components/schemas/ClassCodeLoginRequest'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthSuccess' }
+        '401':
+          description: Invalid credentials
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /auth/refresh:
+    post:
+      tags: [Auth]
+      summary: Rotate access token using refresh cookie
+      security: []  # refresh token is in httpOnly cookie
+      responses:
+        '200':
+          description: New access token issued; refresh rotated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  access_token: { type: string }
+                  expires_in: { type: integer, example: 900 }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /auth/logout:
+    post:
+      tags: [Auth]
+      summary: Logout (revokes refresh token, clears cookie)
+      responses:
+        '204': { description: Logged out }
+
+  /auth/password-reset/request:
+    post:
+      tags: [Auth]
+      summary: Request password reset email
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email: { type: string, format: email }
+      responses:
+        '202':
+          description: If the email exists, a reset link has been sent
+          # intentionally same response whether email exists or not (enumeration defense)
+
+  /auth/password-reset/confirm:
+    post:
+      tags: [Auth]
+      summary: Confirm password reset with token
+      security: []
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [token, new_password]
+              properties:
+                token: { type: string }
+                new_password: { type: string, minLength: 8 }
+      responses:
+        '204': { description: Password updated }
+        '400': { $ref: '#/components/responses/ValidationError' }
+
+  # ================= USERS =================
+
+  /users/me:
+    get:
+      tags: [Users]
+      summary: Get authenticated user profile
+      responses:
+        '200':
+          description: Current user (role-dependent shape)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/StudentProfile'
+                  - $ref: '#/components/schemas/ParentProfile'
+                  - $ref: '#/components/schemas/TeacherProfile'
+                discriminator: { propertyName: role }
+    patch:
+      tags: [Users]
+      summary: Update authenticated user profile
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ProfileUpdate' }
+      responses:
+        '200':
+          description: Updated profile
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentProfile' }
+
+  /users/me/avatar:
+    patch:
+      tags: [Users]
+      summary: Change selected avatar
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [avatar_id]
+              properties:
+                avatar_id: { type: string }
+      responses:
+        '200':
+          description: Avatar updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  avatar_id: { type: string }
+                  avatar_url: { type: string, format: uri }
+
+  /parents/me/children:
+    post:
+      tags: [Users]
+      summary: Create a new child account (parent only)
+      description: |
+        Requires parent account. Creates a linked student profile with
+        auto-generated username. Parent sets the initial password.
+        Records COPPA parental consent (timestamp + IP).
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ChildAccountCreate' }
+      responses:
+        '201':
+          description: Child account created and linked
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/StudentProfile' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+    get:
+      tags: [Users]
+      summary: List children linked to this parent
+      responses:
+        '200':
+          description: List of linked children
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/StudentProfile' }
+
+  # ================= CONTENT / CURRICULUM =================
+
+  /curriculum/taxonomy:
+    get:
+      tags: [Content]
+      summary: Get curriculum taxonomy tree
+      parameters:
+        - { name: country, in: query, schema: { type: string, example: "SG" } }
+        - { name: grade, in: query, schema: { type: integer, minimum: 1, maximum: 6 } }
+      responses:
+        '200':
+          description: Hierarchical taxonomy (country → grade → strand → topic → subtopic → skill)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CurriculumTaxonomy' }
+
+  /skills:
+    get:
+      tags: [Content]
+      summary: List skills (filterable by curriculum location)
+      parameters:
+        - { name: country, in: query, schema: { type: string } }
+        - { name: grade, in: query, schema: { type: integer } }
+        - { name: topic, in: query, schema: { type: string } }
+      responses:
+        '200':
+          description: Paginated skills list
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillListResponse' }
+
+  /problems/{problem_id}:
+    get:
+      tags: [Content]
+      summary: Fetch a specific problem
+      parameters:
+        - { name: problem_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: The problem
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Problem' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  # ================= ADAPTIVE ENGINE =================
+
+  /adaptive/next-problem:
+    get:
+      tags: [Adaptive]
+      summary: Get the next recommended problem for the authenticated student
+      description: |
+        Core endpoint driving the adaptive learning experience. Applies the
+        FSRS+BKT blended priority scheduler (see scheduler_composition_design.md).
+        Response includes `decision_trace` describing why this problem was
+        chosen — enables Phase 4 weight tuning and teacher debugging.
+      parameters:
+        - { name: topic_hint, in: query, schema: { type: string }, description: "Optional topic bias" }
+      responses:
+        '200':
+          description: Next problem + scheduler metadata
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NextProblemResponse' }
+
+  /adaptive/attempts:
+    post:
+      tags: [Adaptive]
+      summary: Submit an answer to a problem
+      description: |
+        Records the attempt, triggers BKT state update, triggers FSRS state
+        update, enqueues gamification events (points, badges, streak).
+        Returns immediate feedback; async updates visible on next state poll.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AttemptRequest' }
+      responses:
+        '200':
+          description: Attempt recorded with immediate feedback
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AttemptResponse' }
+        '409':
+          description: Duplicate attempt (idempotency collision)
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  /adaptive/hints/{problem_id}:
+    get:
+      tags: [Adaptive]
+      summary: Get next progressive hint for a problem
+      parameters:
+        - { name: problem_id, in: path, required: true, schema: { type: string } }
+        - { name: hint_index, in: query, schema: { type: integer, minimum: 0 }, description: "0-based; omit for next-unviewed" }
+      responses:
+        '200':
+          description: Hint (one at a time)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  hint_index: { type: integer }
+                  content_html: { type: string }
+                  total_hints: { type: integer }
+                  more_available: { type: boolean }
+        '404':
+          description: No more hints available
+
+  /students/{student_id}/skill-state:
+    get:
+      tags: [Adaptive]
+      summary: Get BKT skill state for a student
+      description: |
+        Returns persistent BKT state (P(known) per skill) PLUS the session
+        mood_modifiers if a session is active. Does NOT return base_P_*
+        parameters (those are internal to the BKT service).
+      parameters:
+        - { name: student_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Skill state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillStateResponse' }
+
+  /students/{student_id}/mood-state:
+    get:
+      tags: [Adaptive]
+      summary: Get current session mood classification
+      parameters:
+        - { name: student_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Session mood + modifiers
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/MoodStateResponse' }
+
+  # ================= GAMIFICATION =================
+
+  /students/{student_id}/points:
+    get:
+      tags: [Gamification]
+      summary: Get student's coin balance and XP
+      parameters:
+        - { name: student_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Points and level
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PointsResponse' }
+
+  /students/{student_id}/badges:
+    get:
+      tags: [Gamification]
+      summary: List earned and available badges
+      parameters:
+        - { name: student_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Earned + locked badges
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/BadgeListResponse' }
+
+  /students/{student_id}/streak:
+    get:
+      tags: [Gamification]
+      summary: Get current daily streak
+      parameters:
+        - { name: student_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Current streak state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  current_streak: { type: integer, example: 12 }
+                  longest_streak: { type: integer, example: 45 }
+                  last_active_date: { type: string, format: date }
+                  bonus_multiplier: { type: number, example: 2.0, description: "Current coin multiplier" }
+
+  /leaderboards/{scope}/{scope_id}:
+    get:
+      tags: [Gamification]
+      summary: Get leaderboard for a class / school / national scope
+      parameters:
+        - { name: scope, in: path, required: true, schema: { type: string, enum: [class, school, national] } }
+        - { name: scope_id, in: path, required: true, schema: { type: string } }
+        - { name: period, in: query, schema: { type: string, enum: [daily, weekly, all_time], default: weekly } }
+      responses:
+        '200':
+          description: Top 10 + requesting student's rank
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LeaderboardResponse' }
+
+  /daily-challenge:
+    get:
+      tags: [Gamification]
+      summary: Get today's daily challenge for the student's grade
+      responses:
+        '200':
+          description: Daily challenge problem + completion state
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  problem: { $ref: '#/components/schemas/Problem' }
+                  completed_today: { type: boolean }
+                  bonus_coins: { type: integer, example: 10 }
+
+  /avatar-shop/items:
+    get:
+      tags: [Gamification]
+      summary: List purchasable avatar items
+      responses:
+        '200':
+          description: Shop catalog
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AvatarShopItem' }
+
+  /students/{student_id}/avatar-shop/purchase:
+    post:
+      tags: [Gamification]
+      summary: Purchase an avatar item with coins
+      parameters:
+        - { name: student_id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [item_id]
+              properties:
+                item_id: { type: string }
+      responses:
+        '200':
+          description: Purchase complete
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  new_coin_balance: { type: integer }
+                  item: { $ref: '#/components/schemas/AvatarShopItem' }
+        '402':
+          description: Insufficient coins
+          content:
+            application/problem+json:
+              schema: { $ref: '#/components/schemas/Problem' }
+
+  # ================= CLASSROOMS & ASSIGNMENTS =================
+
+  /teachers/me/classrooms:
+    post:
+      tags: [Classrooms]
+      summary: Create a classroom (teacher only)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, grade]
+              properties:
+                name: { type: string, example: "3A" }
+                grade: { type: integer, minimum: 1, maximum: 6 }
+      responses:
+        '201':
+          description: Classroom created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Classroom' }
+    get:
+      tags: [Classrooms]
+      summary: List classrooms taught by me
+      responses:
+        '200':
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Classroom' }
+
+  /classrooms/{classroom_id}/students:
+    get:
+      tags: [Classrooms]
+      summary: List students enrolled in this classroom
+      parameters:
+        - { name: classroom_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Enrolled students
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/StudentProfile' }
+
+  /classrooms/{classroom_id}/assignments:
+    post:
+      tags: [Classrooms]
+      summary: Create assignment
+      parameters:
+        - { name: classroom_id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/AssignmentCreate' }
+      responses:
+        '201':
+          description: Assignment created with auto-generated problem set
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Assignment' }
+
+  # ================= DASHBOARD / ANALYTICS =================
+
+  /classrooms/{classroom_id}/analytics/skill-gap-heatmap:
+    get:
+      tags: [Dashboard]
+      summary: Skill mastery heatmap for a class (teacher dashboard)
+      parameters:
+        - { name: classroom_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: 2D matrix of students × skills with P(known) per cell
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SkillGapHeatmap' }
+
+  /classrooms/{classroom_id}/analytics/at-risk-students:
+    get:
+      tags: [Dashboard]
+      summary: List flagged at-risk students with intervention suggestions
+      parameters:
+        - { name: classroom_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: At-risk students
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/AtRiskStudent' }
+
+  /parents/me/children/{child_id}/weekly-report:
+    get:
+      tags: [Dashboard]
+      summary: Get weekly parent progress report
+      parameters:
+        - { name: child_id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: week_of, in: query, schema: { type: string, format: date }, description: "ISO date of week start; defaults to current week" }
+      responses:
+        '200':
+          description: Weekly report summary
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WeeklyParentReport' }
+
+  # ================= BILLING =================
+
+  /billing/plans:
+    get:
+      tags: [Billing]
+      summary: List available subscription plans
+      security: []
+      responses:
+        '200':
+          description: Plan list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Plan' }
+
+  /billing/subscriptions:
+    post:
+      tags: [Billing]
+      summary: Subscribe to a plan (creates Stripe checkout session)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [plan_id]
+              properties:
+                plan_id: { type: string }
+                coupon_code: { type: string }
+      responses:
+        '200':
+          description: Stripe checkout session
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  checkout_url: { type: string, format: uri }
+                  session_id: { type: string }
+    get:
+      tags: [Billing]
+      summary: Get current subscription
+      responses:
+        '200':
+          description: Current subscription state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Subscription' }
+
+  /billing/subscriptions/{subscription_id}:
+    delete:
+      tags: [Billing]
+      summary: Cancel subscription (at period end)
+      parameters:
+        - { name: subscription_id, in: path, required: true, schema: { type: string } }
+      responses:
+        '200':
+          description: Scheduled for cancellation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Subscription' }
+
+  /billing/stripe/webhook:
+    post:
+      tags: [Billing]
+      summary: Stripe webhook endpoint
+      description: |
+        Receives `invoice.payment_succeeded`, `customer.subscription.deleted`,
+        `invoice.payment_failed`, etc. Verified via `Stripe-Signature` header.
+        **Not** protected by JWT auth — verified by Stripe signature instead.
+      security: []
+      parameters:
+        - name: Stripe-Signature
+          in: header
+          required: true
+          schema: { type: string }
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object }  # Stripe-defined payload
+      responses:
+        '200': { description: Event processed }
+        '400': { description: Invalid signature }
+
+  # ================= SCHOOL ADMIN =================
+
+  /schools/{school_id}/students/bulk-import:
+    post:
+      tags: [SchoolAdmin]
+      summary: Bulk-create students from CSV
+      description: |
+        Accepts multipart CSV upload with columns: name, grade, class.
+        Auto-generates usernames and temporary passwords. Returns a
+        credentials sheet URL (PDF) for distribution to students.
+      parameters:
+        - { name: school_id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                csv_file: { type: string, format: binary }
+      responses:
+        '201':
+          description: Students created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  created_count: { type: integer }
+                  skipped_count: { type: integer }
+                  credentials_pdf_url: { type: string, format: uri }
+                  errors:
+                    type: array
+                    items: { type: object }
+
+  /schools/{school_id}/licenses:
+    get:
+      tags: [SchoolAdmin]
+      summary: Get license utilization
+      parameters:
+        - { name: school_id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: License status
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total_licenses: { type: integer, example: 500 }
+                  assigned: { type: integer, example: 327 }
+                  available: { type: integer, example: 173 }
+                  expires_at: { type: string, format: date-time }
+
+components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  responses:
+    Unauthorized:
+      description: Missing or invalid bearer token
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Forbidden:
+      description: Authenticated but not authorized for this resource
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    NotFound:
+      description: Resource does not exist
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    Conflict:
+      description: Resource conflict (e.g. duplicate email)
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+    ValidationError:
+      description: Request failed validation
+      content:
+        application/problem+json:
+          schema: { $ref: '#/components/schemas/Problem' }
+
+  schemas:
+
+    # ---- Common ----
+
+    Problem:  # RFC 7807 problem+json
+      type: object
+      required: [type, title, status]
+      properties:
+        type: { type: string, format: uri, example: "https://api.koobits-clone.example/errors/validation" }
+        title: { type: string, example: "Validation failed" }
+        status: { type: integer, example: 422 }
+        detail: { type: string, example: "Password must be at least 8 characters" }
+        instance: { type: string, example: "/auth/register/parent" }
+        errors:
+          type: array
+          description: Per-field errors (for validation failures)
+          items:
+            type: object
+            properties:
+              field: { type: string }
+              message: { type: string }
+
+    # ---- Auth ----
+
+    ParentRegistration:
+      type: object
+      required: [email, password, name, country]
+      properties:
+        email: { type: string, format: email, example: "alice@example.com" }
+        password: { type: string, minLength: 8 }
+        name: { type: string, example: "Alice Zhang" }
+        country: { type: string, example: "SG" }
+        locale: { type: string, example: "en-SG" }
+
+    TeacherRegistration:
+      type: object
+      required: [email, password, name, school_name]
+      properties:
+        email: { type: string, format: email }
+        password: { type: string, minLength: 8 }
+        name: { type: string }
+        school_name: { type: string }
+        school_country: { type: string, example: "SG" }
+
+    EmailLoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        kind: { type: string, enum: [email] }
+        email: { type: string, format: email }
+        password: { type: string }
+
+    StudentLoginRequest:
+      type: object
+      required: [username, password]
+      properties:
+        kind: { type: string, enum: [student] }
+        username: { type: string, example: "alice_p3" }
+        password: { type: string }
+
+    ClassCodeLoginRequest:
+      type: object
+      required: [class_code, picture_password]
+      description: Login for K-2 students via class code + picture password
+      properties:
+        kind: { type: string, enum: [class_code] }
+        class_code: { type: string, example: "SUN-DRAGON-42" }
+        picture_password:
+          type: array
+          items: { type: string }
+          minItems: 3
+          maxItems: 4
+
+    AuthSuccess:
+      type: object
+      properties:
+        access_token: { type: string }
+        expires_in: { type: integer, example: 900 }
+        user:
+          oneOf:
+            - $ref: '#/components/schemas/StudentProfile'
+            - $ref: '#/components/schemas/ParentProfile'
+            - $ref: '#/components/schemas/TeacherProfile'
+
+    # ---- Users ----
+
+    StudentProfile:
+      type: object
+      required: [id, role, name, grade]
+      properties:
+        id: { type: string, format: uuid }
+        role: { type: string, enum: [student] }
+        name: { type: string }
+        username: { type: string }
+        grade: { type: integer, minimum: 1, maximum: 6 }
+        country: { type: string }
+        avatar_id: { type: string }
+        avatar_url: { type: string, format: uri }
+        level: { type: integer, example: 4 }
+        xp: { type: integer, example: 450 }
+        current_streak: { type: integer, example: 12 }
+        linked_parent_ids:
+          type: array
+          items: { type: string, format: uuid }
+        classroom_id: { type: string, format: uuid, nullable: true }
+
+    ParentProfile:
+      type: object
+      required: [id, role, email, name]
+      properties:
+        id: { type: string, format: uuid }
+        role: { type: string, enum: [parent] }
+        email: { type: string, format: email }
+        name: { type: string }
+        country: { type: string }
+        children_ids:
+          type: array
+          items: { type: string, format: uuid }
+        subscription_status:
+          type: string
+          enum: [none, trial, active, past_due, canceled]
+
+    TeacherProfile:
+      type: object
+      required: [id, role, email, name]
+      properties:
+        id: { type: string, format: uuid }
+        role: { type: string, enum: [teacher, school_admin] }
+        email: { type: string, format: email }
+        name: { type: string }
+        school_id: { type: string, format: uuid }
+        classroom_ids:
+          type: array
+          items: { type: string, format: uuid }
+
+    ProfileUpdate:
+      type: object
+      properties:
+        name: { type: string }
+        locale: { type: string }
+        avatar_id: { type: string }
+
+    ChildAccountCreate:
+      type: object
+      required: [name, grade, password, consent]
+      properties:
+        name: { type: string }
+        grade: { type: integer, minimum: 1, maximum: 6 }
+        password: { type: string, minLength: 6 }
+        consent:
+          type: object
+          required: [accepted, timestamp]
+          description: COPPA parental consent record
+          properties:
+            accepted: { type: boolean }
+            timestamp: { type: string, format: date-time }
+            consent_version: { type: string, example: "v1.2" }
+
+    # ---- Content ----
+
+    CurriculumTaxonomy:
+      type: object
+      properties:
+        country: { type: string, example: "SG" }
+        grades:
+          type: array
+          items:
+            type: object
+            properties:
+              grade: { type: integer }
+              strands:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    strand: { type: string, example: "Numbers" }
+                    topics:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          topic: { type: string, example: "Fractions" }
+                          subtopics:
+                            type: array
+                            items:
+                              type: object
+                              properties:
+                                subtopic: { type: string }
+                                skills:
+                                  type: array
+                                  items: { type: string, description: "Skill ID" }
+
+    Skill:
+      type: object
+      properties:
+        id: { type: string }
+        country: { type: string }
+        grade: { type: integer }
+        strand: { type: string }
+        topic: { type: string }
+        subtopic: { type: string }
+        name: { type: string }
+        description: { type: string }
+
+    SkillListResponse:
+      type: object
+      properties:
+        skills:
+          type: array
+          items: { $ref: '#/components/schemas/Skill' }
+        next_cursor: { type: string, nullable: true }
+
+    Problem:
+      type: object
+      required: [id, curriculum, difficulty, question]
+      properties:
+        id: { type: string, example: "prob_2a3f" }
+        curriculum:
+          type: object
+          properties:
+            country: { type: string }
+            grade: { type: integer }
+            topic: { type: string }
+            subtopic: { type: string }
+            skill_id: { type: string }
+        difficulty:
+          type: object
+          properties:
+            level_label: { type: string, enum: [easy, medium, hard] }
+            irt_b: { type: number, description: "IRT difficulty (may be null pre-calibration)" }
+            irt_a: { type: number, description: "IRT discrimination" }
+        question:
+          type: object
+          properties:
+            type: { type: string, enum: [multiple_choice, fill_in, true_false, drag_drop, matching] }
+            stem_html: { type: string }
+            stem_latex: { type: string, nullable: true }
+            media:
+              type: array
+              items:
+                type: object
+                properties:
+                  type: { type: string, enum: [image, audio, video] }
+                  url: { type: string, format: uri }
+            options:
+              type: array
+              items: { type: string }
+              nullable: true
+        hint_count: { type: integer, description: "Total hints available; fetch one at a time via /adaptive/hints" }
+
+    # ---- Adaptive ----
+
+    NextProblemResponse:
+      type: object
+      required: [problem, scheduler]
+      properties:
+        problem: { $ref: '#/components/schemas/Problem' }
+        scheduler:
+          type: object
+          properties:
+            review_type:
+              type: string
+              enum: [new, spaced_review, weak_skill_practice, daily_challenge, assignment, prerequisite_fallback]
+            student_ability_band: { type: number, example: 2.4, description: "0.0-4.0, internal" }
+            decision_trace: { $ref: '#/components/schemas/DecisionTrace' }
+
+    DecisionTrace:
+      type: object
+      description: |
+        Why this problem was chosen. Phase 4 analytics consume this to tune
+        weights. Teachers can surface it for debugging student paths.
+      properties:
+        fsrs_urgency: { type: number, example: 0.22 }
+        bkt_urgency: { type: number, example: 0.65 }
+        novelty_bonus: { type: number, example: 0.1 }
+        mood_applied:
+          type: string
+          enum: [flow, frustrated, confused, bored]
+        w_f_used: { type: number, example: 0.4 }
+        w_b_used: { type: number, example: 0.6 }
+        candidate_pool_scope: { type: string, example: "prerequisite_topic:multiplication" }
+        safety_net_triggered: { type: boolean, example: false }
+        final_priority: { type: number, example: 0.615 }
+        tiebreaker_used: { type: string, nullable: true, enum: [null, "difficulty_match", "deterministic_id"] }
+
+    AttemptRequest:
+      type: object
+      required: [problem_id, answer, time_spent_ms, hints_used, idempotency_key]
+      properties:
+        problem_id: { type: string }
+        answer:
+          oneOf:
+            - type: string
+            - type: integer  # for MCQ option index
+            - type: array
+              items: { type: string }  # for drag-drop / matching
+        time_spent_ms: { type: integer, minimum: 0 }
+        hints_used: { type: integer, minimum: 0 }
+        idempotency_key: { type: string, description: "Client-generated UUID to prevent duplicate recording" }
+
+    AttemptResponse:
+      type: object
+      properties:
+        attempt_id: { type: string, format: uuid }
+        is_correct: { type: boolean }
+        correct_answer:
+          description: Only returned after answer submitted
+          oneOf:
+            - type: string
+            - type: integer
+        solution_html: { type: string }
+        solution_video_url: { type: string, format: uri, nullable: true }
+        coins_awarded: { type: integer, example: 3 }
+        xp_awarded: { type: integer, example: 5 }
+        new_badges:
+          type: array
+          items: { $ref: '#/components/schemas/Badge' }
+        level_up:
+          type: object
+          nullable: true
+          properties:
+            new_level: { type: integer }
+            old_level: { type: integer }
+
+    SkillStateResponse:
+      type: object
+      properties:
+        student_id: { type: string, format: uuid }
+        skills:
+          type: array
+          items:
+            type: object
+            properties:
+              skill_id: { type: string }
+              p_known: { type: number, example: 0.72 }
+              state: { type: string, enum: [weak, learning, mastered] }
+              attempt_count: { type: integer }
+              last_reviewed: { type: string, format: date-time }
+
+    MoodStateResponse:
+      type: object
+      properties:
+        session_id: { type: string, format: uuid }
+        student_id: { type: string, format: uuid }
+        current_mood:
+          type: string
+          enum: [flow, frustrated, confused, bored]
+        mood_modifiers:
+          description: Session-scoped BKT modifiers; reset on inactivity timeout
+          type: object
+          properties:
+            P_T_delta: { type: number, example: -0.05 }
+            P_G_delta: { type: number, example: 0 }
+            P_S_delta: { type: number, example: 0 }
+        session_started_at: { type: string, format: date-time }
+
+    # ---- Gamification ----
+
+    PointsResponse:
+      type: object
+      properties:
+        student_id: { type: string, format: uuid }
+        coin_balance: { type: integer, example: 1245 }
+        total_xp: { type: integer, example: 4680 }
+        level: { type: integer, example: 7 }
+        xp_to_next_level: { type: integer, example: 320 }
+
+    Badge:
+      type: object
+      properties:
+        id: { type: string, example: "first_perfect_score" }
+        name: { type: string, example: "Perfect Score!" }
+        description: { type: string }
+        icon_url: { type: string, format: uri }
+        earned: { type: boolean }
+        earned_at: { type: string, format: date-time, nullable: true }
+
+    BadgeListResponse:
+      type: object
+      properties:
+        earned:
+          type: array
+          items: { $ref: '#/components/schemas/Badge' }
+        locked:
+          type: array
+          items: { $ref: '#/components/schemas/Badge' }
+
+    LeaderboardResponse:
+      type: object
+      properties:
+        scope: { type: string, enum: [class, school, national] }
+        scope_id: { type: string }
+        period: { type: string, enum: [daily, weekly, all_time] }
+        top:
+          type: array
+          items:
+            type: object
+            properties:
+              rank: { type: integer }
+              student_id: { type: string, format: uuid }
+              student_name: { type: string }
+              avatar_url: { type: string, format: uri }
+              score: { type: integer }
+        my_rank:
+          type: object
+          nullable: true
+          properties:
+            rank: { type: integer }
+            score: { type: integer }
+
+    AvatarShopItem:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        category: { type: string, enum: [hat, outfit, background, pet] }
+        cost_coins: { type: integer }
+        preview_url: { type: string, format: uri }
+        owned: { type: boolean }
+
+    # ---- Classrooms ----
+
+    Classroom:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        grade: { type: integer }
+        class_code: { type: string, description: "Used for K-2 student login" }
+        teacher_id: { type: string, format: uuid }
+        school_id: { type: string, format: uuid, nullable: true }
+        student_count: { type: integer }
+
+    AssignmentCreate:
+      type: object
+      required: [topic, problem_count, deadline]
+      properties:
+        title: { type: string }
+        topic: { type: string }
+        difficulty_min: { type: string, enum: [easy, medium, hard] }
+        difficulty_max: { type: string, enum: [easy, medium, hard] }
+        problem_count: { type: integer, minimum: 1, maximum: 50 }
+        deadline: { type: string, format: date-time }
+        instructions: { type: string, nullable: true }
+
+    Assignment:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        classroom_id: { type: string, format: uuid }
+        title: { type: string }
+        topic: { type: string }
+        problem_ids:
+          type: array
+          items: { type: string }
+        deadline: { type: string, format: date-time }
+        created_at: { type: string, format: date-time }
+
+    # ---- Dashboard ----
+
+    SkillGapHeatmap:
+      type: object
+      properties:
+        classroom_id: { type: string, format: uuid }
+        skills:
+          type: array
+          items: { $ref: '#/components/schemas/Skill' }
+        students:
+          type: array
+          items: { $ref: '#/components/schemas/StudentProfile' }
+        cells:
+          type: array
+          description: Flat array of (student_id, skill_id, p_known) cells
+          items:
+            type: object
+            properties:
+              student_id: { type: string, format: uuid }
+              skill_id: { type: string }
+              p_known: { type: number }
+              state: { type: string, enum: [weak, learning, mastered] }
+
+    AtRiskStudent:
+      type: object
+      properties:
+        student: { $ref: '#/components/schemas/StudentProfile' }
+        reason:
+          type: string
+          enum:
+            - low_p_known_multiple_skills
+            - declining_engagement
+            - broken_streak
+            - repeated_assignment_miss
+        intervention_topics:
+          type: array
+          items: { type: string }
+        flagged_at: { type: string, format: date-time }
+
+    WeeklyParentReport:
+      type: object
+      properties:
+        child_id: { type: string, format: uuid }
+        week_of: { type: string, format: date }
+        problems_solved: { type: integer }
+        topics_practiced:
+          type: array
+          items: { type: string }
+        skill_improvements:
+          type: array
+          items:
+            type: object
+            properties:
+              skill: { type: string }
+              p_known_delta: { type: number }
+        streak_status: { type: string, enum: [active, broken, new_record] }
+        current_level: { type: integer }
+        badges_earned_this_week:
+          type: array
+          items: { $ref: '#/components/schemas/Badge' }
+        time_spent_minutes: { type: integer }
+        pdf_url: { type: string, format: uri, description: "Downloadable PDF version" }
+
+    # ---- Billing ----
+
+    Plan:
+      type: object
+      properties:
+        id: { type: string, example: "premium_monthly_sg" }
+        name: { type: string, example: "Premium Monthly" }
+        interval: { type: string, enum: [monthly, annual] }
+        price:
+          type: object
+          properties:
+            amount: { type: number, example: 17.99 }
+            currency: { type: string, example: "SGD" }
+        trial_days: { type: integer, example: 7 }
+        features:
+          type: array
+          items: { type: string }
+
+    Subscription:
+      type: object
+      properties:
+        id: { type: string }
+        plan_id: { type: string }
+        status:
+          type: string
+          enum: [trialing, active, past_due, canceled]
+        current_period_start: { type: string, format: date-time }
+        current_period_end: { type: string, format: date-time }
+        cancel_at_period_end: { type: boolean }
+        stripe_subscription_id: { type: string }
