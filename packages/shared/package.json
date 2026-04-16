@@ -1,0 +1,20 @@
+{
+  "name": "@koblio/shared",
+  "version": "0.0.1",
+  "private": true,
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "scripts": {
+    "build": "tsc --project tsconfig.build.json",
+    "lint": "eslint src/",
+    "typecheck": "tsc --noEmit",
+    "test": "echo \"No tests yet\""
+  },
+  "devDependencies": {
+    "@koblio/eslint-config": "workspace:*",
+    "@koblio/tsconfig": "workspace:*",
+    "eslint": "^9.0.0",
+    "typescript": "^5.7.0"
+  }
+}

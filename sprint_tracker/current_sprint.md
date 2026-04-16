@@ -12,7 +12,7 @@
 
 | Task ID | Title | Owner Role | Priority | Status | Progress / Blocker |
 |---|---|---|---|---|---|
-| P1-T01 | Initialize Turborepo monorepo (web, mobile, backend, shared) | Tech Lead | P0 | pending | |
+| P1-T01 | Initialize Turborepo monorepo (web, mobile, backend, shared) | Tech Lead | P0 | in-progress | |
 | P1-T02 | Set up GitHub Actions CI pipeline (lint, type-check, test) | Tech Lead | P0 | pending | |
 | P1-T03 | Configure Terraform + AWS ECS Fargate baseline (dev env) | DevOps | P0 | pending | |
 | P1-T04 | Auth0 integration — COPPA-compliant student/teacher/parent roles | Backend | P0 | pending | |
