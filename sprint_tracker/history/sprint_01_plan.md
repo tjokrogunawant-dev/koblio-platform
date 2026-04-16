@@ -36,3 +36,36 @@ None — project kickoff.
 
 ## Notes for Implementation Agent
 Start with P1-T01 (monorepo) — everything else depends on it. P1-T03 can run in parallel with P1-T04 and P1-T05 since it's infra. P1-T08 (Flutter) is independent once the monorepo exists.
+
+---
+
+## PM Agent Mid-Sprint Note — 2026-04-16 (Monday)
+
+**Status at check-in:** Pre-sprint preparation window (18 days before Sprint 01 opens on 2026-05-04).
+
+**Task status review:**
+
+| Task ID | Status | Hold / Blocked? |
+|---|---|---|
+| P1-T01 | pending | No |
+| P1-T02 | pending | No |
+| P1-T03 | pending | No — pending AWS credential provisioning (procurement) |
+| P1-T04 | pending | No — pending Auth0 legal entity verification (procurement) |
+| P1-T05 | pending | No |
+| P1-T06 | pending | No |
+| P1-T07 | pending | No |
+| P1-T08 | pending | No — pending Apple Dev / Google Play account activation (procurement) |
+
+**No HOLD or BLOCKED tasks in `current_sprint.md`.** All tasks remain `pending` as expected — Sprint 01 implementation is gated on the 2026-05-04 start date.
+
+**Procurement action items (hard deadline: 2026-05-01):**
+
+These three items are the only pre-sprint risk. They are PM/Ops-track responsibilities, not Implementation Agent tasks. If any remain unresolved by 2026-05-01, the PM Agent must escalate and flag P1-T03, P1-T04, and/or P1-T08 as BLOCKED in `current_sprint.md` before the sprint opens.
+
+1. **Auth0 COPPA entity verification** — Required for P1-T04. Auth0's COPPA-compliant mode requires a verified legal business entity. Confirm registration status and submit verification to Auth0 support immediately if not done.
+2. **AWS account + IAM bootstrap credentials** — Required for P1-T03. Store credentials in AWS Secrets Manager (never in-repo). Confirm least-privilege IAM role covers ECS, RDS, ElastiCache, and VPC.
+3. **Apple Developer + Google Play accounts** — Required for P1-T08. Both require 24–48 hours for approval; initiate now to avoid day-1 blockage.
+
+**No priority changes.** Execution order in this plan remains correct. Implementation Agent is gated: **do not begin any task before 2026-05-04.**
+
+**Next PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro.md`.
