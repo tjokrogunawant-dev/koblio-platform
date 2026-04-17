@@ -69,3 +69,41 @@ These three items are the only pre-sprint risk. They are PM/Ops-track responsibi
 **No priority changes.** Execution order in this plan remains correct. Implementation Agent is gated: **do not begin any task before 2026-05-04.**
 
 **Next PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro.md`.
+
+---
+
+## PM Agent Mid-Sprint Note — 2026-04-17 (Monday)
+
+**Status at check-in:** Pre-sprint preparation window — **17 days until Sprint 01 opens (2026-05-04)**.
+
+**Git activity since last check-in (2026-04-16):**
+No new commits. The repository contains only the four foundation commits from 2026-04-16 (spec init, QC baseline, retro baseline, pre-sprint note). Implementation Agent is correctly dormant — no tasks should be picked up before 2026-05-04.
+
+**Task status review:**
+
+| Task ID | Status | Hold / Blocked? |
+|---|---|---|
+| P1-T01 | pending | No |
+| P1-T02 | pending | No |
+| P1-T03 | pending | No — AWS credentials procurement outstanding |
+| P1-T04 | pending | No — Auth0 legal entity verification outstanding |
+| P1-T05 | pending | No |
+| P1-T06 | pending | No |
+| P1-T07 | pending | No |
+| P1-T08 | pending | No — Apple Dev / Google Play account activation outstanding |
+
+**No HOLD or BLOCKED tasks.** All tasks remain `pending` as expected for this pre-sprint window.
+
+**Procurement deadline countdown — hard deadline 2026-05-01 (14 days):**
+
+| Procurement Item | Required By Task | Deadline | Status |
+|---|---|---|---|
+| Auth0 COPPA entity verification | P1-T04 | 2026-05-01 | ⚠️ Unconfirmed |
+| AWS account + IAM bootstrap credentials | P1-T03 | 2026-05-01 | ⚠️ Unconfirmed |
+| Apple Developer + Google Play accounts | P1-T08 | 2026-05-01 | ⚠️ Unconfirmed |
+
+All three items remain unconfirmed from the 2026-04-16 check-in. These are PM/Ops-track items. **If any remain unresolved by 2026-05-01, the PM Agent must mark the corresponding tasks as BLOCKED in `current_sprint.md` before the sprint opens.**
+
+**No priority changes.** Execution order in this plan remains correct. Implementation Agent gate is in force: **do not begin any task before 2026-05-04.**
+
+**Next scheduled PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro.md`.
