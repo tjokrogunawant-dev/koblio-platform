@@ -107,3 +107,53 @@ All three items remain unconfirmed from the 2026-04-16 check-in. These are PM/Op
 **No priority changes.** Execution order in this plan remains correct. Implementation Agent gate is in force: **do not begin any task before 2026-05-04.**
 
 **Next scheduled PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro.md`.
+
+---
+
+## PM Agent Mid-Sprint Note — 2026-04-17 (Monday, Pass 2 — post-P1-T01 completion)
+
+**Status at check-in:** Pre-sprint preparation window — **17 days until Sprint 01 opens (2026-05-04)**.
+
+**Git activity since Pass 1 (earlier today):**
+
+| Commit | Description |
+|---|---|
+| `e81a0d8` | `[P1-T01] Initialize Turborepo monorepo with apps and packages` |
+| `ce3de19` | `QC Agent: Sprint 01 code review — 2026-04-17` |
+| `1e8123f` | `PM Agent: Sprint 01 retrospective — 2026-04-17` |
+
+**P1-T01 is complete — QC approved (2 WARNINGs, 0 blockers):**
+All 6 acceptance criteria pass (`pnpm install`, `turbo build`, `turbo lint`, `turbo typecheck`, `turbo test`, README). QC findings:
+
+| Severity | Finding | Resolution Target |
+|---|---|---|
+| WARNING | `app.enableCors()` unrestricted (`main.ts:8`) | Fix in P1-T04 AC (CORS_ORIGIN env var via ConfigService) |
+| WARNING | No `.env.example` in repo | Fix in P1-T02 AC (mandatory, not advisory) |
+| INFO | P1-T01 scope overlaps P1-T06 (module skeletons, Swagger, health check delivered) | P1-T06 scope reduced (see below) |
+
+**Task status review:**
+
+| Task ID | Status | Hold / Blocked? | Notes |
+|---|---|---|---|
+| P1-T01 | **done** | No | QC-approved; all AC met |
+| P1-T02 | pending | No | **AC expanded:** `.env.example` + `gitleaks` pre-commit hook now mandatory |
+| P1-T03 | pending | No — AWS credentials outstanding | |
+| P1-T04 | pending | No — Auth0 entity verification outstanding | **AC expanded:** CORS `CORS_ORIGIN` env var restriction required |
+| P1-T05 | pending | No | |
+| P1-T06 | pending | No | **Scope reduced:** module skeletons, Swagger, health check done via P1-T01; remaining: `helmet`, rate limiting, request validation pipeline, docker-compose (~0.5–1 day, down from 2 days) |
+| P1-T07 | pending | No | |
+| P1-T08 | pending | No — App Store accounts outstanding | |
+
+**No HOLD or BLOCKED tasks.** Sprint 01 effective workload reduced by ~1.5 days due to P1-T01 over-delivery.
+
+**Procurement deadline countdown — hard deadline 2026-05-01 (14 days):**
+
+| Procurement Item | Required By | Deadline | Status |
+|---|---|---|---|
+| Auth0 COPPA entity verification | P1-T04 (P0) | 2026-05-01 | ⚠️ Unconfirmed — RECURRING BLOCKER |
+| AWS account + IAM bootstrap credentials | P1-T03 (P0) | 2026-05-01 | ⚠️ Unconfirmed — RECURRING BLOCKER |
+| Apple Developer + Google Play accounts | P1-T08 (P1) | 2026-05-01 | ⚠️ Unconfirmed — RECURRING BLOCKER |
+
+All three items have now been flagged in **three consecutive agent cycles** without resolution. If unresolved by 2026-05-01, mark P1-T04, P1-T03, and P1-T08 as BLOCKED in `current_sprint.md` immediately.
+
+**Next PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro.md` (final).
