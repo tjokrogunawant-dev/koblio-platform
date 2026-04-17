@@ -378,3 +378,63 @@ Each phase ends with a formal review (M1.6, M2.5, M3.4, M4.4, M5.5). Reviewed by
 ---
 
 *This package was prepared with care. Read the docs that apply to your role, don't re-litigate the locked decisions, and escalate spec gaps quickly. Good luck.*
+
+---
+
+## Local Development Setup
+
+### Prerequisites
+
+- **Node.js** >= 22.x
+- **pnpm** >= 10.x (`npm install -g pnpm`)
+- **Turbo** (installed as a dev dependency, or globally via `npm install -g turbo`)
+
+### Getting Started
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/tjokrogunawant-dev/koblio-platform.git
+cd koblio-platform
+
+# 2. Install all dependencies
+pnpm install
+
+# 3. Build all packages
+turbo build
+
+# 4. Run linting
+turbo lint
+
+# 5. Run type checking
+turbo typecheck
+
+# 6. Start development servers (API on :3001, Web on :3000)
+turbo dev
+```
+
+### Monorepo Structure
+
+```
+koblio-platform/
+  apps/
+    api/              # NestJS backend API (port 3001)
+    web/              # Next.js 15 web application (port 3000)
+  packages/
+    shared/           # Shared types, constants, validation
+    ui/               # Shared React UI components
+    eslint-config/    # Shared ESLint configurations
+    typescript-config/ # Shared TypeScript configurations
+```
+
+### Key Commands
+
+| Command | Description |
+|---------|-------------|
+| `pnpm install` | Install all dependencies across the monorepo |
+| `turbo build` | Build all packages and apps |
+| `turbo dev` | Start all dev servers in parallel |
+| `turbo lint` | Lint all packages |
+| `turbo typecheck` | Type-check all packages |
+| `turbo test` | Run all tests |
+| `pnpm format` | Format all files with Prettier |
+| `pnpm format:check` | Check formatting without modifying |

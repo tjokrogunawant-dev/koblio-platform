@@ -1,0 +1,24 @@
+{
+  "name": "@koblio/shared",
+  "version": "0.0.0",
+  "private": true,
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc --build",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@koblio/eslint-config": "workspace:*",
+    "@koblio/typescript-config": "workspace:*",
+    "eslint": "^9.27.0",
+    "typescript": "^5.8.0"
+  }
+}
