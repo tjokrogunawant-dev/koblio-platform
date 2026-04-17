@@ -13,7 +13,7 @@
 | Task ID | Title | Owner Role | Priority | Status | Progress / Blocker |
 |---|---|---|---|---|---|
 | P1-T01 | Initialize Turborepo monorepo (web, mobile, backend, shared) | Tech Lead | P0 | done | All AC met: pnpm install, turbo build/lint/typecheck pass |
-| P1-T02 | Set up GitHub Actions CI pipeline (lint, type-check, test) | Tech Lead | P0 | pending | |
+| P1-T02 | Set up GitHub Actions CI pipeline (lint, type-check, test) | Tech Lead | P0 | done | All AC met: PR/push workflow runs format, lint, typecheck, test, build; Turborepo remote caching configured; concurrency control enabled. Branch protection requires manual GitHub config. |
 | P1-T03 | Configure Terraform + AWS ECS Fargate baseline (dev env) | DevOps | P0 | pending | |
 | P1-T04 | Auth0 integration — COPPA-compliant student/teacher/parent roles | Backend | P0 | pending | |
 | P1-T05 | Prisma schema — core tables (users, students, parents, teachers, schools) | Backend | P0 | pending | |
@@ -34,4 +34,4 @@ None currently.
 ---
 
 ## Last Updated
-2026-04-17 by Implementation Agent (P1-T01 completed)
+2026-04-17 by Implementation Agent (P1-T02 completed)
