@@ -1,11 +1,19 @@
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { Logger, ValidationPipe } from '@nestjs/common';
+import helmet from 'helmet';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  const logger = new Logger('Bootstrap');
 
+  app.use(helmet());
   app.enableCors();
+  app.setGlobalPrefix('api', { exclude: ['health'] });
+  app.useGlobalPipes(
+    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
+  );
 
   const config = new DocumentBuilder()
     .setTitle('Koblio API')
@@ -19,6 +27,7 @@ async function bootstrap() {
 
   const port = process.env.PORT ?? 3001;
   await app.listen(port);
+  logger.log(`Application listening on port ${port}`);
 }
 
 bootstrap();

@@ -12,19 +12,22 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@koblio/shared": "workspace:*",
     "@nestjs/common": "^11.0.0",
+    "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.0",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/swagger": "^11.0.0",
-    "@koblio/shared": "workspace:*",
+    "@nestjs/throttler": "^6.5.0",
+    "helmet": "^8.1.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.0"
   },
   "devDependencies": {
-    "@nestjs/cli": "^11.0.0",
-    "@nestjs/testing": "^11.0.0",
     "@koblio/eslint-config": "workspace:*",
     "@koblio/typescript-config": "workspace:*",
+    "@nestjs/cli": "^11.0.0",
+    "@nestjs/testing": "^11.0.0",
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.0",
     "@types/node": "^22.0.0",
