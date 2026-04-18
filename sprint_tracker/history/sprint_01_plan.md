@@ -217,3 +217,56 @@ These items have now been flagged in **four consecutive agent cycles**. The RECU
 **No priority changes.** Execution order and scope adjustments from previous notes remain in effect. Implementation Agent gate is in force: **do not begin any task before 2026-05-04.**
 
 **Next PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro.md` (final — or sprint_01_retro_3.md if retro_2.md is already the authoritative pass).
+
+---
+
+## PM Agent Mid-Sprint Note — 2026-04-18 (Monday, Pass 2 — post-P1-T06 completion)
+
+**Status at check-in:** Pre-sprint preparation window — **16 days until Sprint 01 opens (2026-05-04)**. Procurement deadline is **13 days away (2026-05-01)**. This note supersedes Pass 1 (also 2026-04-18); P1-T06 was completed after Pass 1 was committed.
+
+**Git activity since Pass 1 (2026-04-18):**
+
+| Commit | Description |
+|---|---|
+| `a94b3e9` | `[P1-T06] Bootstrap NestJS API with module controllers, helmet, and rate limiting` |
+| `146a519` | `PM Agent: Sprint 01 mid-sprint note — 2026-04-18` |
+
+**P1-T06 is complete.** NestJS bootstrap delivered: `helmet`, rate limiting, `ValidationPipe`, 6 domain modules with placeholder controllers/services, Swagger UI at `/api/docs`, `/health` returning 200, 7 unit tests passing. Implementation Agent has now delivered **3 of 8 tasks — 16 days before Sprint 01 officially opens**.
+
+**Task status review (current):**
+
+| Task ID | Title | Status | Hold / Blocked? |
+|---|---|---|---|
+| P1-T01 | Initialize Turborepo monorepo | **done** | No |
+| P1-T02 | GitHub Actions CI pipeline | **done** | No — QC verification pending |
+| P1-T03 | Terraform + AWS ECS Fargate (dev) | pending | ⚠️ RECURRING BLOCKER — AWS credentials |
+| P1-T04 | Auth0 COPPA-compliant auth | pending | ⚠️ RECURRING BLOCKER — Auth0 entity verification |
+| P1-T05 | Prisma core schema | pending | No — unblocked, ready for sprint open |
+| P1-T06 | NestJS modules skeleton | **done** | No — QC verification pending |
+| P1-T07 | Next.js teacher dashboard shell | pending | No — unblocked, ready for sprint open |
+| P1-T08 | Flutter student app shell | pending | ⚠️ RECURRING BLOCKER — App Store accounts |
+
+**No HOLD or BLOCKED tasks in `current_sprint.md`.** All three procurement items remain at WARNING severity (not yet escalated to BLOCKED); escalation deadline is 2026-05-01. See `sprint_tracker/PHASE_GATE_RISK.md` and `sprint_tracker/history/sprint_01_retro_3.md` for full analysis.
+
+**Velocity update:**
+
+| Metric | Value |
+|---|---|
+| Tasks completed (pre-sprint) | 3 of 8 — P1-T01, P1-T02, P1-T06 |
+| P0 tasks completed | 2 of 5 |
+| Estimated days of work remaining | ~7.5 days (P1-T06 done; 5 tasks remain) |
+| Sprint capacity available (10 working days) | **~2.5-day buffer** — healthiest position yet |
+
+**Procurement deadline countdown — hard deadline 2026-05-01 (13 days):**
+
+| Procurement Item | Required By | Deadline | Consecutive Cycles Flagged |
+|---|---|---|---|
+| Auth0 COPPA entity verification | P1-T04 (P0) | 2026-05-01 | **5** |
+| AWS account + IAM bootstrap credentials | P1-T03 (P0) | 2026-05-01 | **5** |
+| Apple Developer + Google Play accounts | P1-T08 (P1) | 2026-05-01 | **5** |
+
+Five consecutive cycles without resolution. If any item remains unconfirmed on 2026-05-01, PM Agent must immediately set P1-T03, P1-T04, and/or P1-T08 to `BLOCKED` in `current_sprint.md` — before sprint open.
+
+**No priority changes.** Execution order remains: P1-T05 → P1-T07 on day 1 if P1-T03/P1-T04 blocked; P1-T03 and P1-T04 in parallel once procurement resolves; P1-T08 as final P1 task.
+
+**Next PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro_4.md` (final sprint retrospective — retro_3 is the most recent authoritative pass as of 2026-04-18).
