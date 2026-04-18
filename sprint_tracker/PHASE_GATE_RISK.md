@@ -5,7 +5,7 @@
 **Phase:** 1 — Foundation & MVP  
 **Gate Sprint:** Sprint 06 (target end date: 2026-07-24)  
 **Risk Level:** MEDIUM  
-**Trigger:** RECURRING BLOCKER — 3 procurement items unresolved across 2 consecutive agent cycles
+**Trigger:** RECURRING BLOCKER — 3 procurement items unresolved across 5 consecutive agent cycles
 
 ---
 
@@ -58,6 +58,7 @@ If any item is unresolved by **2026-05-01**:
 |---|---|---|---|---|
 | 2026-04-16 | ❌ Unconfirmed | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
 | 2026-04-17 | ❌ Unconfirmed | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
+| 2026-04-18 | ❌ Unconfirmed | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
 | 2026-05-01 | — | — | — | TBD |
 | 2026-05-04 (Sprint open) | — | — | — | TBD |
 
