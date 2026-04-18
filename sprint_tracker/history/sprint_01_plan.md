@@ -157,3 +157,63 @@ All 6 acceptance criteria pass (`pnpm install`, `turbo build`, `turbo lint`, `tu
 All three items have now been flagged in **three consecutive agent cycles** without resolution. If unresolved by 2026-05-01, mark P1-T04, P1-T03, and P1-T08 as BLOCKED in `current_sprint.md` immediately.
 
 **Next PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro.md` (final).
+
+---
+
+## PM Agent Mid-Sprint Note — 2026-04-18 (Monday — pre-sprint, 16 days to open)
+
+**Status at check-in:** Pre-sprint preparation window — **16 days until Sprint 01 opens (2026-05-04)**. Procurement deadline is **13 days away (2026-05-01)**.
+
+**Git activity since last check-in (2026-04-17 Pass 2):**
+
+| Commit | Description |
+|---|---|
+| `ed0943d` | `[P1-T02] Set up GitHub Actions CI pipeline for lint, typecheck, test, and build` |
+| `3ec195e` | `PM Agent: Sprint 01 mid-sprint note — 2026-04-17` |
+
+P1-T02 was completed and committed after the last retrospective was written. The CI pipeline is now live. Implementation Agent has delivered 2 of 8 sprint tasks **16 days before the sprint officially opens**.
+
+**Task status review:**
+
+| Task ID | Title | Status | Hold / Blocked? | Notes |
+|---|---|---|---|---|
+| P1-T01 | Initialize Turborepo monorepo | **done** | No | QC-approved; all AC met |
+| P1-T02 | GitHub Actions CI pipeline | **done** | No | Completed post-retro; QC verification pending |
+| P1-T03 | Terraform + AWS ECS Fargate (dev) | pending | ⚠️ AWS credentials unconfirmed | RECURRING BLOCKER |
+| P1-T04 | Auth0 COPPA-compliant auth | pending | ⚠️ Auth0 entity verification unconfirmed | RECURRING BLOCKER |
+| P1-T05 | Prisma core schema | pending | No | No blockers; can start on sprint open |
+| P1-T06 | NestJS modules skeleton | pending | No | Scope reduced ~1.5 days via P1-T01 over-delivery |
+| P1-T07 | Next.js teacher dashboard shell | pending | No | No blockers; can start on sprint open |
+| P1-T08 | Flutter student app shell | pending | ⚠️ App Store accounts unconfirmed | RECURRING BLOCKER |
+
+**No HOLD or BLOCKED tasks in `current_sprint.md`.** Procurement items remain `pending` (not yet escalated to BLOCKED) — the hard escalation deadline is 2026-05-01. At that point, if still unresolved, P1-T03, P1-T04, and P1-T08 must be set to BLOCKED.
+
+**P1-T02 QC note:** The sprint_01_retro_2.md (written 2026-04-17) reported P1-T02 as "NO EVIDENCE" because the commit landed after the retro was authored. QC Agent should verify P1-T02 acceptance criteria in its next run:
+- PR/push workflow runs format, lint, typecheck, test, build ✅ (confirmed by current_sprint.md)
+- `.env.example` committed (mandatory per expanded AC) — **verify**
+- `gitleaks` pre-commit hook in GitHub Actions pipeline — **verify**
+- Turborepo remote caching configured — **verify**
+- Branch protection rules (requires manual GitHub config) — **verify/document**
+
+**Velocity update — pre-sprint window:**
+
+| Metric | Value |
+|---|---|
+| Tasks completed (pre-sprint) | 2 of 8 (P1-T01, P1-T02) |
+| P0 tasks completed | 2 of 5 |
+| Estimated days of work remaining | ~9.5 days (accounting for P1-T06 scope reduction) |
+| Sprint capacity available (10 working days) | 0.5-day buffer at current estimates |
+
+**Procurement deadline countdown — hard deadline 2026-05-01 (13 days):**
+
+| Procurement Item | Required By | Deadline | Status | Consecutive Cycles Flagged |
+|---|---|---|---|---|
+| Auth0 COPPA entity verification | P1-T04 (P0) | 2026-05-01 | ⚠️ Unconfirmed | 4 |
+| AWS account + IAM bootstrap credentials | P1-T03 (P0) | 2026-05-01 | ⚠️ Unconfirmed | 4 |
+| Apple Developer + Google Play accounts | P1-T08 (P1) | 2026-05-01 | ⚠️ Unconfirmed | 4 |
+
+These items have now been flagged in **four consecutive agent cycles**. The RECURRING BLOCKER designation established in sprint_01_retro_2.md continues to apply. PM/Ops must confirm resolution by 2026-05-01 or the corresponding tasks will be set to BLOCKED before sprint open.
+
+**No priority changes.** Execution order and scope adjustments from previous notes remain in effect. Implementation Agent gate is in force: **do not begin any task before 2026-05-04.**
+
+**Next PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro.md` (final — or sprint_01_retro_3.md if retro_2.md is already the authoritative pass).
