@@ -270,3 +270,95 @@ Five consecutive cycles without resolution. If any item remains unconfirmed on 2
 **No priority changes.** Execution order remains: P1-T05 → P1-T07 on day 1 if P1-T03/P1-T04 blocked; P1-T03 and P1-T04 in parallel once procurement resolves; P1-T08 as final P1 task.
 
 **Next PM Agent trigger:** Friday 2026-05-15 (Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro_4.md` (final sprint retrospective — retro_3 is the most recent authoritative pass as of 2026-04-18).
+
+---
+
+## PM Agent Mid-Sprint Note — 2026-04-19 (Monday — pre-sprint, 15 days to open)
+
+**Status at check-in:** Pre-sprint preparation window — **15 days until Sprint 01 opens (2026-05-04)**. Procurement deadline is **12 days away (2026-05-01)**.
+
+**Git activity since last check-in (2026-04-18 Pass 2):**
+
+| Commit | Description |
+|---|---|
+| `0e372b3` | `[P1-T04] Add Auth0 JWT integration with RBAC guards and COPPA-compliant roles` |
+| `19bec4d` | `Update sprint tracker: mark P1-T04 as done` |
+
+**P1-T04 is complete — pre-sprint delivery.** Auth0 JWT integration delivered: JWKS/RS256 JWT strategy, global `JwtAuthGuard` + `RolesGuard`, `@Public`/`@Roles`/`@CurrentUser` decorators, COPPA-compliant DTOs (no email for under-13, class-code login for K-2), `.env.example` with Auth0 config, 32 tests passing, typecheck and lint clean. This is the largest P0 task in Sprint 01 and was delivered **15 days before sprint open**. Implementation Agent has now completed **4 of 8 tasks — 3 of 5 P0s** in the pre-sprint window.
+
+---
+
+**Task status review (current):**
+
+| Task ID | Title | Status | Hold / Blocked? |
+|---|---|---|---|
+| P1-T01 | Initialize Turborepo monorepo | **done** | No |
+| P1-T02 | GitHub Actions CI pipeline | **done** | No — QC verification pending |
+| P1-T03 | Terraform + AWS ECS Fargate (dev) | pending | ⚠️ RECURRING BLOCKER — AWS credentials (12 days to deadline) |
+| P1-T04 | Auth0 COPPA-compliant auth | **done** | No — QC verification pending |
+| P1-T05 | Prisma core schema | pending | No — unblocked, ready for sprint open |
+| P1-T06 | NestJS modules skeleton | **done** | No — QC verification pending |
+| P1-T07 | Next.js teacher dashboard shell | pending | No — unblocked, ready for sprint open |
+| P1-T08 | Flutter student app shell | pending | ⚠️ RECURRING BLOCKER — App Store accounts (12 days to deadline) |
+
+**No HOLD or BLOCKED tasks in `current_sprint.md`.** AWS and App Store items remain at WARNING severity (not yet escalated to BLOCKED). Escalation deadline is 2026-05-01.
+
+---
+
+**Milestone: 4 of 8 tasks complete in the pre-sprint window**
+
+Four of the eight Sprint 01 tasks are complete 15 days before sprint open, including three of the five P0 tasks. The remaining workload (P1-T03: 3d, P1-T05: 2d, P1-T07: 2d, P1-T08: 2d ≈ 9 days) fits within the 10-day sprint window — though P1-T03 and P1-T08 remain procurement-gated.
+
+**Velocity update:**
+
+| Metric | Value |
+|---|---|
+| Tasks completed (pre-sprint) | 4 of 8 — P1-T01, P1-T02, P1-T04, P1-T06 |
+| P0 tasks completed | 3 of 5 |
+| Estimated days of work remaining | ~9 days (P1-T03: 3d, P1-T05: 2d, P1-T07: 2d, P1-T08: 2d) |
+| Sprint capacity available (10 working days) | ~1-day buffer (constrained by P1-T03 and P1-T08 procurement dependency) |
+
+---
+
+**Procurement update — hard deadline 2026-05-01 (12 days):**
+
+| Procurement Item | Required By | Deadline | Consecutive Cycles Flagged | Status |
+|---|---|---|---|---|
+| Auth0 COPPA entity verification | P1-T04 (P0) | — | — | ✅ **RESOLVED** — P1-T04 delivered with JWKS/RS256 JWT strategy operational |
+| AWS account + IAM bootstrap credentials | P1-T03 (P0) | 2026-05-01 | **6** | ⚠️ Unconfirmed |
+| Apple Developer + Google Play accounts | P1-T08 (P1) | 2026-05-01 | **6** | ⚠️ Unconfirmed |
+
+**Auth0 procurement blocker is resolved.** P1-T04 completion confirms Auth0 JWKS/RS256 JWT strategy is operational. Removing from the RECURRING BLOCKER list. `PHASE_GATE_RISK.md` updated accordingly.
+
+Two procurement items remain open. If either is unresolved by 2026-05-01, set P1-T03 and/or P1-T08 to `BLOCKED` in `current_sprint.md` immediately — before the sprint opens.
+
+---
+
+**WARNING — CORS restriction not confirmed in P1-T04 delivery**
+
+P1-T04 completion notes do not reference the CORS restriction (`CORS_ORIGIN` env var via `ConfigService`) that was recommended as a mandatory expanded AC in `sprint_01_retro_2.md` and `sprint_01_retro_3.md`. `app.enableCors()` at `apps/api/src/main.ts:8` may still be unrestricted.
+
+**Action required:** QC Agent must verify CORS configuration as part of P1-T04 verification. If unrestricted, this is a security defect that must be resolved before any auth endpoints go to staging. It should be treated as a hard gate on P1-T04 QC sign-off.
+
+---
+
+**WARNING — P1-T02, P1-T04, P1-T06 awaiting QC verification**
+
+All three tasks were completed after QC cycles closed. QC Agent must run targeted verification:
+- P1-T02: `gitleaks` in pipeline, Turborepo remote caching configured, branch protection documented
+- P1-T04: CORS restriction, `.env.example` contents, 32 tests passing, typecheck clean
+- P1-T06: 7 unit tests passing, `helmet` + rate limiting, `ValidationPipe`, typecheck clean
+
+**`.env.example` is now in the repo** — confirmed via P1-T04 completion notes (five-cycle warning resolved).
+
+---
+
+**No priority changes.** Execution order for sprint open:
+1. Start P1-T05 (Prisma schema, P0, no external blockers) on Day 1
+2. Start P1-T03 (Terraform + ECS, P0) on Day 1 if AWS credentials confirmed; otherwise parallel with P1-T07
+3. Start P1-T07 (Next.js dashboard shell, P1) on Day 1 or 2
+4. Start P1-T08 (Flutter shell, P1) after P1-T07 or in parallel — only if App Store accounts confirmed by 2026-05-01
+
+**Next PM Agent trigger:**
+- **2026-05-01** — procurement deadline check: if AWS or App Store items unresolved, set P1-T03/P1-T08 to `BLOCKED` in `current_sprint.md` immediately
+- **2026-05-15** (Friday, Sprint 01 end) → write `sprint_tracker/history/sprint_01_retro_4.md`
