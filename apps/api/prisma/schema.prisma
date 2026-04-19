@@ -1,0 +1,131 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STUDENT
+  PARENT
+  TEACHER
+  ADMIN
+}
+
+enum SchoolRole {
+  TEACHER
+  SCHOOL_ADMIN
+}
+
+model User {
+  id          String   @id @default(uuid()) @db.Uuid
+  auth0Id     String   @unique @map("auth0_id")
+  email       String?  @unique
+  role        UserRole
+  displayName String   @map("display_name")
+  username    String?  @unique
+  grade       Int?
+  country     String?
+  locale      String?
+  avatarId    String?  @map("avatar_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  parentLinks      ParentChildLink[] @relation("ParentUser")
+  childLinks       ParentChildLink[] @relation("ChildUser")
+  consentsGiven    ParentalConsent[] @relation("ConsentParent")
+  consentsReceived ParentalConsent[] @relation("ConsentChild")
+  schoolTeachers   SchoolTeacher[]
+  classroomsOwned  Classroom[]
+  enrollments      Enrollment[]
+
+  @@map("users")
+}
+
+model School {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  country   String?
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  teachers   SchoolTeacher[]
+  classrooms Classroom[]
+
+  @@map("schools")
+}
+
+model SchoolTeacher {
+  id        String     @id @default(uuid()) @db.Uuid
+  teacherId String     @map("teacher_id") @db.Uuid
+  schoolId  String     @map("school_id") @db.Uuid
+  role      SchoolRole @default(TEACHER)
+  joinedAt  DateTime   @default(now()) @map("joined_at")
+
+  teacher User   @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  school  School @relation(fields: [schoolId], references: [id], onDelete: Cascade)
+
+  @@unique([teacherId, schoolId])
+  @@map("school_teachers")
+}
+
+model Classroom {
+  id        String   @id @default(uuid()) @db.Uuid
+  name      String
+  grade     Int
+  classCode String   @unique @map("class_code")
+  teacherId String   @map("teacher_id") @db.Uuid
+  schoolId  String?  @map("school_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  teacher     User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
+  school      School?      @relation(fields: [schoolId], references: [id], onDelete: SetNull)
+  enrollments Enrollment[]
+
+  @@map("classrooms")
+}
+
+model Enrollment {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @map("student_id") @db.Uuid
+  classroomId String   @map("classroom_id") @db.Uuid
+  enrolledAt  DateTime @default(now()) @map("enrolled_at")
+
+  student   User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  classroom Classroom @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, classroomId])
+  @@map("enrollments")
+}
+
+model ParentChildLink {
+  id        String   @id @default(uuid()) @db.Uuid
+  parentId  String   @map("parent_id") @db.Uuid
+  childId   String   @map("child_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+
+  parent User @relation("ParentUser", fields: [parentId], references: [id], onDelete: Cascade)
+  child  User @relation("ChildUser", fields: [childId], references: [id], onDelete: Cascade)
+
+  @@unique([parentId, childId])
+  @@map("parent_child_links")
+}
+
+model ParentalConsent {
+  id             String   @id @default(uuid()) @db.Uuid
+  parentId       String   @map("parent_id") @db.Uuid
+  childId        String   @map("child_id") @db.Uuid
+  accepted       Boolean
+  consentVersion String   @map("consent_version")
+  ipAddress      String   @map("ip_address")
+  timestamp      DateTime
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  parent User @relation("ConsentParent", fields: [parentId], references: [id], onDelete: Cascade)
+  child  User @relation("ConsentChild", fields: [childId], references: [id], onDelete: Cascade)
+
+  @@map("parental_consents")
+}
