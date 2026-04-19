@@ -59,7 +59,7 @@ If any item is unresolved by **2026-05-01**:
 | 2026-04-16 | ❌ Unconfirmed | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
 | 2026-04-17 | ❌ Unconfirmed | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
 | 2026-04-18 | ❌ Unconfirmed | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
-| 2026-04-19 | ✅ RESOLVED — P1-T04 delivered (JWKS/RS256 operational) | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
+| 2026-04-19 | ✅ RESOLVED — P1-T04 delivered (JWKS/RS256 operational, 32 tests, .env.example committed) | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
 | 2026-05-01 | — | — | — | TBD |
 | 2026-05-04 (Sprint open) | — | — | — | TBD |
 
