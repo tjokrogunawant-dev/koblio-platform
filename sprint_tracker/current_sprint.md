@@ -18,7 +18,7 @@
 | P1-T04 | Auth0 integration — COPPA-compliant student/teacher/parent roles | Backend | P0 | done | All AC met: Auth0 JWT strategy (JWKS/RS256), global JwtAuthGuard + RolesGuard, @Public/@Roles/@CurrentUser decorators, COPPA-compliant DTOs (no email for students, class-code login for K-2), .env.example with Auth0 config, 32 tests passing, typecheck + lint clean |
 | P1-T05 | Prisma schema — core tables (users, students, parents, teachers, schools) | Backend | P0 | done | All AC met: Prisma schema with 7 models (User, School, SchoolTeacher, Classroom, Enrollment, ParentChildLink, ParentalConsent), FK constraints enforced, migration SQL created; API endpoints: POST /parents/me/children (create child + consent), GET /parents/me/children, POST /schools, POST /teachers/me/classrooms, POST /classrooms/:id/students, GET /classrooms/:id/students; COPPA-compliant (no email on student accounts, consent with timestamp+IP); 68 tests passing, typecheck + lint clean |
 | P1-T06 | NestJS app bootstrap — Auth, User, Content modules skeleton | Backend | P1 | done | All AC met: helmet, rate limiting, ValidationPipe configured; 6 modules with placeholder controllers, services, @ApiTags/@ApiOperation decorators; /health returns 200; Swagger UI at /api/docs; 7 unit tests passing; typecheck clean |
-| P1-T07 | Next.js 15 app bootstrap — teacher dashboard shell | Frontend | P1 | pending | |
+| P1-T07 | Next.js 15 app bootstrap — teacher dashboard shell | Frontend | P1 | in-progress | |
 | P1-T08 | Flutter app bootstrap — student app shell (GoRouter, Riverpod, Rive) | Mobile | P1 | pending | |
 
 ---
