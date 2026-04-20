@@ -29,7 +29,10 @@ None — first sprint.
 ---
 
 ## Sprint Blockers
-None currently.
+
+| Task ID | Blocker | Deadline |
+|---|---|---|
+| P1-T03 | Docker Compose not implemented; AWS account + IAM credentials unconfirmed | 2026-05-01 (credentials hard deadline) |
 
 ---
 

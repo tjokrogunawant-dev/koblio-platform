@@ -504,3 +504,39 @@ The sprint enters open at a strong position. Four P0s are done. The only remaini
 - **2026-05-01** — procurement deadline check: if AWS or App Store items unresolved, set P1-T03 / P1-T08 to `BLOCKED` in `current_sprint.md`
 - **2026-05-04** (Monday, Sprint 01 open) — sprint-start boundary: write Sprint 01 open confirmation note
 - **2026-05-15** (Friday, Sprint 01 end) — write `sprint_tracker/history/sprint_01_retro_5.md` (final sprint retrospective)
+
+---
+
+## PM Agent Mid-Sprint Note — 2026-04-20 (Monday — Sprint Start session, Pass 3)
+
+**Sprint boundary check:** Today (2026-04-20) is **NOT a sprint-start boundary**. Per `SPRINT_OVERVIEW.md`, Sprint 01 opens 2026-05-04 (14 days) and Sprint 02 opens 2026-05-18. The session was invoked as a Sprint Start session but confirmed mid/pre-sprint.
+
+**PM Agent activity today:** Two prior cycles already ran today — Pass 1 (`ce7bee6`: mid-sprint note) and Pass 2 (`3879ad6`: sprint_01_retro_5.md). No new implementation commits have landed since those cycles. State is unchanged.
+
+**BLOCKED task confirmed:**
+
+| Task ID | Title | Priority | Blocker |
+|---|---|---|---|
+| P1-T03 | Terraform + AWS ECS Fargate (dev) | P0 | Docker Compose not implemented; AWS account + IAM credentials unavailable in environment |
+
+`current_sprint.md` Sprint Blockers section updated this cycle to accurately reflect P1-T03 block (previously incorrectly showed "None currently").
+
+**Current task summary (unchanged from Pass 2):**
+
+| Task ID | Status |
+|---|---|
+| P1-T01 | done |
+| P1-T02 | done |
+| P1-T03 | **blocked** |
+| P1-T04 | done |
+| P1-T05 | done |
+| P1-T06 | done |
+| P1-T07 | pending |
+| P1-T08 | pending |
+
+**5/8 done · 1/8 blocked (P0) · 2/8 pending · 4/5 P0s complete**
+
+**Next PM Agent triggers (unchanged):**
+- **2026-05-01** — procurement deadline: if AWS credentials unresolved, set P1-T03 to `BLOCKED` (already blocked; confirm no update needed)
+- **2026-05-04** (Monday) — Sprint 01 officially opens; write sprint-open note
+- **2026-05-15** (Friday) — Sprint 01 end; write final retrospective
