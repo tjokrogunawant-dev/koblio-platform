@@ -507,6 +507,52 @@ The sprint enters open at a strong position. Four P0s are done. The only remaini
 
 ---
 
+## PM Agent Mid-Sprint Note — 2026-04-21 (Monday — pre-sprint, 13 days to open)
+
+**Sprint boundary check:** Today (2026-04-21) is **NOT a sprint-start boundary**. Per `SPRINT_OVERVIEW.md`, Sprint 01 opens 2026-05-04 (13 days) and Sprint 02 opens 2026-05-18. This is a pre-sprint Monday check-in. The PM Agent session was invoked as a Sprint Start session; confirmed mid/pre-sprint after boundary check.
+
+**Git activity since last check-in (2026-04-20 Pass 3, commit `208578a`):**
+
+No new commits. State is identical to the 2026-04-20 Pass 3 note. Implementation Agent is holding pending sprint open.
+
+**Task status review (no changes):**
+
+| Task ID | Title | Status | Notes |
+|---|---|---|---|
+| P1-T01 | Initialize Turborepo monorepo | **done** | QC-approved |
+| P1-T02 | GitHub Actions CI pipeline | **done** | QC verification pending (gitleaks, remote caching) |
+| P1-T03 | Terraform + AWS ECS Fargate (dev) | **blocked** | RECURRING BLOCKER — Docker Compose not implemented; AWS credentials unavailable |
+| P1-T04 | Auth0 COPPA-compliant auth | **done** | QC verification pending (CORS restriction unconfirmed) |
+| P1-T05 | Prisma core schema | **done** | QC verification pending |
+| P1-T06 | NestJS modules skeleton | **done** | QC verification pending |
+| P1-T07 | Next.js teacher dashboard shell | **pending** | No blockers — first task on sprint open |
+| P1-T08 | Flutter student app shell | **pending** | RECURRING BLOCKER — App Store accounts unconfirmed |
+
+**Summary:** 5/8 done · 1/8 blocked (P0) · 2/8 pending · 4/5 P0s complete. Unchanged from 2026-04-20.
+
+**Open blockers and warnings:**
+
+| Item | Severity | Deadline |
+|---|---|---|
+| P1-T03 — Docker Compose not implemented | BLOCKED | Before sprint open (2026-05-04) |
+| P1-T03 — AWS account + IAM credentials | RECURRING BLOCKER | **2026-05-01 — 10 days** |
+| P1-T08 — Apple Developer + Google Play accounts | RECURRING BLOCKER | **2026-05-01 — 10 days** |
+| CORS restriction in `apps/api/src/main.ts` | WARNING | Before P1-T07 starts |
+| P1-T02, P1-T04, P1-T05, P1-T06 — QC verification pending | WARNING | Before sprint open |
+
+**Procurement countdown — 10 days to hard deadline (2026-05-01):**
+
+AWS credentials and App Store accounts remain unconfirmed. Both items must be resolved by 2026-05-01 or PM Agent sets P1-T03 / P1-T08 to `BLOCKED` in `current_sprint.md` — before sprint open — so Implementation Agent does not waste Day 1 on externally blocked tasks.
+
+**No state changes. No priority changes.** Guidance from 2026-04-20 Pass 3 remains in force.
+
+**Next PM Agent triggers:**
+- **2026-05-01** — procurement deadline check: confirm or BLOCK P1-T03 / P1-T08 in `current_sprint.md`
+- **2026-05-04** (Monday, Sprint 01 open) — sprint-start boundary: write Sprint 01 open confirmation note
+- **2026-05-15** (Friday, Sprint 01 end) — write `sprint_tracker/history/sprint_01_retro_5.md` (final sprint retrospective)
+
+---
+
 ## PM Agent Mid-Sprint Note — 2026-04-20 (Monday — Sprint Start session, Pass 3)
 
 **Sprint boundary check:** Today (2026-04-20) is **NOT a sprint-start boundary**. Per `SPRINT_OVERVIEW.md`, Sprint 01 opens 2026-05-04 (14 days) and Sprint 02 opens 2026-05-18. The session was invoked as a Sprint Start session but confirmed mid/pre-sprint.
