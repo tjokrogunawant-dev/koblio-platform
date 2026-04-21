@@ -586,3 +586,70 @@ AWS credentials and App Store accounts remain unconfirmed. Both items must be re
 - **2026-05-01** — procurement deadline: if AWS credentials unresolved, set P1-T03 to `BLOCKED` (already blocked; confirm no update needed)
 - **2026-05-04** (Monday) — Sprint 01 officially opens; write sprint-open note
 - **2026-05-15** (Friday) — Sprint 01 end; write final retrospective
+
+---
+
+## PM Agent Mid-Sprint Note — 2026-04-21 (Monday — pre-sprint, 13 days to open, Pass 2 — post-P1-T07 completion)
+
+**Sprint boundary check:** Today (2026-04-21) is **NOT a sprint-start boundary**. Per `SPRINT_OVERVIEW.md`, Sprint 01 opens 2026-05-04 (13 days) and Sprint 02 opens 2026-05-18. Session invoked as Sprint Start; confirmed pre-sprint mid-sprint check-in.
+
+**Git activity since Pass 1 (earlier today, commit `5822677`):**
+
+| Commit | Description |
+|---|---|
+| `e164ac6` | `[P1-T07] Bootstrap Next.js 15 web app with teacher dashboard shell` |
+| `504e833` | `PM Agent: Sprint 01 retrospective (Pass 6) — 2026-04-21` |
+
+**P1-T07 is complete.** Next.js 15 teacher dashboard shell delivered: Tailwind CSS + shadcn/ui (Button, Input, Card), landing page (`/`), login page (`/login`), sidebar-nav dashboard shell (`/dashboard`) with 5 nav items, TanStack Query provider, Auth0 placeholders, 21 tests passing, typecheck + lint + build clean. All acceptance criteria met. Implementation Agent has now completed **6 of 8 Sprint 01 tasks — 4 of 5 P0s — 13 days before sprint open**. This supersedes the Pass 1 note (which incorrectly showed P1-T07 as pending).
+
+**Task status review (authoritative as of 2026-04-21, end-of-day):**
+
+| Task ID | Title | Status | Notes |
+|---|---|---|---|
+| P1-T01 | Initialize Turborepo monorepo | **done** | QC-approved |
+| P1-T02 | GitHub Actions CI pipeline | **done** | QC verification pending (gitleaks, remote caching) |
+| P1-T03 | Terraform + AWS ECS Fargate (dev) | **blocked** | RECURRING BLOCKER — Docker Compose not implemented; AWS credentials unavailable |
+| P1-T04 | Auth0 COPPA-compliant auth | **done** | QC verification pending (CORS restriction unconfirmed) |
+| P1-T05 | Prisma core schema | **done** | QC verification pending |
+| P1-T06 | NestJS modules skeleton | **done** | QC verification pending |
+| P1-T07 | Next.js teacher dashboard shell | **done** | **Completed 2026-04-21** — 21 tests, shadcn/ui, Auth0 placeholders; QC verification pending |
+| P1-T08 | Flutter student app shell | **pending** | RECURRING BLOCKER — App Store accounts unconfirmed (10 days to deadline) |
+
+**Summary: 6/8 done · 1/8 blocked (P0) · 1/8 pending · 4/5 P0s complete**
+
+**BLOCKED task:**
+
+| Task ID | Blocker | Deadline |
+|---|---|---|
+| P1-T03 | Docker Compose not implemented; AWS account + IAM credentials unavailable | Docker Compose: before sprint open (2026-05-04); AWS credentials: **2026-05-01** |
+
+**Open warnings:**
+
+| Item | Severity | Cycles Flagged | Deadline |
+|---|---|---|---|
+| CORS restriction in `apps/api/src/main.ts` | WARNING | 9+ | Before P1-T07 used with real backend |
+| P1-T02, P1-T04, P1-T05, P1-T06, P1-T07 — QC unverified in done state | WARNING | — | Before sprint open (2026-05-04) |
+| AWS account + IAM bootstrap credentials (P1-T03) | RECURRING BLOCKER | **9** | **2026-05-01 — 10 days** |
+| Apple Developer + Google Play accounts (P1-T08) | RECURRING BLOCKER | **9** | **2026-05-01 — 10 days** |
+
+**Velocity update:**
+
+| Metric | Value |
+|---|---|
+| Tasks completed (pre-sprint) | 6 of 8 — P1-T01, P1-T02, P1-T04, P1-T05, P1-T06, P1-T07 |
+| P0 tasks completed | 4 of 5 |
+| Remaining unblocked work | ~2 days (P1-T08 — emulator-level Flutter work possible without App Store accounts) |
+| Remaining blocked work | ~2 days (P1-T03 — Terraform scope after Docker Compose stub + AWS credentials) |
+| Sprint capacity (10 working days) | **~6-day buffer** on unblocked scope |
+
+**CORS prerequisite for P1-T07:** P1-T07 is now done as a shell. It must NOT be pointed at a real backend until `app.enableCors()` in `apps/api/src/main.ts` is locked to `CORS_ORIGIN` env var via `ConfigService`. QC Agent must verify this as the first P1-T04 QC action. Treat as a hard gate on P1-T07 production readiness.
+
+**Guidance for Implementation Agent:**
+- **Next action:** P1-T08 (Flutter student app shell) can begin on emulator immediately — App Store accounts only block final on-device AC verification, not development.
+- **Docker Compose stub** (NestJS API + PostgreSQL 16 + Redis 7) remains highest-leverage infrastructure task to reduce P1-T03 scope. Fully unblocked since P1-T04 is done.
+- Do NOT mark P1-T08 done without confirmed App Store accounts for on-device validation.
+
+**Next PM Agent triggers:**
+- **2026-05-01** — procurement deadline check: if AWS credentials or App Store accounts unresolved, set P1-T03 / P1-T08 to `BLOCKED` in `current_sprint.md` before sprint opens
+- **2026-05-04** (Monday, Sprint 01 open) — sprint-start boundary confirmed; write Sprint 01 open confirmation note in this file
+- **2026-05-15** (Friday, Sprint 01 end) — write `sprint_tracker/history/sprint_01_retro_7.md` (final sprint retrospective)
