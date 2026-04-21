@@ -19,7 +19,7 @@
 | P1-T05 | Prisma schema — core tables (users, students, parents, teachers, schools) | Backend | P0 | done | All AC met: Prisma schema with 7 models (User, School, SchoolTeacher, Classroom, Enrollment, ParentChildLink, ParentalConsent), FK constraints enforced, migration SQL created; API endpoints: POST /parents/me/children (create child + consent), GET /parents/me/children, POST /schools, POST /teachers/me/classrooms, POST /classrooms/:id/students, GET /classrooms/:id/students; COPPA-compliant (no email on student accounts, consent with timestamp+IP); 68 tests passing, typecheck + lint clean |
 | P1-T06 | NestJS app bootstrap — Auth, User, Content modules skeleton | Backend | P1 | done | All AC met: helmet, rate limiting, ValidationPipe configured; 6 modules with placeholder controllers, services, @ApiTags/@ApiOperation decorators; /health returns 200; Swagger UI at /api/docs; 7 unit tests passing; typecheck clean |
 | P1-T07 | Next.js 15 app bootstrap — teacher dashboard shell | Frontend | P1 | done | All AC met: Tailwind CSS + shadcn/ui components (Button, Input, Card) configured; pages: landing (/), login (/login), teacher dashboard shell (/dashboard) with sidebar nav (overview, classes, assignments, progress, settings); TanStack Query provider; env config with Auth0 placeholders; 21 tests passing; typecheck + lint + build clean |
-| P1-T08 | Flutter app bootstrap — student app shell (GoRouter, Riverpod, Rive) | Mobile | P1 | pending | |
+| P1-T08 | Flutter app bootstrap — student app shell (GoRouter, Riverpod, Rive) | Mobile | P1 | done | All AC met: Flutter 3.29 project in apps/mobile/; GoRouter with auth-gated redirect (splash → login → home); Riverpod ProviderScope + StateNotifier auth state; Dio client with base URL, timeouts, auth interceptor (Bearer token injection); child-friendly Material 3 theme (rounded, 48dp+ touch targets); screens: splash, login (username + class code modes), home, practice, profile with bottom nav shell; Rive + Lottie + flutter_math_fork dependencies configured; Drift for offline; 34 tests passing; analyzer clean |
 
 ---
 
@@ -37,4 +37,4 @@ None — first sprint.
 ---
 
 ## Last Updated
-2026-04-21 by Implementation Agent (P1-T07 completed)
+2026-04-21 by Implementation Agent (P1-T08 completed)

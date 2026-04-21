@@ -1,0 +1,58 @@
+name: koblio_mobile
+description: Koblio — gamified adaptive math learning for K-6 students.
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.7.2
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Navigation
+  go_router: ^15.1.2
+
+  # State management
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # HTTP client
+  dio: ^5.8.0+1
+
+  # Offline storage
+  drift: ^2.25.0
+  sqlite3_flutter_libs: ^0.5.32
+  path_provider: ^2.1.5
+  path: ^1.9.1
+
+  # Animations
+  rive: ^0.14.5
+  lottie: ^3.3.1
+
+  # Math rendering
+  flutter_math_fork: ^0.7.2
+
+  # Secure storage (JWT tokens)
+  flutter_secure_storage: ^9.2.4
+
+  # Icons
+  cupertino_icons: ^1.0.8
+
+  # Logging
+  logger: ^2.5.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  riverpod_generator: ^2.6.3
+  build_runner: ^2.4.15
+  drift_dev: ^2.25.0
+  mockito: ^5.4.6
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/rive/
+    - assets/lottie/

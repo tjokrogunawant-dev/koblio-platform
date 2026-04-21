@@ -1,0 +1,69 @@
+import 'package:dio/dio.dart';
+import 'package:koblio_mobile/config/env_config.dart';
+import 'package:koblio_mobile/services/auth_interceptor.dart';
+
+class ApiClient {
+  ApiClient({
+    required this.dio,
+    required this.authInterceptor,
+  });
+
+  factory ApiClient.create({
+    EnvConfig? config,
+    AuthInterceptor? authInterceptor,
+  }) {
+    final env = config ?? EnvConfig.current;
+    final interceptor = authInterceptor ?? AuthInterceptor();
+
+    final dio = Dio(
+      BaseOptions(
+        baseUrl: env.apiBaseUrl,
+        connectTimeout: const Duration(seconds: 10),
+        receiveTimeout: const Duration(seconds: 30),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
+    );
+
+    dio.interceptors.addAll([
+      interceptor,
+      LogInterceptor(
+        requestBody: true,
+        responseBody: true,
+        logPrint: (_) {},
+      ),
+    ]);
+
+    return ApiClient(dio: dio, authInterceptor: interceptor);
+  }
+
+  final Dio dio;
+  final AuthInterceptor authInterceptor;
+
+  Future<Response<T>> get<T>(
+    String path, {
+    Map<String, dynamic>? queryParameters,
+  }) {
+    return dio.get<T>(path, queryParameters: queryParameters);
+  }
+
+  Future<Response<T>> post<T>(
+    String path, {
+    Object? data,
+  }) {
+    return dio.post<T>(path, data: data);
+  }
+
+  Future<Response<T>> patch<T>(
+    String path, {
+    Object? data,
+  }) {
+    return dio.patch<T>(path, data: data);
+  }
+
+  Future<Response<T>> delete<T>(String path) {
+    return dio.delete<T>(path);
+  }
+}
