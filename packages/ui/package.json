@@ -13,6 +13,7 @@
   "scripts": {
     "build": "tsc --build",
     "lint": "eslint .",
+    "test": "jest",
     "typecheck": "tsc --noEmit"
   },
   "peerDependencies": {
@@ -22,11 +23,27 @@
   "devDependencies": {
     "@koblio/eslint-config": "workspace:*",
     "@koblio/typescript-config": "workspace:*",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "eslint": "^9.27.0",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "ts-jest": "^29.4.9",
     "typescript": "^5.8.0"
+  },
+  "dependencies": {
+    "@radix-ui/react-dialog": "^1.1.15",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tooltip": "^1.2.8",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "tailwind-merge": "^3.5.0"
   }
 }

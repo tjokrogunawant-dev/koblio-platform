@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 01  
+**Sprint:** 02  
 **Phase:** 1 — Foundation & MVP  
-**Start:** 2026-05-04  
-**End:** 2026-05-15  
-**Sprint Goal:** Bootstrap monorepo, CI/CD, auth scaffolding, and core DB schema
+**Start:** 2026-05-19  
+**End:** 2026-05-30  
+**Sprint Goal:** Design system, auth registration endpoints, error tracking, Docker dev environment
 
 ---
 
@@ -12,19 +12,22 @@
 
 | Task ID | Title | Owner Role | Priority | Status | Progress / Blocker |
 |---|---|---|---|---|---|
-| P1-T01 | Initialize Turborepo monorepo (web, mobile, backend, shared) | Tech Lead | P0 | done | All AC met: pnpm install, turbo build/lint/typecheck pass |
-| P1-T02 | Set up GitHub Actions CI pipeline (lint, type-check, test) | Tech Lead | P0 | done | All AC met: PR/push workflow runs format, lint, typecheck, test, build; Turborepo remote caching configured; concurrency control enabled. Branch protection requires manual GitHub config. |
-| P1-T03 | Configure Terraform + AWS ECS Fargate baseline (dev env) | DevOps | P0 | blocked | Blocker: Docker Compose local dev environment (plan P1-T04) not yet implemented; requires AWS credentials and access not available in this environment |
-| P1-T04 | Auth0 integration — COPPA-compliant student/teacher/parent roles | Backend | P0 | done | All AC met: Auth0 JWT strategy (JWKS/RS256), global JwtAuthGuard + RolesGuard, @Public/@Roles/@CurrentUser decorators, COPPA-compliant DTOs (no email for students, class-code login for K-2), .env.example with Auth0 config, 32 tests passing, typecheck + lint clean |
-| P1-T05 | Prisma schema — core tables (users, students, parents, teachers, schools) | Backend | P0 | done | All AC met: Prisma schema with 7 models (User, School, SchoolTeacher, Classroom, Enrollment, ParentChildLink, ParentalConsent), FK constraints enforced, migration SQL created; API endpoints: POST /parents/me/children (create child + consent), GET /parents/me/children, POST /schools, POST /teachers/me/classrooms, POST /classrooms/:id/students, GET /classrooms/:id/students; COPPA-compliant (no email on student accounts, consent with timestamp+IP); 68 tests passing, typecheck + lint clean |
-| P1-T06 | NestJS app bootstrap — Auth, User, Content modules skeleton | Backend | P1 | done | All AC met: helmet, rate limiting, ValidationPipe configured; 6 modules with placeholder controllers, services, @ApiTags/@ApiOperation decorators; /health returns 200; Swagger UI at /api/docs; 7 unit tests passing; typecheck clean |
-| P1-T07 | Next.js 15 app bootstrap — teacher dashboard shell | Frontend | P1 | done | All AC met: Tailwind CSS + shadcn/ui components (Button, Input, Card) configured; pages: landing (/), login (/login), teacher dashboard shell (/dashboard) with sidebar nav (overview, classes, assignments, progress, settings); TanStack Query provider; env config with Auth0 placeholders; 21 tests passing; typecheck + lint + build clean |
-| P1-T08 | Flutter app bootstrap — student app shell (GoRouter, Riverpod, Rive) | Mobile | P1 | done | All AC met: Flutter 3.29 project in apps/mobile/; GoRouter with auth-gated redirect (splash → login → home); Riverpod ProviderScope + StateNotifier auth state; Dio client with base URL, timeouts, auth interceptor (Bearer token injection); child-friendly Material 3 theme (rounded, 48dp+ touch targets); screens: splash, login (username + class code modes), home, practice, profile with bottom nav shell; Rive + Lottie + flutter_math_fork dependencies configured; Drift for offline; 34 tests passing; analyzer clean |
+| P1-T08 | Design System Foundations — 10 core UI components in packages/ui | Frontend | P1 | in-progress | Starting: Button, Input, Card, Badge, ProgressBar, Avatar, Modal, Toast, Dropdown, Tooltip |
+| P1-T04 | Docker Compose Local Dev Environment (PostgreSQL, MongoDB, Redis) | DevOps | P0 | blocked | Blocker: Docker not available in this environment |
+| P1-T09 | Sentry Error Tracking Setup (web + API) | DevOps | P2 | pending | Depends: P1-T06 (done), P1-T07 (done) |
+| P1-T10 | Auth Module — Parent & Teacher Registration endpoints | Backend | P0 | pending | Depends: P1-T04 (done), P1-T06 (done) |
+| P1-T11 | Auth Module — Student Login & RBAC enforcement | Backend | P0 | pending | Depends: P1-T10 |
+| P1-T13 | Auth Frontend — Login & Registration Pages | Frontend | P0 | pending | Depends: P1-T08, P1-T10, P1-T11 |
 
 ---
 
-## Carry-Over from Previous Sprint
-None — first sprint.
+## Carry-Over from Sprint 01
+
+| Task ID | Title | Status | Note |
+|---|---|---|---|
+| P1-T03 (S01) | Configure Terraform + AWS ECS Fargate | blocked | Blocked on AWS credentials; Docker Compose (P1-T04) also blocked |
+
+Sprint 01 completed 7/8 tasks (P1-T01 through P1-T08 except P1-T03).
 
 ---
 
@@ -32,9 +35,10 @@ None — first sprint.
 
 | Task ID | Blocker | Deadline |
 |---|---|---|
-| P1-T03 | Docker Compose not implemented; AWS account + IAM credentials unconfirmed | 2026-05-01 (credentials hard deadline) |
+| P1-T04 | Docker not available in this environment | — |
+| P1-T03 (S01) | AWS credentials not available | — |
 
 ---
 
 ## Last Updated
-2026-04-21 by Implementation Agent (P1-T08 completed)
+2026-04-22 by Implementation Agent (Sprint 02 started, P1-T08 claimed)
