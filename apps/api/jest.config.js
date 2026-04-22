@@ -6,6 +6,9 @@ module.exports = {
   transform: {
     '^.+\\.ts$': 'ts-jest',
   },
+  moduleNameMapper: {
+    '^@koblio/shared$': '<rootDir>/../../../packages/shared/src',
+  },
   collectCoverageFrom: ['**/*.ts', '!**/node_modules/**', '!main.ts'],
   coverageDirectory: '../coverage',
   testEnvironment: 'node',

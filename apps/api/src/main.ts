@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { Logger, ValidationPipe } from '@nestjs/common';
 import helmet from 'helmet';
+import cookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -9,7 +10,8 @@ async function bootstrap() {
   const logger = new Logger('Bootstrap');
 
   app.use(helmet());
-  app.enableCors();
+  app.use(cookieParser());
+  app.enableCors({ credentials: true, origin: true });
   app.setGlobalPrefix('api', { exclude: ['health'] });
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
