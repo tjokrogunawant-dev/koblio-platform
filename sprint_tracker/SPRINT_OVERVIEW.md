@@ -1,10 +1,12 @@
 # Koblio Sprint Overview — 36 Sprints, 18 Months
 
+> **Calendar note (updated 2026-04-22):** The project started ~6 weeks ahead of the original plan (planned Sprint 01 start: 2026-05-04; actual: 2026-04-16). Sprints 01–03 reflect actual execution dates. Sprint 04+ dates remain as originally planned and will be revised at Phase 1 mid-point.
+
 | Sprint | Dates | Phase | Key Deliverables | Status |
 |---|---|---|---|---|
-| 01 | 2026-05-04 – 2026-05-15 | 1 | Monorepo, CI/CD, Auth0, core DB schema | 🔵 Active |
-| 02 | 2026-05-18 – 2026-05-29 | 1 | Content pipeline, problem schema, CMS skeleton | ⬜ Planned |
-| 03 | 2026-06-01 – 2026-06-12 | 1 | Problem-solving engine, cold-start rules engine | ⬜ Planned |
+| 01 | 2026-04-16 – 2026-04-21 | 1 | Monorepo, CI/CD, Auth0, core DB schema | ✅ Done |
+| 02 | 2026-04-22 – 2026-04-22 | 1 | Design system (P1-T08), Flutter shell; most P0 auth tasks pending (Docker blocker) | ✅ Done |
+| 03 | 2026-04-22 – 2026-05-02 | 1 | Auth endpoints (testcontainers), KaTeX, MongoDB Atlas schema, Sentry | 🔵 Active |
 | 04 | 2026-06-15 – 2026-06-26 | 1 | Gamification v1 (coins, XP, streaks, daily challenge) | ⬜ Planned |
 | 05 | 2026-06-29 – 2026-07-10 | 1 | Teacher dashboard v1 (class overview, student progress) | ⬜ Planned |
 | 06 | 2026-07-13 – 2026-07-24 | 1 | Phase 1 integration, QA, bug fix, phase gate review | ⬜ Planned |
