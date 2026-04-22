@@ -12,7 +12,7 @@
 
 | Task ID | Title | Owner Role | Priority | Status | Progress / Blocker |
 |---|---|---|---|---|---|
-| P1-T08 | Design System Foundations — 10 core UI components in packages/ui | Frontend | P1 | in-progress | Starting: Button, Input, Card, Badge, ProgressBar, Avatar, Modal, Toast, Dropdown, Tooltip |
+| P1-T08 | Design System Foundations — 10 core UI components in packages/ui | Frontend | P1 | done | All AC met: 10 components (Button, Input, Card, Badge, ProgressBar, Avatar, Modal, Toast, Dropdown, Tooltip) exported from @koblio/ui; child-friendly styling (rounded-2xl, shadow-md, 48dp+ touch targets); Radix UI primitives for Modal/Dropdown/Tooltip; cva variants for all; WCAG AA contrast via Tailwind theme tokens; 66 tests passing; typecheck + lint clean |
 | P1-T04 | Docker Compose Local Dev Environment (PostgreSQL, MongoDB, Redis) | DevOps | P0 | blocked | Blocker: Docker not available in this environment |
 | P1-T09 | Sentry Error Tracking Setup (web + API) | DevOps | P2 | pending | Depends: P1-T06 (done), P1-T07 (done) |
 | P1-T10 | Auth Module — Parent & Teacher Registration endpoints | Backend | P0 | pending | Depends: P1-T04 (done), P1-T06 (done) |
@@ -41,4 +41,4 @@ Sprint 01 completed 7/8 tasks (P1-T01 through P1-T08 except P1-T03).
 ---
 
 ## Last Updated
-2026-04-22 by Implementation Agent (Sprint 02 started, P1-T08 claimed)
+2026-04-22 by Implementation Agent (P1-T08 completed — 10 design system components, 66 tests)
