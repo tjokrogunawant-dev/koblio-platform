@@ -198,6 +198,35 @@ describe('UserService', () => {
       ).rejects.toThrow(ConflictException);
     });
 
+    it('should hash and store password for child account', async () => {
+      prisma.user.findUnique
+        .mockResolvedValueOnce(mockParent)
+        .mockResolvedValueOnce(null);
+
+      let createdData: Record<string, unknown> | undefined;
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          user: {
+            create: jest.fn().mockImplementation((args) => {
+              createdData = args.data;
+              return mockChild;
+            }),
+          },
+          parentChildLink: { create: jest.fn().mockResolvedValue({}) },
+          parentalConsent: { create: jest.fn().mockResolvedValue({}) },
+        };
+        return fn(tx);
+      });
+
+      await service.createChildAccount('auth0|parent1', dto, '1.2.3.4');
+
+      expect(createdData).toBeDefined();
+      expect(createdData!.passwordHash).toBeDefined();
+      expect(typeof createdData!.passwordHash).toBe('string');
+      const parts = (createdData!.passwordHash as string).split(':');
+      expect(parts).toHaveLength(2);
+    });
+
     it('should not collect email from child account (COPPA)', async () => {
       prisma.user.findUnique
         .mockResolvedValueOnce(mockParent)

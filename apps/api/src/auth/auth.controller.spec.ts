@@ -1,5 +1,9 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
@@ -31,6 +35,9 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      loginStudent: jest.fn(),
+      loginWithClassCode: jest.fn(),
+      lookupClassCode: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -167,6 +174,110 @@ describe('AuthController', () => {
     });
   });
 
+  describe('loginStudent', () => {
+    const dto = {
+      kind: 'student' as const,
+      username: 'bobby1234',
+      password: 'MyP@ss123',
+    };
+
+    it('should login student and return token', async () => {
+      authService.loginStudent.mockResolvedValue({
+        authResult: {
+          access_token: 'at-student',
+          expires_in: 3600,
+          user: { id: 'student-1', role: 'student', name: 'Bobby' },
+        },
+      });
+
+      const result = await controller.loginStudent(dto);
+
+      expect(result.access_token).toBe('at-student');
+      expect(result.user.role).toBe('student');
+      expect(result.expires_in).toBe(3600);
+    });
+
+    it('should propagate UnauthorizedException for invalid credentials', async () => {
+      authService.loginStudent.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('loginWithClassCode', () => {
+    const dto = {
+      kind: 'class_code' as const,
+      class_code: 'SUN-DRAGON-42',
+      username: 'bobby1234',
+      picture_password: ['cat', 'sun', 'tree'],
+    };
+
+    it('should login student via class code', async () => {
+      authService.loginWithClassCode.mockResolvedValue({
+        authResult: {
+          access_token: 'at-classcode',
+          expires_in: 3600,
+          user: { id: 'student-1', role: 'student', name: 'Bobby' },
+        },
+      });
+
+      const result = await controller.loginWithClassCode(dto);
+
+      expect(result.access_token).toBe('at-classcode');
+      expect(result.user.role).toBe('student');
+    });
+
+    it('should propagate UnauthorizedException for invalid class code', async () => {
+      authService.loginWithClassCode.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.loginWithClassCode(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('lookupClassCode', () => {
+    it('should return classroom info with students', async () => {
+      authService.lookupClassCode.mockResolvedValue({
+        classroom_id: 'classroom-1',
+        name: 'Grade 1A',
+        grade: 1,
+        students: [
+          {
+            id: 'student-1',
+            name: 'Bobby',
+            username: 'bobby1234',
+            avatar_id: 'cat',
+          },
+        ],
+      });
+
+      const result = await controller.lookupClassCode({
+        class_code: 'SUN-DRAGON-42',
+      });
+
+      expect(result.classroom_id).toBe('classroom-1');
+      expect(result.students).toHaveLength(1);
+      expect(result.students[0].name).toBe('Bobby');
+    });
+
+    it('should propagate NotFoundException for invalid class code', async () => {
+      authService.lookupClassCode.mockRejectedValue(
+        new NotFoundException('Class code not found'),
+      );
+
+      await expect(
+        controller.lookupClassCode({ class_code: 'BAD-CODE' }),
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
+
   describe('refresh', () => {
     it('should refresh token and update cookie', async () => {
       const req = mockRequest({ koblio_refresh: 'rt-old' });
@@ -284,6 +395,20 @@ describe('AuthController', () => {
       expect(controller.teacherCheck(user)).toEqual({
         teacher: true,
         userId: 'auth0|teacher1',
+      });
+    });
+  });
+
+  describe('studentCheck', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'student-uuid-1',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'student-uuid-1',
       });
     });
   });

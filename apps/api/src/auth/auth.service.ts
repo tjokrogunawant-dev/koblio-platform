@@ -1,8 +1,9 @@
-import { createHash } from 'crypto';
+import { createHash, createHmac } from 'crypto';
 import {
   ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -12,10 +13,17 @@ import { RedisService } from '../redis/redis.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { EmailLoginDto } from './dto/login.dto';
+import {
+  EmailLoginDto,
+  StudentLoginDto,
+  ClassCodeLoginDto,
+} from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
+import { verifyPassword } from './password.util';
+import { LOCAL_JWT_ISSUER } from './auth.constants';
 
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
+const STUDENT_TOKEN_EXPIRES_SECONDS = 3600; // 1 hour
 
 export interface AuthResult {
   access_token: string;
@@ -223,6 +231,136 @@ export class AuthService {
     };
   }
 
+  async loginStudent(dto: StudentLoginDto): Promise<{
+    authResult: AuthResult;
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const valid = await verifyPassword(dto.password, user.passwordHash);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const accessToken = this.signLocalToken({
+      id: user.id,
+      roles: ['student'],
+    });
+
+    this.logger.log(`Student logged in: ${user.id}`);
+
+    return {
+      authResult: {
+        access_token: accessToken,
+        expires_in: STUDENT_TOKEN_EXPIRES_SECONDS,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+        },
+      },
+    };
+  }
+
+  async lookupClassCode(classCode: string) {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode },
+      include: {
+        enrollments: {
+          include: {
+            student: {
+              select: {
+                id: true,
+                displayName: true,
+                username: true,
+                avatarId: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!classroom) {
+      throw new NotFoundException('Class code not found');
+    }
+
+    return {
+      classroom_id: classroom.id,
+      name: classroom.name,
+      grade: classroom.grade,
+      students: classroom.enrollments.map((e) => ({
+        id: e.student.id,
+        name: e.student.displayName,
+        username: e.student.username,
+        avatar_id: e.student.avatarId,
+      })),
+    };
+  }
+
+  async loginWithClassCode(dto: ClassCodeLoginDto): Promise<{
+    authResult: AuthResult;
+  }> {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode: dto.class_code },
+    });
+
+    if (!classroom) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const enrollment = await this.prisma.enrollment.findUnique({
+      where: {
+        studentId_classroomId: {
+          studentId: user.id,
+          classroomId: classroom.id,
+        },
+      },
+    });
+
+    if (!enrollment) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const picturePasswordString = dto.picture_password.join(':');
+    const valid = await verifyPassword(picturePasswordString, user.passwordHash);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const accessToken = this.signLocalToken({
+      id: user.id,
+      roles: ['student'],
+    });
+
+    this.logger.log(`Student logged in via class code: ${user.id}`);
+
+    return {
+      authResult: {
+        access_token: accessToken,
+        expires_in: STUDENT_TOKEN_EXPIRES_SECONDS,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+        },
+      },
+    };
+  }
+
   async refresh(refreshToken: string): Promise<{
     access_token: string;
     expires_in: number;
@@ -277,6 +415,36 @@ export class AuthService {
       audience: this.configService.getOrThrow<string>('AUTH0_AUDIENCE'),
       clientId: this.configService.getOrThrow<string>('AUTH0_CLIENT_ID'),
     };
+  }
+
+  signLocalToken(user: { id: string; roles: string[] }): string {
+    const secret = this.configService.get<string>(
+      'JWT_LOCAL_SECRET',
+      'koblio-local-dev-secret-change-in-production',
+    );
+    const audience = this.configService.getOrThrow<string>('AUTH0_AUDIENCE');
+
+    const header = { alg: 'HS256', typ: 'JWT' };
+    const now = Math.floor(Date.now() / 1000);
+    const payload = {
+      sub: user.id,
+      roles: user.roles,
+      'https://koblio.com/roles': user.roles,
+      iss: LOCAL_JWT_ISSUER,
+      aud: audience,
+      iat: now,
+      exp: now + STUDENT_TOKEN_EXPIRES_SECONDS,
+    };
+
+    const b64Header = Buffer.from(JSON.stringify(header)).toString('base64url');
+    const b64Payload = Buffer.from(JSON.stringify(payload)).toString(
+      'base64url',
+    );
+    const signature = createHmac('sha256', secret)
+      .update(`${b64Header}.${b64Payload}`)
+      .digest('base64url');
+
+    return `${b64Header}.${b64Payload}.${signature}`;
   }
 
   private hashToken(token: string): string {

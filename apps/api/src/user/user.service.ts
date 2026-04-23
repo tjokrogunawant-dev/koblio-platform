@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { UserRole as PrismaUserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { hashPassword } from '../auth/password.util';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
 
@@ -58,6 +59,8 @@ export class UserService {
       );
     }
 
+    const passwordHashed = await hashPassword(dto.password);
+
     const child = await this.prisma.$transaction(async (tx) => {
       const newChild = await tx.user.create({
         data: {
@@ -65,6 +68,7 @@ export class UserService {
           role: PrismaUserRole.STUDENT,
           displayName: dto.name,
           username,
+          passwordHash: passwordHashed,
           grade: dto.grade,
           country: parent.country,
         },

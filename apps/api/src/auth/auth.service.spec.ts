@@ -1,14 +1,24 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
+import { hashPassword } from './password.util';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: { user: Record<string, jest.Mock>; $transaction: jest.Mock };
+  let prisma: {
+    user: Record<string, jest.Mock>;
+    classroom: Record<string, jest.Mock>;
+    enrollment: Record<string, jest.Mock>;
+    $transaction: jest.Mock;
+  };
   let redis: Record<string, jest.Mock>;
   let auth0: Record<string, jest.Mock>;
 
@@ -17,6 +27,12 @@ describe('AuthService', () => {
       user: {
         findUnique: jest.fn(),
         create: jest.fn(),
+      },
+      classroom: {
+        findUnique: jest.fn(),
+      },
+      enrollment: {
+        findUnique: jest.fn(),
       },
       $transaction: jest.fn((fn) => fn(prisma)),
     };
@@ -50,7 +66,10 @@ describe('AuthService', () => {
               };
               return config[key];
             }),
-            get: jest.fn(),
+            get: jest.fn((key: string, defaultVal?: string) => {
+              if (key === 'JWT_LOCAL_SECRET') return 'test-local-secret';
+              return defaultVal;
+            }),
           },
         },
         { provide: PrismaService, useValue: prisma },
@@ -275,6 +294,229 @@ describe('AuthService', () => {
     });
   });
 
+  describe('loginStudent', () => {
+    const dto = {
+      kind: 'student' as const,
+      username: 'bobby1234',
+      password: 'MyP@ss123',
+    };
+
+    it('should authenticate student with valid username and password', async () => {
+      const hashed = await hashPassword('MyP@ss123');
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'student-uuid-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: hashed,
+      });
+
+      const result = await service.loginStudent(dto);
+
+      expect(result.authResult.user.id).toBe('student-uuid-1');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.authResult.user.name).toBe('Bobby');
+      expect(result.authResult.access_token).toBeDefined();
+      expect(result.authResult.expires_in).toBe(3600);
+    });
+
+    it('should throw UnauthorizedException for unknown username', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for wrong password', async () => {
+      const hashed = await hashPassword('DifferentPassword');
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'student-uuid-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: hashed,
+      });
+
+      await expect(service.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for non-student user', async () => {
+      const hashed = await hashPassword('MyP@ss123');
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'parent-uuid',
+        role: 'PARENT',
+        displayName: 'Alice',
+        passwordHash: hashed,
+      });
+
+      await expect(service.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for student without passwordHash', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'student-uuid-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        passwordHash: null,
+      });
+
+      await expect(service.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('lookupClassCode', () => {
+    it('should return classroom info with enrolled students', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-1',
+        name: 'Grade 1A',
+        grade: 1,
+        enrollments: [
+          {
+            student: {
+              id: 'student-1',
+              displayName: 'Bobby',
+              username: 'bobby1234',
+              avatarId: 'avatar-cat',
+            },
+          },
+          {
+            student: {
+              id: 'student-2',
+              displayName: 'Sara',
+              username: 'sara5678',
+              avatarId: null,
+            },
+          },
+        ],
+      });
+
+      const result = await service.lookupClassCode('SUN-DRAGON-42');
+
+      expect(prisma.classroom.findUnique).toHaveBeenCalledWith({
+        where: { classCode: 'SUN-DRAGON-42' },
+        include: {
+          enrollments: {
+            include: {
+              student: {
+                select: {
+                  id: true,
+                  displayName: true,
+                  username: true,
+                  avatarId: true,
+                },
+              },
+            },
+          },
+        },
+      });
+      expect(result.classroom_id).toBe('classroom-1');
+      expect(result.name).toBe('Grade 1A');
+      expect(result.grade).toBe(1);
+      expect(result.students).toHaveLength(2);
+      expect(result.students[0].name).toBe('Bobby');
+      expect(result.students[1].username).toBe('sara5678');
+    });
+
+    it('should throw NotFoundException for invalid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue(null);
+
+      await expect(service.lookupClassCode('INVALID-CODE')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('loginWithClassCode', () => {
+    const dto = {
+      kind: 'class_code' as const,
+      class_code: 'SUN-DRAGON-42',
+      username: 'bobby1234',
+      picture_password: ['cat', 'sun', 'tree'],
+    };
+
+    it('should authenticate student via class code and picture password', async () => {
+      const hashed = await hashPassword('cat:sun:tree');
+
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-1',
+        classCode: 'SUN-DRAGON-42',
+      });
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'student-uuid-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: hashed,
+      });
+      prisma.enrollment.findUnique.mockResolvedValue({
+        id: 'enrollment-1',
+        studentId: 'student-uuid-1',
+        classroomId: 'classroom-1',
+      });
+
+      const result = await service.loginWithClassCode(dto);
+
+      expect(result.authResult.user.id).toBe('student-uuid-1');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.authResult.access_token).toBeDefined();
+    });
+
+    it('should throw UnauthorizedException for invalid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue(null);
+
+      await expect(service.loginWithClassCode(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException if student not enrolled in classroom', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-1',
+      });
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'student-uuid-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        passwordHash: 'some:hash',
+      });
+      prisma.enrollment.findUnique.mockResolvedValue(null);
+
+      await expect(service.loginWithClassCode(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for wrong picture password', async () => {
+      const hashed = await hashPassword('dog:moon:flower');
+
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-1',
+      });
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'student-uuid-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        passwordHash: hashed,
+      });
+      prisma.enrollment.findUnique.mockResolvedValue({
+        id: 'enrollment-1',
+        studentId: 'student-uuid-1',
+        classroomId: 'classroom-1',
+      });
+
+      await expect(service.loginWithClassCode(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
   describe('refresh', () => {
     it('should return new access token from Auth0', async () => {
       redis.isRevoked.mockResolvedValue(false);
@@ -378,6 +620,32 @@ describe('AuthService', () => {
         audience: 'https://api.koblio.com',
         clientId: 'test-client-id',
       });
+    });
+  });
+
+  describe('signLocalToken', () => {
+    it('should return a valid JWT string with three parts', () => {
+      const token = service.signLocalToken({
+        id: 'student-uuid-1',
+        roles: ['student'],
+      });
+
+      const parts = token.split('.');
+      expect(parts).toHaveLength(3);
+
+      const header = JSON.parse(Buffer.from(parts[0], 'base64url').toString());
+      expect(header.alg).toBe('HS256');
+      expect(header.typ).toBe('JWT');
+
+      const payload = JSON.parse(
+        Buffer.from(parts[1], 'base64url').toString(),
+      );
+      expect(payload.sub).toBe('student-uuid-1');
+      expect(payload.roles).toEqual(['student']);
+      expect(payload['https://koblio.com/roles']).toEqual(['student']);
+      expect(payload.iss).toBe('koblio-api');
+      expect(payload.aud).toBe('https://api.koblio.com');
+      expect(payload.exp).toBeGreaterThan(payload.iat);
     });
   });
 });
