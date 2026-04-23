@@ -1,8 +1,13 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
+import { LoginKind } from './dto/login.dto';
 
 function mockResponse() {
   const res = {
@@ -31,6 +36,8 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      loginStudent: jest.fn(),
+      lookupClassCode: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -129,7 +136,7 @@ describe('AuthController', () => {
 
   describe('login', () => {
     const dto = {
-      kind: 'email' as const,
+      kind: LoginKind.EMAIL as const,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -284,6 +291,172 @@ describe('AuthController', () => {
       expect(controller.teacherCheck(user)).toEqual({
         teacher: true,
         userId: 'auth0|teacher1',
+      });
+    });
+  });
+
+  describe('loginStudent', () => {
+    const dto = {
+      kind: LoginKind.STUDENT as const,
+      username: 'bobby1234',
+      password: 'Kid$P@ss1',
+    };
+
+    it('should login student and set refresh cookie', async () => {
+      const res = mockResponse();
+      authService.loginStudent.mockResolvedValue({
+        authResult: {
+          access_token: 'at-student',
+          expires_in: 900,
+          user: { id: 'uuid-s1', role: 'student', name: 'Bobby Zhang' },
+        },
+        refreshToken: 'rt-student',
+      });
+
+      const result = await controller.loginStudent(dto, res);
+
+      expect(result.access_token).toBe('at-student');
+      expect(result.user.role).toBe('student');
+      expect(result.user.email).toBeUndefined();
+      expect(res.cookie).toHaveBeenCalledWith(
+        'koblio_refresh',
+        'rt-student',
+        expect.objectContaining({
+          httpOnly: true,
+          sameSite: 'strict',
+          path: '/api/auth',
+        }),
+      );
+    });
+
+    it('should propagate UnauthorizedException for bad credentials', async () => {
+      const res = mockResponse();
+      authService.loginStudent.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.loginStudent(dto, res)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('lookupClassCode', () => {
+    it('should return classroom info for valid class code', async () => {
+      authService.lookupClassCode.mockResolvedValue({
+        id: 'cls-1',
+        name: '3A',
+        grade: 3,
+        teacher_name: 'Jane Smith',
+        school_id: 'school-1',
+        student_count: 12,
+      });
+
+      const result = await controller.lookupClassCode({
+        class_code: 'SUN-DRAGON-42',
+      });
+
+      expect(authService.lookupClassCode).toHaveBeenCalledWith(
+        'SUN-DRAGON-42',
+      );
+      expect(result).toEqual({
+        id: 'cls-1',
+        name: '3A',
+        grade: 3,
+        teacher_name: 'Jane Smith',
+        school_id: 'school-1',
+        student_count: 12,
+      });
+    });
+
+    it('should propagate NotFoundException for invalid class code', async () => {
+      authService.lookupClassCode.mockRejectedValue(
+        new NotFoundException('Class code not found'),
+      );
+
+      await expect(
+        controller.lookupClassCode({ class_code: 'INVALID-99' }),
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('studentCheck', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'auth0|student1',
+      });
+    });
+  });
+
+  describe('parentCheck', () => {
+    it('should return parent confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|parent1',
+        email: 'parent@example.com',
+        roles: ['parent'],
+      };
+
+      expect(controller.parentCheck(user)).toEqual({
+        parent: true,
+        userId: 'auth0|parent1',
+      });
+    });
+  });
+
+  describe('RBAC enforcement', () => {
+    it('should expose student check endpoint with no email (COPPA)', () => {
+      const studentUser: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+
+      const result = controller.studentCheck(studentUser);
+      expect(result.student).toBe(true);
+      expect(studentUser.email).toBeUndefined();
+    });
+
+    it('should expose role-specific check endpoints for all four roles', () => {
+      const admin: AuthenticatedUser = {
+        userId: 'admin1',
+        email: 'admin@koblio.com',
+        roles: ['admin'],
+      };
+      const teacher: AuthenticatedUser = {
+        userId: 'teacher1',
+        email: 'teacher@school.edu',
+        roles: ['teacher'],
+      };
+      const parent: AuthenticatedUser = {
+        userId: 'parent1',
+        email: 'parent@home.com',
+        roles: ['parent'],
+      };
+      const student: AuthenticatedUser = {
+        userId: 'student1',
+        roles: ['student'],
+      };
+
+      expect(controller.adminCheck(admin)).toEqual({
+        admin: true,
+        userId: 'admin1',
+      });
+      expect(controller.teacherCheck(teacher)).toEqual({
+        teacher: true,
+        userId: 'teacher1',
+      });
+      expect(controller.parentCheck(parent)).toEqual({
+        parent: true,
+        userId: 'parent1',
+      });
+      expect(controller.studentCheck(student)).toEqual({
+        student: true,
+        userId: 'student1',
       });
     });
   });

@@ -1,14 +1,23 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
+import { LoginKind } from './dto/login.dto';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: { user: Record<string, jest.Mock>; $transaction: jest.Mock };
+  let prisma: {
+    user: Record<string, jest.Mock>;
+    classroom: Record<string, jest.Mock>;
+    $transaction: jest.Mock;
+  };
   let redis: Record<string, jest.Mock>;
   let auth0: Record<string, jest.Mock>;
 
@@ -17,6 +26,9 @@ describe('AuthService', () => {
       user: {
         findUnique: jest.fn(),
         create: jest.fn(),
+      },
+      classroom: {
+        findUnique: jest.fn(),
       },
       $transaction: jest.fn((fn) => fn(prisma)),
     };
@@ -31,6 +43,7 @@ describe('AuthService', () => {
     auth0 = {
       createUser: jest.fn(),
       authenticateUser: jest.fn(),
+      authenticateByUsername: jest.fn(),
       assignRoles: jest.fn().mockResolvedValue(undefined),
       refreshToken: jest.fn(),
       revokeRefreshToken: jest.fn().mockResolvedValue(undefined),
@@ -223,7 +236,7 @@ describe('AuthService', () => {
 
   describe('login', () => {
     const dto = {
-      kind: 'email' as const,
+      kind: LoginKind.EMAIL as const,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -367,6 +380,144 @@ describe('AuthService', () => {
       expect(
         service.isStudentAccount({ userId: '1', roles: ['parent'] }),
       ).toBe(false);
+    });
+  });
+
+  describe('loginStudent', () => {
+    const dto = {
+      kind: LoginKind.STUDENT as const,
+      username: 'bobby1234',
+      password: 'Kid$P@ss1',
+    };
+
+    it('should authenticate student by username and return tokens', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        username: dto.username,
+        role: 'STUDENT',
+        displayName: 'Bobby Zhang',
+      });
+      auth0.authenticateByUsername.mockResolvedValue({
+        access_token: 'at-student',
+        expires_in: 900,
+        refresh_token: 'rt-student',
+      });
+
+      const result = await service.loginStudent(dto);
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { username: dto.username },
+      });
+      expect(auth0.authenticateByUsername).toHaveBeenCalledWith(
+        dto.username,
+        dto.password,
+      );
+      expect(result.authResult.access_token).toBe('at-student');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.authResult.user.email).toBeUndefined();
+      expect(result.refreshToken).toBe('rt-student');
+    });
+
+    it('should throw UnauthorizedException if username not found', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(auth0.authenticateByUsername).not.toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException if user is not a student', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-p1',
+        username: dto.username,
+        role: 'PARENT',
+        displayName: 'Parent User',
+      });
+
+      await expect(service.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(auth0.authenticateByUsername).not.toHaveBeenCalled();
+    });
+
+    it('should store refresh token hash in Redis', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        username: dto.username,
+        role: 'STUDENT',
+        displayName: 'Bobby Zhang',
+      });
+      auth0.authenticateByUsername.mockResolvedValue({
+        access_token: 'at-student',
+        expires_in: 900,
+        refresh_token: 'rt-student',
+      });
+
+      await service.loginStudent(dto);
+
+      expect(redis.storeRefreshToken).toHaveBeenCalledWith(
+        'uuid-s1',
+        expect.any(String),
+        7 * 24 * 60 * 60,
+      );
+    });
+
+    it('should propagate Auth0 UnauthorizedException for bad password', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        username: dto.username,
+        role: 'STUDENT',
+        displayName: 'Bobby Zhang',
+      });
+      auth0.authenticateByUsername.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(service.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('lookupClassCode', () => {
+    it('should return classroom info for valid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'cls-1',
+        name: '3A',
+        grade: 3,
+        classCode: 'SUN-DRAGON-42',
+        teacherId: 'teacher-1',
+        schoolId: 'school-1',
+        teacher: { displayName: 'Jane Smith' },
+        _count: { enrollments: 12 },
+      });
+
+      const result = await service.lookupClassCode('SUN-DRAGON-42');
+
+      expect(prisma.classroom.findUnique).toHaveBeenCalledWith({
+        where: { classCode: 'SUN-DRAGON-42' },
+        include: {
+          teacher: { select: { displayName: true } },
+          _count: { select: { enrollments: true } },
+        },
+      });
+      expect(result).toEqual({
+        id: 'cls-1',
+        name: '3A',
+        grade: 3,
+        teacher_name: 'Jane Smith',
+        school_id: 'school-1',
+        student_count: 12,
+      });
+    });
+
+    it('should throw NotFoundException for invalid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.lookupClassCode('INVALID-CODE-99'),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 
