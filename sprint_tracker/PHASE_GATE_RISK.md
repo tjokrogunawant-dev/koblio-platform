@@ -84,7 +84,8 @@ If any item is unresolved by **2026-05-01**:
 | 2026-04-20 | ✅ RESOLVED | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
 | 2026-04-21 | ✅ RESOLVED | ❌ Unconfirmed | ❌ Unconfirmed | MEDIUM |
 | 2026-04-22 | ✅ RESOLVED | ❌ Unconfirmed | ❌ Unconfirmed | **MEDIUM-HIGH** *(Docker runtime confirmed unavailable — P1-T04 blocked; 3 P0 auth tasks transitively blocked)* |
-| 2026-05-01 | — | — | — | TBD *(hard deadline — AWS credentials)* |
+| 2026-04-24 | ✅ RESOLVED | ❌ Unconfirmed | ❌ Unconfirmed | **MEDIUM-HIGH** *(No change — 7 days to AWS hard deadline; Sprint 03 implementation stall; P1-T11/T14/T09/T17 pending with no blockers)* |
+| 2026-05-01 | — | — | — | TBD *(hard deadline — AWS credentials; if unresolved, escalate risk to HIGH)* |
 | 2026-05-18 | — | — | — | TBD *(Docker resolution deadline — 1 day before Sprint 02 opens)* |
 | 2026-05-19 (Sprint 02 open) | — | — | — | TBD |
 
