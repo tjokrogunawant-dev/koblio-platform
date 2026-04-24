@@ -8,7 +8,11 @@ import { RedisService } from '../redis/redis.service';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: { user: Record<string, jest.Mock>; $transaction: jest.Mock };
+  let prisma: {
+    user: Record<string, jest.Mock>;
+    classroom: Record<string, jest.Mock>;
+    $transaction: jest.Mock;
+  };
   let redis: Record<string, jest.Mock>;
   let auth0: Record<string, jest.Mock>;
 
@@ -17,6 +21,9 @@ describe('AuthService', () => {
       user: {
         findUnique: jest.fn(),
         create: jest.fn(),
+      },
+      classroom: {
+        findUnique: jest.fn(),
       },
       $transaction: jest.fn((fn) => fn(prisma)),
     };
@@ -378,6 +385,161 @@ describe('AuthService', () => {
         audience: 'https://api.koblio.com',
         clientId: 'test-client-id',
       });
+    });
+  });
+
+  describe('studentLogin', () => {
+    const dto = {
+      kind: 'student' as const,
+      username: 'bobby1234',
+      password: 'secret123',
+    };
+
+    const mockStudent = {
+      id: 'uuid-s1',
+      auth0Id: 'auth0|student1',
+      email: null,
+      role: 'STUDENT',
+      displayName: 'Bobby Zhang',
+      username: 'bobby1234',
+      grade: 2,
+    };
+
+    it('should authenticate student with username and password', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockStudent);
+      auth0.authenticateUser.mockResolvedValue({
+        access_token: 'at-student',
+        expires_in: 900,
+        refresh_token: 'rt-student',
+      });
+
+      const result = await service.studentLogin(dto);
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { username: 'bobby1234' },
+      });
+      expect(auth0.authenticateUser).toHaveBeenCalledWith(
+        'bobby1234@student.koblio.internal',
+        'secret123',
+      );
+      expect(result.authResult.access_token).toBe('at-student');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.authResult.user.name).toBe('Bobby Zhang');
+      expect(result.authResult.user.email).toBeUndefined();
+      expect(result.refreshToken).toBe('rt-student');
+    });
+
+    it('should throw UnauthorizedException if username not found', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(auth0.authenticateUser).not.toHaveBeenCalled();
+    });
+
+    it('should throw UnauthorizedException if user is not a student', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        ...mockStudent,
+        role: 'PARENT',
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+      expect(auth0.authenticateUser).not.toHaveBeenCalled();
+    });
+
+    it('should propagate Auth0 UnauthorizedException for wrong password', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockStudent);
+      auth0.authenticateUser.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should store refresh token in Redis on student login', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockStudent);
+      auth0.authenticateUser.mockResolvedValue({
+        access_token: 'at-student',
+        expires_in: 900,
+        refresh_token: 'rt-student',
+      });
+
+      await service.studentLogin(dto);
+
+      expect(redis.storeRefreshToken).toHaveBeenCalledWith(
+        'uuid-s1',
+        expect.any(String),
+        7 * 24 * 60 * 60,
+      );
+    });
+  });
+
+  describe('resolveClassCode', () => {
+    it('should resolve valid class code to classroom with students', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-1',
+        name: 'Math 2A',
+        grade: 2,
+        classCode: 'SUN-DRAGON-42',
+        enrollments: [
+          {
+            student: {
+              id: 'student-1',
+              displayName: 'Bobby Zhang',
+              username: 'bobby1234',
+            },
+          },
+          {
+            student: {
+              id: 'student-2',
+              displayName: 'Sara Lee',
+              username: 'saralee5678',
+            },
+          },
+        ],
+      });
+
+      const result = await service.resolveClassCode('SUN-DRAGON-42');
+
+      expect(prisma.classroom.findUnique).toHaveBeenCalledWith({
+        where: { classCode: 'SUN-DRAGON-42' },
+        include: { enrollments: { include: { student: true } } },
+      });
+      expect(result.classroom.id).toBe('classroom-1');
+      expect(result.classroom.name).toBe('Math 2A');
+      expect(result.classroom.grade).toBe(2);
+      expect(result.classroom.class_code).toBe('SUN-DRAGON-42');
+      expect(result.students).toHaveLength(2);
+      expect(result.students[0].display_name).toBe('Bobby Zhang');
+      expect(result.students[1].username).toBe('saralee5678');
+    });
+
+    it('should throw UnauthorizedException for invalid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.resolveClassCode('INVALID-CODE-99'),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should return empty students array for classroom with no enrollments', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-2',
+        name: 'Science 1B',
+        grade: 1,
+        classCode: 'STAR-EAGLE-77',
+        enrollments: [],
+      });
+
+      const result = await service.resolveClassCode('STAR-EAGLE-77');
+
+      expect(result.students).toHaveLength(0);
+      expect(result.classroom.name).toBe('Science 1B');
     });
   });
 });

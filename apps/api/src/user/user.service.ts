@@ -6,7 +6,9 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserRole as PrismaUserRole } from '@prisma/client';
+import { studentSyntheticEmail } from '@koblio/shared';
 import { PrismaService } from '../prisma/prisma.service';
+import { Auth0ClientService } from '../auth/auth0-client.service';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
 
@@ -14,7 +16,10 @@ import { CreateSchoolDto } from './dto/create-school.dto';
 export class UserService {
   private readonly logger = new Logger(UserService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly auth0Client: Auth0ClientService,
+  ) {}
 
   getStatus() {
     return { module: 'user', status: 'operational' };
@@ -58,10 +63,19 @@ export class UserService {
       );
     }
 
+    const syntheticEmail = studentSyntheticEmail(username);
+    const auth0User = await this.auth0Client.createUser(
+      syntheticEmail,
+      dto.password,
+      dto.name,
+      { role: 'student', parent_id: parent.id },
+    );
+    await this.auth0Client.assignRoles(auth0User.user_id, ['student']);
+
     const child = await this.prisma.$transaction(async (tx) => {
       const newChild = await tx.user.create({
         data: {
-          auth0Id: `child_${parent.id}_${Date.now()}`,
+          auth0Id: auth0User.user_id,
           role: PrismaUserRole.STUDENT,
           displayName: dto.name,
           username,

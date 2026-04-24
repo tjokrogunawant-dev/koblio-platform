@@ -31,6 +31,8 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      studentLogin: jest.fn(),
+      resolveClassCode: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -284,6 +286,137 @@ describe('AuthController', () => {
       expect(controller.teacherCheck(user)).toEqual({
         teacher: true,
         userId: 'auth0|teacher1',
+      });
+    });
+  });
+
+  describe('loginStudent', () => {
+    const dto = {
+      kind: 'student' as const,
+      username: 'bobby1234',
+      password: 'secret123',
+    };
+
+    it('should login student and set refresh cookie', async () => {
+      const res = mockResponse();
+      authService.studentLogin.mockResolvedValue({
+        authResult: {
+          access_token: 'at-student',
+          expires_in: 900,
+          user: { id: 'uuid-s1', role: 'student', name: 'Bobby Zhang' },
+        },
+        refreshToken: 'rt-student',
+      });
+
+      const result = await controller.loginStudent(dto, res);
+
+      expect(result.access_token).toBe('at-student');
+      expect(result.user.role).toBe('student');
+      expect(result.user.name).toBe('Bobby Zhang');
+      expect(res.cookie).toHaveBeenCalledWith(
+        'koblio_refresh',
+        'rt-student',
+        expect.objectContaining({ httpOnly: true, sameSite: 'strict' }),
+      );
+    });
+
+    it('should propagate UnauthorizedException for invalid student credentials', async () => {
+      const res = mockResponse();
+      authService.studentLogin.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.loginStudent(dto, res)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('resolveClassCode', () => {
+    it('should resolve valid class code to classroom info', async () => {
+      authService.resolveClassCode.mockResolvedValue({
+        classroom: {
+          id: 'classroom-1',
+          name: 'Math 2A',
+          grade: 2,
+          class_code: 'SUN-DRAGON-42',
+        },
+        students: [
+          { id: 'student-1', display_name: 'Bobby', username: 'bobby1234' },
+        ],
+      });
+
+      const result = await controller.resolveClassCode('SUN-DRAGON-42');
+
+      expect(authService.resolveClassCode).toHaveBeenCalledWith('SUN-DRAGON-42');
+      expect(result.classroom.name).toBe('Math 2A');
+      expect(result.students).toHaveLength(1);
+    });
+
+    it('should propagate UnauthorizedException for invalid class code', async () => {
+      authService.resolveClassCode.mockRejectedValue(
+        new UnauthorizedException('Invalid class code'),
+      );
+
+      await expect(
+        controller.resolveClassCode('INVALID-99'),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
+  describe('studentCheck', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'auth0|student1',
+      });
+    });
+  });
+
+  describe('RBAC enforcement', () => {
+    it('student user should not have admin/teacher email fields', () => {
+      const studentUser: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+
+      const meResult = controller.getMe(studentUser);
+      expect(meResult.email).toBeUndefined();
+      expect(meResult.roles).toEqual(['student']);
+    });
+
+    it('each role check endpoint returns the correct role flag', () => {
+      const admin: AuthenticatedUser = {
+        userId: 'auth0|admin1',
+        email: 'admin@koblio.com',
+        roles: ['admin'],
+      };
+      const teacher: AuthenticatedUser = {
+        userId: 'auth0|teacher1',
+        email: 'teacher@school.edu',
+        roles: ['teacher'],
+      };
+      const student: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+
+      expect(controller.adminCheck(admin)).toEqual({
+        admin: true,
+        userId: 'auth0|admin1',
+      });
+      expect(controller.teacherCheck(teacher)).toEqual({
+        teacher: true,
+        userId: 'auth0|teacher1',
+      });
+      expect(controller.studentCheck(student)).toEqual({
+        student: true,
+        userId: 'auth0|student1',
       });
     });
   });

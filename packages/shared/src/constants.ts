@@ -8,3 +8,9 @@ export const UserRole = {
 } as const;
 
 export type UserRoleType = (typeof UserRole)[keyof typeof UserRole];
+
+export const STUDENT_EMAIL_DOMAIN = 'student.koblio.internal';
+
+export function studentSyntheticEmail(username: string): string {
+  return `${username}@${STUDENT_EMAIL_DOMAIN}`;
+}

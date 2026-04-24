@@ -7,6 +7,7 @@ import {
 import { UserRole } from '@prisma/client';
 import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { Auth0ClientService } from '../auth/auth0-client.service';
 
 const mockParent = {
   id: '00000000-0000-0000-0000-000000000001',
@@ -71,6 +72,7 @@ describe('UserService', () => {
     parentalConsent: { create: jest.Mock };
     $transaction: jest.Mock;
   };
+  let auth0: Record<string, jest.Mock>;
 
   beforeEach(async () => {
     prisma = {
@@ -82,10 +84,19 @@ describe('UserService', () => {
       $transaction: jest.fn(),
     };
 
+    auth0 = {
+      createUser: jest.fn(),
+      assignRoles: jest.fn().mockResolvedValue(undefined),
+      authenticateUser: jest.fn(),
+      refreshToken: jest.fn(),
+      revokeRefreshToken: jest.fn().mockResolvedValue(undefined),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         { provide: PrismaService, useValue: prisma },
+        { provide: Auth0ClientService, useValue: auth0 },
       ],
     }).compile();
 
@@ -135,6 +146,8 @@ describe('UserService', () => {
         .mockResolvedValueOnce(mockParent)
         .mockResolvedValueOnce(null);
 
+      auth0.createUser.mockResolvedValue({ user_id: 'auth0|child-new' });
+
       prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
         const tx = {
           user: { create: jest.fn().mockResolvedValue(mockChild) },
@@ -154,6 +167,33 @@ describe('UserService', () => {
       expect(result.role).toBe('student');
       expect(result.grade).toBe(2);
       expect(result.linked_parent_ids).toContain(mockParent.id);
+    });
+
+    it('should create Auth0 user with synthetic email and assign student role', async () => {
+      prisma.user.findUnique
+        .mockResolvedValueOnce(mockParent)
+        .mockResolvedValueOnce(null);
+
+      auth0.createUser.mockResolvedValue({ user_id: 'auth0|child-new' });
+
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          user: { create: jest.fn().mockResolvedValue(mockChild) },
+          parentChildLink: { create: jest.fn().mockResolvedValue({}) },
+          parentalConsent: { create: jest.fn().mockResolvedValue({}) },
+        };
+        return fn(tx);
+      });
+
+      await service.createChildAccount('auth0|parent1', dto, '192.168.1.1');
+
+      expect(auth0.createUser).toHaveBeenCalledWith(
+        expect.stringContaining('@student.koblio.internal'),
+        dto.password,
+        dto.name,
+        { role: 'student', parent_id: mockParent.id },
+      );
+      expect(auth0.assignRoles).toHaveBeenCalledWith('auth0|child-new', ['student']);
     });
 
     it('should throw NotFoundException if parent not found', async () => {
@@ -202,6 +242,8 @@ describe('UserService', () => {
       prisma.user.findUnique
         .mockResolvedValueOnce(mockParent)
         .mockResolvedValueOnce(null);
+
+      auth0.createUser.mockResolvedValue({ user_id: 'auth0|child-coppa' });
 
       prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
         const tx = {

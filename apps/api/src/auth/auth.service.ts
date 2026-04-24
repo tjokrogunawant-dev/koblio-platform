@@ -12,8 +12,9 @@ import { RedisService } from '../redis/redis.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { EmailLoginDto } from './dto/login.dto';
+import { EmailLoginDto, StudentLoginDto } from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
+import { studentSyntheticEmail } from '@koblio/shared';
 
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
@@ -220,6 +221,87 @@ export class AuthService {
         },
       },
       refreshToken: tokens.refresh_token ?? '',
+    };
+  }
+
+  async studentLogin(dto: StudentLoginDto): Promise<{
+    authResult: AuthResult;
+    refreshToken: string;
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== 'STUDENT') {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const syntheticEmail = studentSyntheticEmail(dto.username);
+    const tokens = await this.auth0Client.authenticateUser(
+      syntheticEmail,
+      dto.password,
+    );
+
+    if (tokens.refresh_token) {
+      await this.redis.storeRefreshToken(
+        user.id,
+        this.hashToken(tokens.refresh_token),
+        REFRESH_TOKEN_TTL_SECONDS,
+      );
+    }
+
+    return {
+      authResult: {
+        access_token: tokens.access_token,
+        expires_in: tokens.expires_in,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+        },
+      },
+      refreshToken: tokens.refresh_token ?? '',
+    };
+  }
+
+  async resolveClassCode(classCode: string): Promise<{
+    classroom: {
+      id: string;
+      name: string;
+      grade: number;
+      class_code: string;
+    };
+    students: Array<{
+      id: string;
+      display_name: string;
+      username: string | null;
+    }>;
+  }> {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode },
+      include: {
+        enrollments: {
+          include: { student: true },
+        },
+      },
+    });
+
+    if (!classroom) {
+      throw new UnauthorizedException('Invalid class code');
+    }
+
+    return {
+      classroom: {
+        id: classroom.id,
+        name: classroom.name,
+        grade: classroom.grade,
+        class_code: classroom.classCode,
+      },
+      students: classroom.enrollments.map((e) => ({
+        id: e.student.id,
+        display_name: e.student.displayName,
+        username: e.student.username,
+      })),
     };
   }
 
