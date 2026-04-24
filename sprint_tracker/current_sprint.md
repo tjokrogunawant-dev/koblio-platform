@@ -45,7 +45,7 @@
 | P1-T08 | Design System Foundations (10 components, @koblio/ui) | S02 | `b32e2bf` |
 | P1-T08† | Flutter App Shell (GoRouter, Riverpod, Dio) | S02 | `a85d6fd` |
 | P1-T10 | Auth Module — Parent & Teacher Registration endpoints | S03 | `acabf47` |
-| P1-T11 | Auth Module — Student Login & RBAC enforcement | S03 | _(pending commit)_ |
+| P1-T11 | Auth Module — Student Login & RBAC enforcement | S03 | `4ce87fb` |
 
 > *Task IDs in git commits differ from canonical `koobits_scheduled_task_plan.md` numbering due to implementation agent mapping. Canonical S1 task completions: Monorepo (T01), CI (T02), Auth0/COPPA (T07), Prisma schema (canonical T03 NestJS + T05 Prisma), NestJS bootstrap (T03), Next.js shell (T02 web scaffold). Reconciliation needed in next QC pass.
 > †Flutter app shell not assigned a canonical task ID in current sprint plan; treated as Sprint 02 bonus deliverable.
