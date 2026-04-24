@@ -3,16 +3,19 @@ import {
   ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { UserRole as PrismaUserRole } from '@prisma/client';
+import { compare } from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { EmailLoginDto } from './dto/login.dto';
+import { EmailLoginDto, StudentLoginDto } from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
@@ -37,6 +40,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
     private readonly auth0Client: Auth0ClientService,
+    private readonly jwtService: JwtService,
   ) {}
 
   getStatus() {
@@ -269,6 +273,71 @@ export class AuthService {
 
   isStudentAccount(user: AuthenticatedUser): boolean {
     return user.roles.includes('student') && !user.email;
+  }
+
+  async studentLogin(dto: StudentLoginDto): Promise<{
+    authResult: AuthResult;
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const valid = await compare(dto.password, user.passwordHash);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const token = this.jwtService.sign({
+      sub: user.auth0Id,
+      roles: ['student'],
+    });
+
+    this.logger.log(`Student logged in: ${user.id}`);
+
+    return {
+      authResult: {
+        access_token: token,
+        expires_in: 3600,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+        },
+      },
+    };
+  }
+
+  async classCodeLookup(classCode: string) {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode },
+      include: {
+        teacher: { select: { displayName: true } },
+        school: { select: { name: true } },
+        _count: { select: { enrollments: true } },
+      },
+    });
+
+    if (!classroom) {
+      throw new NotFoundException('Class code not found');
+    }
+
+    return {
+      id: classroom.id,
+      name: classroom.name,
+      grade: classroom.grade,
+      class_code: classroom.classCode,
+      teacher_name: classroom.teacher.displayName,
+      school_name: classroom.school?.name ?? null,
+      student_count: classroom._count.enrollments,
+    };
   }
 
   getAuth0Config() {

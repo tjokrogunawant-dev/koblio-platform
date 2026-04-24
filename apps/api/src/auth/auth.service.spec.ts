@@ -1,22 +1,37 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { hashSync } from 'bcryptjs';
 import { AuthService } from './auth.service';
 import { Auth0ClientService } from './auth0-client.service';
+import { EmailLoginDto, LoginKind, StudentLoginDto } from './dto/login.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: { user: Record<string, jest.Mock>; $transaction: jest.Mock };
+  let prisma: {
+    user: Record<string, jest.Mock>;
+    classroom: Record<string, jest.Mock>;
+    $transaction: jest.Mock;
+  };
   let redis: Record<string, jest.Mock>;
   let auth0: Record<string, jest.Mock>;
+  let jwtService: { sign: jest.Mock };
 
   beforeEach(async () => {
     prisma = {
       user: {
         findUnique: jest.fn(),
         create: jest.fn(),
+      },
+      classroom: {
+        findUnique: jest.fn(),
       },
       $transaction: jest.fn((fn) => fn(prisma)),
     };
@@ -34,6 +49,10 @@ describe('AuthService', () => {
       assignRoles: jest.fn().mockResolvedValue(undefined),
       refreshToken: jest.fn(),
       revokeRefreshToken: jest.fn().mockResolvedValue(undefined),
+    };
+
+    jwtService = {
+      sign: jest.fn().mockReturnValue('student-jwt-token'),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -56,6 +75,7 @@ describe('AuthService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: RedisService, useValue: redis },
         { provide: Auth0ClientService, useValue: auth0 },
+        { provide: JwtService, useValue: jwtService },
       ],
     }).compile();
 
@@ -222,8 +242,8 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    const dto = {
-      kind: 'email' as const,
+    const dto: EmailLoginDto = {
+      kind: LoginKind.EMAIL,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -272,6 +292,155 @@ describe('AuthService', () => {
       await expect(service.login(dto)).rejects.toThrow(
         UnauthorizedException,
       );
+    });
+  });
+
+  describe('studentLogin', () => {
+    const dto: StudentLoginDto = {
+      kind: LoginKind.STUDENT,
+      username: 'bobbyzhang1234',
+      password: 'secret123',
+    };
+
+    const passwordHash = hashSync('secret123', 10);
+
+    const mockStudent = {
+      id: 'uuid-student-1',
+      auth0Id: 'child_parent1_12345',
+      email: null,
+      role: 'STUDENT',
+      displayName: 'Bobby Zhang',
+      username: 'bobbyzhang1234',
+      passwordHash,
+      grade: 2,
+      country: 'US',
+    };
+
+    it('should authenticate student with username and password', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockStudent);
+
+      const result = await service.studentLogin(dto);
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { username: 'bobbyzhang1234' },
+      });
+      expect(result.authResult.access_token).toBe('student-jwt-token');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.authResult.user.name).toBe('Bobby Zhang');
+      expect(result.authResult.user.id).toBe('uuid-student-1');
+    });
+
+    it('should sign JWT with student role and auth0Id as sub', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockStudent);
+
+      await service.studentLogin(dto);
+
+      expect(jwtService.sign).toHaveBeenCalledWith({
+        sub: 'child_parent1_12345',
+        roles: ['student'],
+      });
+    });
+
+    it('should throw UnauthorizedException for non-existent username', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException if user is not a student', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        ...mockStudent,
+        role: 'TEACHER',
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException if no password hash stored', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        ...mockStudent,
+        passwordHash: null,
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for wrong password', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockStudent);
+
+      await expect(
+        service.studentLogin({ ...dto, password: 'wrongpassword' }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should not return email for student accounts (COPPA)', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockStudent);
+
+      const result = await service.studentLogin(dto);
+
+      expect(result.authResult.user.email).toBeUndefined();
+    });
+  });
+
+  describe('classCodeLookup', () => {
+    const mockClassroom = {
+      id: 'classroom-uuid-1',
+      name: 'Grade 2 Math',
+      grade: 2,
+      classCode: 'SUN-DRAGON-42',
+      teacherId: 'teacher-uuid-1',
+      schoolId: 'school-uuid-1',
+      teacher: { displayName: 'Jane Smith' },
+      school: { name: 'Springfield Elementary' },
+      _count: { enrollments: 15 },
+    };
+
+    it('should resolve class code to classroom info', async () => {
+      prisma.classroom.findUnique.mockResolvedValue(mockClassroom);
+
+      const result = await service.classCodeLookup('SUN-DRAGON-42');
+
+      expect(prisma.classroom.findUnique).toHaveBeenCalledWith({
+        where: { classCode: 'SUN-DRAGON-42' },
+        include: {
+          teacher: { select: { displayName: true } },
+          school: { select: { name: true } },
+          _count: { select: { enrollments: true } },
+        },
+      });
+      expect(result.id).toBe('classroom-uuid-1');
+      expect(result.name).toBe('Grade 2 Math');
+      expect(result.grade).toBe(2);
+      expect(result.class_code).toBe('SUN-DRAGON-42');
+      expect(result.teacher_name).toBe('Jane Smith');
+      expect(result.school_name).toBe('Springfield Elementary');
+      expect(result.student_count).toBe(15);
+    });
+
+    it('should handle classroom without school', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        ...mockClassroom,
+        school: null,
+        schoolId: null,
+      });
+
+      const result = await service.classCodeLookup('SUN-DRAGON-42');
+
+      expect(result.school_name).toBeNull();
+    });
+
+    it('should throw NotFoundException for invalid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.classCodeLookup('INVALID-CODE-99'),
+      ).rejects.toThrow(NotFoundException);
     });
   });
 

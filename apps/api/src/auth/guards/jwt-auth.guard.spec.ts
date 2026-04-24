@@ -1,4 +1,4 @@
-import { ExecutionContext } from '@nestjs/common';
+import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -34,8 +34,24 @@ describe('JwtAuthGuard', () => {
       }),
     } as unknown as ExecutionContext;
 
-    // AuthGuard('jwt').canActivate will throw or return Observable
-    // in real usage; here we verify it doesn't short-circuit
     expect(() => guard.canActivate(context)).toBeDefined();
+  });
+
+  describe('handleRequest', () => {
+    it('should return user when authentication succeeds', () => {
+      const user = { userId: 'test-user', roles: ['student'] };
+      expect(guard.handleRequest(null, user, undefined)).toBe(user);
+    });
+
+    it('should throw UnauthorizedException when no user', () => {
+      expect(() => guard.handleRequest(null, null, undefined)).toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw the original error if present', () => {
+      const err = new Error('JWT expired');
+      expect(() => guard.handleRequest(err, null, undefined)).toThrow(err);
+    });
   });
 });

@@ -6,9 +6,12 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserRole as PrismaUserRole } from '@prisma/client';
+import { hash } from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
+
+const BCRYPT_ROUNDS = 10;
 
 @Injectable()
 export class UserService {
@@ -58,6 +61,8 @@ export class UserService {
       );
     }
 
+    const passwordHash = await hash(dto.password, BCRYPT_ROUNDS);
+
     const child = await this.prisma.$transaction(async (tx) => {
       const newChild = await tx.user.create({
         data: {
@@ -65,6 +70,7 @@ export class UserService {
           role: PrismaUserRole.STUDENT,
           displayName: dto.name,
           username,
+          passwordHash,
           grade: dto.grade,
           country: parent.country,
         },
