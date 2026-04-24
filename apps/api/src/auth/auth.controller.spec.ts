@@ -1,8 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
+import {
+  LoginKind,
+  EmailLoginDto,
+  StudentLoginDto,
+  ClassCodeLoginDto,
+} from './dto/login.dto';
 
 function mockResponse() {
   const res = {
@@ -31,6 +41,9 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      studentLogin: jest.fn(),
+      classCodeLogin: jest.fn(),
+      lookupClassCode: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -128,8 +141,8 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    const dto = {
-      kind: 'email' as const,
+    const dto: EmailLoginDto = {
+      kind: LoginKind.EMAIL,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -284,6 +297,135 @@ describe('AuthController', () => {
       expect(controller.teacherCheck(user)).toEqual({
         teacher: true,
         userId: 'auth0|teacher1',
+      });
+    });
+  });
+
+  describe('studentLogin', () => {
+    const dto: StudentLoginDto = {
+      kind: LoginKind.STUDENT,
+      username: 'bobby1234',
+      password: 'Secret123',
+    };
+
+    it('should authenticate student and return auth result', async () => {
+      authService.studentLogin.mockResolvedValue({
+        authResult: {
+          access_token: 'student-jwt',
+          expires_in: 900,
+          user: { id: 'uuid-s1', role: 'student', name: 'Bobby' },
+        },
+        refreshToken: '',
+      });
+
+      const result = await controller.studentLogin(dto);
+
+      expect(authService.studentLogin).toHaveBeenCalledWith(dto);
+      expect(result.access_token).toBe('student-jwt');
+      expect(result.user.role).toBe('student');
+    });
+
+    it('should propagate UnauthorizedException for bad credentials', async () => {
+      authService.studentLogin.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('classCodeLogin', () => {
+    const dto: ClassCodeLoginDto = {
+      kind: LoginKind.CLASS_CODE,
+      class_code: 'SUN-DRAGON-42',
+      username: 'bobby1234',
+      picture_password: ['cat', 'dog', 'fish'],
+    };
+
+    it('should authenticate via class code and return classroom_id', async () => {
+      authService.classCodeLogin.mockResolvedValue({
+        authResult: {
+          access_token: 'student-jwt',
+          expires_in: 900,
+          user: { id: 'uuid-s1', role: 'student', name: 'Bobby' },
+        },
+        classroomId: 'classroom-1',
+      });
+
+      const result = await controller.classCodeLogin(dto);
+
+      expect(authService.classCodeLogin).toHaveBeenCalledWith(dto);
+      expect(result.access_token).toBe('student-jwt');
+      expect(result.classroom_id).toBe('classroom-1');
+    });
+
+    it('should propagate NotFoundException for invalid class code', async () => {
+      authService.classCodeLogin.mockRejectedValue(
+        new NotFoundException('Class code not found'),
+      );
+
+      await expect(controller.classCodeLogin(dto)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('lookupClassCode', () => {
+    it('should return classroom info with student list', async () => {
+      authService.lookupClassCode.mockResolvedValue({
+        classroom_id: 'classroom-1',
+        name: 'Grade 2A',
+        grade: 2,
+        students: [
+          { id: 'uuid-s1', name: 'Bobby', username: 'bobby1234', avatar_id: null },
+        ],
+      });
+
+      const result = await controller.lookupClassCode('SUN-DRAGON-42');
+
+      expect(authService.lookupClassCode).toHaveBeenCalledWith('SUN-DRAGON-42');
+      expect(result.classroom_id).toBe('classroom-1');
+      expect(result.students).toHaveLength(1);
+    });
+
+    it('should propagate NotFoundException for invalid code', async () => {
+      authService.lookupClassCode.mockRejectedValue(
+        new NotFoundException('Class code not found'),
+      );
+
+      await expect(controller.lookupClassCode('BAD-CODE-99')).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+  });
+
+  describe('studentCheck', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'child_parent1_123',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'child_parent1_123',
+      });
+    });
+  });
+
+  describe('parentCheck', () => {
+    it('should return parent confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|parent1',
+        email: 'parent@example.com',
+        roles: ['parent'],
+      };
+
+      expect(controller.parentCheck(user)).toEqual({
+        parent: true,
+        userId: 'auth0|parent1',
       });
     });
   });

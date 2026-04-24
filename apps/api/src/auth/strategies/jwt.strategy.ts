@@ -15,21 +15,42 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
     const issuer = configService.getOrThrow<string>('AUTH0_ISSUER_URL');
     const audience = configService.getOrThrow<string>('AUTH0_AUDIENCE');
+    const localSecret = configService.getOrThrow<string>('JWT_SECRET');
+
+    const jwksProvider = passportJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: `${issuer}.well-known/jwks.json`,
+    });
 
     super({
-      secretOrKeyProvider: passportJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: `${issuer}.well-known/jwks.json`,
-      }),
+      secretOrKeyProvider: (
+        request: unknown,
+        rawJwtToken: string,
+        done: (err: unknown, secret?: string | Buffer) => void,
+      ) => {
+        try {
+          const headerB64 = rawJwtToken.split('.')[0];
+          const header = JSON.parse(
+            Buffer.from(headerB64, 'base64').toString(),
+          );
+          if (header.alg === 'HS256') {
+            done(null, localSecret);
+          } else {
+            jwksProvider(request, rawJwtToken, done);
+          }
+        } catch {
+          jwksProvider(request, rawJwtToken, done);
+        }
+      },
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       audience,
       issuer,
-      algorithms: ['RS256'],
+      algorithms: ['RS256', 'HS256'],
     });
 
-    this.logger.log('JWT strategy initialized');
+    this.logger.log('JWT strategy initialized (dual-mode: JWKS + local)');
   }
 
   validate(payload: JwtPayload): AuthenticatedUser {

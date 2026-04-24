@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  ArrayMaxSize,
+  ArrayMinSize,
+  IsArray,
   IsBoolean,
   IsInt,
   IsOptional,
@@ -41,6 +44,20 @@ export class CreateChildAccountDto {
   @IsString()
   @MinLength(6)
   password!: string;
+
+  @ApiProperty({
+    type: [String],
+    required: false,
+    minItems: 3,
+    maxItems: 4,
+    description: 'Picture password for K-2 students (3-4 picture selections)',
+  })
+  @IsOptional()
+  @IsArray()
+  @IsString({ each: true })
+  @ArrayMinSize(3)
+  @ArrayMaxSize(4)
+  picture_password?: string[];
 
   @ApiProperty({ type: ConsentDto })
   @ValidateNested()

@@ -3,16 +3,19 @@ import {
   ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { UserRole as PrismaUserRole } from '@prisma/client';
+import { compare } from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { EmailLoginDto } from './dto/login.dto';
+import { EmailLoginDto, StudentLoginDto, ClassCodeLoginDto } from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
@@ -37,6 +40,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
     private readonly auth0Client: Auth0ClientService,
+    private readonly jwtService: JwtService,
   ) {}
 
   getStatus() {
@@ -271,12 +275,149 @@ export class AuthService {
     return user.roles.includes('student') && !user.email;
   }
 
+  async studentLogin(dto: StudentLoginDto): Promise<{
+    authResult: AuthResult;
+    refreshToken: string;
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const passwordValid = await compare(dto.password, user.passwordHash);
+    if (!passwordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    this.logger.log(`Student login: ${user.id}`);
+
+    const accessToken = this.signStudentToken(user.id, user.auth0Id);
+
+    return {
+      authResult: {
+        access_token: accessToken,
+        expires_in: 900,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+        },
+      },
+      refreshToken: '',
+    };
+  }
+
+  async classCodeLogin(dto: ClassCodeLoginDto): Promise<{
+    authResult: AuthResult;
+    classroomId: string;
+  }> {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode: dto.class_code },
+    });
+
+    if (!classroom) {
+      throw new NotFoundException('Class code not found');
+    }
+
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const enrollment = await this.prisma.enrollment.findUnique({
+      where: {
+        studentId_classroomId: {
+          studentId: user.id,
+          classroomId: classroom.id,
+        },
+      },
+    });
+
+    if (!enrollment) {
+      throw new UnauthorizedException('Student is not enrolled in this classroom');
+    }
+
+    if (
+      user.picturePassword.length === 0 ||
+      user.picturePassword.length !== dto.picture_password.length ||
+      !user.picturePassword.every((p, i) => p === dto.picture_password[i])
+    ) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    this.logger.log(`Class code login: ${user.id} in classroom ${classroom.id}`);
+
+    const accessToken = this.signStudentToken(user.id, user.auth0Id);
+
+    return {
+      authResult: {
+        access_token: accessToken,
+        expires_in: 900,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+        },
+      },
+      classroomId: classroom.id,
+    };
+  }
+
+  async lookupClassCode(classCode: string) {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode },
+      include: {
+        enrollments: {
+          include: {
+            student: { select: { id: true, displayName: true, username: true, avatarId: true } },
+          },
+        },
+      },
+    });
+
+    if (!classroom) {
+      throw new NotFoundException('Class code not found');
+    }
+
+    return {
+      classroom_id: classroom.id,
+      name: classroom.name,
+      grade: classroom.grade,
+      students: classroom.enrollments.map((e) => ({
+        id: e.student.id,
+        name: e.student.displayName,
+        username: e.student.username,
+        avatar_id: e.student.avatarId,
+      })),
+    };
+  }
+
   getAuth0Config() {
     return {
       domain: this.configService.getOrThrow<string>('AUTH0_ISSUER_URL'),
       audience: this.configService.getOrThrow<string>('AUTH0_AUDIENCE'),
       clientId: this.configService.getOrThrow<string>('AUTH0_CLIENT_ID'),
     };
+  }
+
+  private signStudentToken(userId: string, auth0Id: string): string {
+    const rolesNamespace = this.configService.get<string>(
+      'AUTH0_ROLES_NAMESPACE',
+      'https://koblio.com/roles',
+    );
+
+    return this.jwtService.sign({
+      sub: auth0Id,
+      [rolesNamespace]: ['student'],
+      roles: ['student'],
+      userId,
+    });
   }
 
   private hashToken(token: string): string {

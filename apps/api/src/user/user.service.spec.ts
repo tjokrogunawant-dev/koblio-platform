@@ -219,6 +219,63 @@ describe('UserService', () => {
 
       await service.createChildAccount('auth0|parent1', dto, '1.2.3.4');
     });
+
+    it('should store hashed password (not plaintext)', async () => {
+      prisma.user.findUnique
+        .mockResolvedValueOnce(mockParent)
+        .mockResolvedValueOnce(null);
+
+      let capturedData: Record<string, unknown> = {};
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          user: {
+            create: jest.fn().mockImplementation((args) => {
+              capturedData = args.data;
+              return mockChild;
+            }),
+          },
+          parentChildLink: { create: jest.fn().mockResolvedValue({}) },
+          parentalConsent: { create: jest.fn().mockResolvedValue({}) },
+        };
+        return fn(tx);
+      });
+
+      await service.createChildAccount('auth0|parent1', dto, '1.2.3.4');
+
+      expect(capturedData.passwordHash).toBeDefined();
+      expect(capturedData.passwordHash).not.toBe('secret123');
+      expect(typeof capturedData.passwordHash).toBe('string');
+    });
+
+    it('should store picture password when provided (K-2)', async () => {
+      prisma.user.findUnique
+        .mockResolvedValueOnce(mockParent)
+        .mockResolvedValueOnce(null);
+
+      let capturedData: Record<string, unknown> = {};
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          user: {
+            create: jest.fn().mockImplementation((args) => {
+              capturedData = args.data;
+              return mockChild;
+            }),
+          },
+          parentChildLink: { create: jest.fn().mockResolvedValue({}) },
+          parentalConsent: { create: jest.fn().mockResolvedValue({}) },
+        };
+        return fn(tx);
+      });
+
+      const dtoWithPicture = {
+        ...dto,
+        picture_password: ['cat', 'dog', 'fish'],
+      };
+
+      await service.createChildAccount('auth0|parent1', dtoWithPicture, '1.2.3.4');
+
+      expect(capturedData.picturePassword).toEqual(['cat', 'dog', 'fish']);
+    });
   });
 
   describe('listChildren', () => {

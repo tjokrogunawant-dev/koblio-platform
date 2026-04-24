@@ -8,7 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 
-enum LoginKind {
+export enum LoginKind {
   EMAIL = 'email',
   STUDENT = 'student',
   CLASS_CODE = 'class_code',
@@ -50,6 +50,10 @@ export class ClassCodeLoginDto {
   @ApiProperty({ example: 'SUN-DRAGON-42' })
   @IsString()
   class_code!: string;
+
+  @ApiProperty({ example: 'bobby1234', description: 'Student username' })
+  @IsString()
+  username!: string;
 
   @ApiProperty({
     type: [String],
