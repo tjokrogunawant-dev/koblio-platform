@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { UserRole as PrismaUserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuthService } from '../auth/auth.service';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
 
@@ -14,7 +15,10 @@ import { CreateSchoolDto } from './dto/create-school.dto';
 export class UserService {
   private readonly logger = new Logger(UserService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly authService: AuthService,
+  ) {}
 
   getStatus() {
     return { module: 'user', status: 'operational' };
@@ -58,6 +62,8 @@ export class UserService {
       );
     }
 
+    const passwordHash = await this.authService.hashPassword(dto.password);
+
     const child = await this.prisma.$transaction(async (tx) => {
       const newChild = await tx.user.create({
         data: {
@@ -65,6 +71,7 @@ export class UserService {
           role: PrismaUserRole.STUDENT,
           displayName: dto.name,
           username,
+          passwordHash,
           grade: dto.grade,
           country: parent.country,
         },

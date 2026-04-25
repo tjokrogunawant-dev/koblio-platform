@@ -7,6 +7,7 @@ import {
 import { UserRole } from '@prisma/client';
 import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { AuthService } from '../auth/auth.service';
 
 const mockParent = {
   id: '00000000-0000-0000-0000-000000000001',
@@ -71,6 +72,7 @@ describe('UserService', () => {
     parentalConsent: { create: jest.Mock };
     $transaction: jest.Mock;
   };
+  let authServiceMock: { hashPassword: jest.Mock };
 
   beforeEach(async () => {
     prisma = {
@@ -82,10 +84,15 @@ describe('UserService', () => {
       $transaction: jest.fn(),
     };
 
+    authServiceMock = {
+      hashPassword: jest.fn().mockResolvedValue('salt:hashedpassword'),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         { provide: PrismaService, useValue: prisma },
+        { provide: AuthService, useValue: authServiceMock },
       ],
     }).compile();
 
@@ -218,6 +225,29 @@ describe('UserService', () => {
       });
 
       await service.createChildAccount('auth0|parent1', dto, '1.2.3.4');
+    });
+
+    it('should hash the password for student login', async () => {
+      prisma.user.findUnique
+        .mockResolvedValueOnce(mockParent)
+        .mockResolvedValueOnce(null);
+
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          user: {
+            create: jest.fn().mockImplementation((args) => {
+              expect(args.data.passwordHash).toBe('salt:hashedpassword');
+              return mockChild;
+            }),
+          },
+          parentChildLink: { create: jest.fn().mockResolvedValue({}) },
+          parentalConsent: { create: jest.fn().mockResolvedValue({}) },
+        };
+        return fn(tx);
+      });
+
+      await service.createChildAccount('auth0|parent1', dto, '1.2.3.4');
+      expect(authServiceMock.hashPassword).toHaveBeenCalledWith('secret123');
     });
   });
 

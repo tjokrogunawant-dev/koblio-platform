@@ -1,22 +1,36 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
-import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import {
+  ConflictException,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Auth0ClientService } from './auth0-client.service';
+import { LoginKind } from './dto/login.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: { user: Record<string, jest.Mock>; $transaction: jest.Mock };
+  let prisma: {
+    user: Record<string, jest.Mock>;
+    classroom: Record<string, jest.Mock>;
+    $transaction: jest.Mock;
+  };
   let redis: Record<string, jest.Mock>;
   let auth0: Record<string, jest.Mock>;
+  let jwtServiceMock: Record<string, jest.Mock>;
 
   beforeEach(async () => {
     prisma = {
       user: {
         findUnique: jest.fn(),
         create: jest.fn(),
+      },
+      classroom: {
+        findUnique: jest.fn(),
       },
       $transaction: jest.fn((fn) => fn(prisma)),
     };
@@ -34,6 +48,11 @@ describe('AuthService', () => {
       assignRoles: jest.fn().mockResolvedValue(undefined),
       refreshToken: jest.fn(),
       revokeRefreshToken: jest.fn().mockResolvedValue(undefined),
+    };
+
+    jwtServiceMock = {
+      sign: jest.fn().mockReturnValue('student-jwt-token'),
+      verify: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -56,6 +75,7 @@ describe('AuthService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: RedisService, useValue: redis },
         { provide: Auth0ClientService, useValue: auth0 },
+        { provide: JwtService, useValue: jwtServiceMock },
       ],
     }).compile();
 
@@ -223,7 +243,7 @@ describe('AuthService', () => {
 
   describe('login', () => {
     const dto = {
-      kind: 'email' as const,
+      kind: LoginKind.EMAIL as const,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -378,6 +398,165 @@ describe('AuthService', () => {
         audience: 'https://api.koblio.com',
         clientId: 'test-client-id',
       });
+    });
+  });
+
+  describe('loginStudent', () => {
+    it('should authenticate student with valid username and password', async () => {
+      const passwordHash = await service.hashPassword('StudentPass1');
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        auth0Id: 'child_parent1_123',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash,
+      });
+
+      const result = await service.loginStudent({
+        kind: LoginKind.STUDENT as const,
+        username: 'bobby1234',
+        password: 'StudentPass1',
+      });
+
+      expect(result.authResult.user.id).toBe('uuid-s1');
+      expect(result.authResult.user.role).toBe('student');
+      expect(jwtServiceMock.sign).toHaveBeenCalledWith({
+        sub: 'child_parent1_123',
+        roles: ['student'],
+      });
+      expect(result.authResult.access_token).toBe('student-jwt-token');
+    });
+
+    it('should reject non-existent username', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.loginStudent({
+          kind: LoginKind.STUDENT as const,
+          username: 'nonexistent',
+          password: 'pass123',
+        }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should reject wrong password', async () => {
+      const passwordHash = await service.hashPassword('CorrectPass');
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        auth0Id: 'child_parent1_123',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash,
+      });
+
+      await expect(
+        service.loginStudent({
+          kind: LoginKind.STUDENT as const,
+          username: 'bobby1234',
+          password: 'WrongPass',
+        }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should reject non-student account', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-t1',
+        role: 'TEACHER',
+        displayName: 'Teacher',
+        username: 'teacher1',
+        passwordHash: null,
+      });
+
+      await expect(
+        service.loginStudent({
+          kind: LoginKind.STUDENT as const,
+          username: 'teacher1',
+          password: 'pass123',
+        }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should reject student with no password hash', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: null,
+      });
+
+      await expect(
+        service.loginStudent({
+          kind: LoginKind.STUDENT as const,
+          username: 'bobby1234',
+          password: 'pass123',
+        }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+  });
+
+  describe('resolveClassCode', () => {
+    it('should return classroom info for valid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'cls-1',
+        name: 'Math 101',
+        grade: 2,
+        classCode: 'SUN-DRAGON-42',
+        teacher: { displayName: 'Ms. Smith' },
+        school: { name: 'Springfield Elementary' },
+        _count: { enrollments: 15 },
+      });
+
+      const result = await service.resolveClassCode('SUN-DRAGON-42');
+
+      expect(result).toEqual({
+        id: 'cls-1',
+        name: 'Math 101',
+        grade: 2,
+        class_code: 'SUN-DRAGON-42',
+        teacher_name: 'Ms. Smith',
+        school_name: 'Springfield Elementary',
+        student_count: 15,
+      });
+    });
+
+    it('should throw NotFoundException for invalid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.resolveClassCode('INVALID-CODE-99'),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should handle classroom with no school', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'cls-2',
+        name: 'Reading',
+        grade: 1,
+        classCode: 'STAR-PANDA-77',
+        teacher: { displayName: 'Mr. Jones' },
+        school: null,
+        _count: { enrollments: 0 },
+      });
+
+      const result = await service.resolveClassCode('STAR-PANDA-77');
+
+      expect(result.school_name).toBeNull();
+    });
+  });
+
+  describe('hashPassword', () => {
+    it('should produce a salt:hash format', async () => {
+      const hash = await service.hashPassword('testPassword');
+      expect(hash).toMatch(/^[a-f0-9]+:[a-f0-9]+$/);
+    });
+
+    it('should produce different hashes for the same password', async () => {
+      const hash1 = await service.hashPassword('testPassword');
+      const hash2 = await service.hashPassword('testPassword');
+      expect(hash1).not.toBe(hash2);
     });
   });
 });

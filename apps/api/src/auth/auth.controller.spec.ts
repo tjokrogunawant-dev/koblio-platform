@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { LoginKind } from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 
 function mockResponse() {
@@ -31,6 +32,8 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      loginStudent: jest.fn(),
+      resolveClassCode: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -129,7 +132,7 @@ describe('AuthController', () => {
 
   describe('login', () => {
     const dto = {
-      kind: 'email' as const,
+      kind: LoginKind.EMAIL as const,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -284,6 +287,74 @@ describe('AuthController', () => {
       expect(controller.teacherCheck(user)).toEqual({
         teacher: true,
         userId: 'auth0|teacher1',
+      });
+    });
+  });
+
+  describe('loginStudent', () => {
+    const dto = {
+      kind: LoginKind.STUDENT as const,
+      username: 'bobby1234',
+      password: 'StudentPass1',
+    };
+
+    it('should login student and return auth result', async () => {
+      authService.loginStudent.mockResolvedValue({
+        authResult: {
+          access_token: 'student-jwt-token',
+          expires_in: 900,
+          user: { id: 'uuid-s1', role: 'student', name: 'Bobby' },
+        },
+      });
+
+      const result = await controller.loginStudent(dto);
+
+      expect(authService.loginStudent).toHaveBeenCalledWith(dto);
+      expect(result.access_token).toBe('student-jwt-token');
+      expect(result.user.role).toBe('student');
+    });
+
+    it('should propagate UnauthorizedException for invalid credentials', async () => {
+      authService.loginStudent.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.loginStudent(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('resolveClassCode', () => {
+    it('should return classroom info for valid code', async () => {
+      authService.resolveClassCode.mockResolvedValue({
+        id: 'cls-1',
+        name: 'Math 101',
+        grade: 2,
+        class_code: 'SUN-DRAGON-42',
+        teacher_name: 'Ms. Smith',
+        school_name: 'Springfield Elementary',
+        student_count: 15,
+      });
+
+      const result = await controller.resolveClassCode('SUN-DRAGON-42');
+
+      expect(authService.resolveClassCode).toHaveBeenCalledWith('SUN-DRAGON-42');
+      expect(result.name).toBe('Math 101');
+      expect(result.class_code).toBe('SUN-DRAGON-42');
+    });
+  });
+
+  describe('studentCheck', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'child_parent1_123',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'child_parent1_123',
       });
     });
   });
