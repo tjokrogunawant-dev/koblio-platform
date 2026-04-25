@@ -22,8 +22,11 @@ describe('JwtStrategy', () => {
         return config[key];
       }),
       get: jest.fn((key: string, defaultValue: string) => {
-        if (key === 'AUTH0_ROLES_NAMESPACE') return 'https://koblio.com/roles';
-        return defaultValue;
+        const config: Record<string, string> = {
+          AUTH0_ROLES_NAMESPACE: 'https://koblio.com/roles',
+          JWT_LOCAL_SECRET: 'test-local-secret',
+        };
+        return config[key] ?? defaultValue;
       }),
     } as unknown as ConfigService;
 
@@ -79,18 +82,32 @@ describe('JwtStrategy', () => {
 
     it('should handle student without email (COPPA compliance)', () => {
       const payload = {
-        sub: 'auth0|student789',
-        roles: ['student'],
+        sub: 'child_p1_12345',
+        'https://koblio.com/roles': ['student'],
       };
 
       const result = strategy.validate(payload as never);
 
       expect(result).toEqual({
-        userId: 'auth0|student789',
+        userId: 'child_p1_12345',
         email: undefined,
         roles: ['student'],
       });
       expect(result.email).toBeUndefined();
+    });
+
+    it('should extract student role from namespaced claim (local JWT)', () => {
+      const payload = {
+        sub: 'child_p1_12345',
+        name: 'Bobby',
+        iss: 'koblio-local',
+        'https://koblio.com/roles': ['student'],
+      };
+
+      const result = strategy.validate(payload as never);
+
+      expect(result.userId).toBe('child_p1_12345');
+      expect(result.roles).toEqual(['student']);
     });
   });
 });

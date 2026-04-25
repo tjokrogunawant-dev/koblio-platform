@@ -1,14 +1,20 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import * as bcrypt from 'bcryptjs';
 import { AuthService } from './auth.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
+import { LoginKind, EmailLoginDto, StudentLoginDto, ClassCodeLoginDto } from './dto/login.dto';
 
 describe('AuthService', () => {
   let service: AuthService;
-  let prisma: { user: Record<string, jest.Mock>; $transaction: jest.Mock };
+  let prisma: {
+    user: Record<string, jest.Mock>;
+    classroom: Record<string, jest.Mock>;
+    $transaction: jest.Mock;
+  };
   let redis: Record<string, jest.Mock>;
   let auth0: Record<string, jest.Mock>;
 
@@ -17,6 +23,9 @@ describe('AuthService', () => {
       user: {
         findUnique: jest.fn(),
         create: jest.fn(),
+      },
+      classroom: {
+        findUnique: jest.fn(),
       },
       $transaction: jest.fn((fn) => fn(prisma)),
     };
@@ -50,7 +59,13 @@ describe('AuthService', () => {
               };
               return config[key];
             }),
-            get: jest.fn(),
+            get: jest.fn((key: string, defaultValue?: string) => {
+              const config: Record<string, string> = {
+                JWT_LOCAL_SECRET: 'test-jwt-secret',
+                AUTH0_ROLES_NAMESPACE: 'https://koblio.com/roles',
+              };
+              return config[key] ?? defaultValue;
+            }),
           },
         },
         { provide: PrismaService, useValue: prisma },
@@ -222,8 +237,8 @@ describe('AuthService', () => {
   });
 
   describe('login', () => {
-    const dto = {
-      kind: 'email' as const,
+    const dto: EmailLoginDto = {
+      kind: LoginKind.EMAIL,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -270,6 +285,206 @@ describe('AuthService', () => {
       );
 
       await expect(service.login(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('studentLogin', () => {
+    const dto: StudentLoginDto = {
+      kind: LoginKind.STUDENT,
+      username: 'bobby1234',
+      password: 'kidpass1',
+    };
+
+    it('should authenticate student with username and password', async () => {
+      const passwordHash = await bcrypt.hash('kidpass1', 10);
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        auth0Id: 'child_parent1_1234',
+        role: 'STUDENT',
+        displayName: 'Bobby Zhang',
+        username: 'bobby1234',
+        passwordHash,
+      });
+
+      const result = await service.studentLogin(dto);
+
+      expect(prisma.user.findUnique).toHaveBeenCalledWith({
+        where: { username: 'bobby1234' },
+      });
+      expect(result.authResult.user.id).toBe('uuid-s1');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.authResult.access_token).toBeDefined();
+      expect(result.authResult.expires_in).toBe(3600);
+    });
+
+    it('should throw UnauthorizedException for non-existent username', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for wrong password', async () => {
+      const passwordHash = await bcrypt.hash('differentpassword', 10);
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        auth0Id: 'child_parent1_1234',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash,
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for non-student user', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-t1',
+        auth0Id: 'auth0|teacher1',
+        role: 'TEACHER',
+        displayName: 'Teacher',
+        username: 'bobby1234',
+        passwordHash: 'some-hash',
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for student without password hash', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        auth0Id: 'child_parent1_1234',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: null,
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should return a valid JWT access token', async () => {
+      const passwordHash = await bcrypt.hash('kidpass1', 10);
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-s1',
+        auth0Id: 'child_parent1_1234',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash,
+      });
+
+      const result = await service.studentLogin(dto);
+
+      const parts = result.authResult.access_token.split('.');
+      expect(parts).toHaveLength(3);
+
+      const payload = JSON.parse(
+        Buffer.from(parts[1], 'base64url').toString(),
+      );
+      expect(payload.sub).toBe('child_parent1_1234');
+      expect(payload.iss).toBe('koblio-local');
+      expect(payload['https://koblio.com/roles']).toEqual(['student']);
+    });
+  });
+
+  describe('classCodeLogin', () => {
+    const dto: ClassCodeLoginDto = {
+      kind: LoginKind.CLASS_CODE,
+      class_code: 'SUN-DRAGON-42',
+      picture_password: ['cat', 'star', 'moon'],
+    };
+
+    it('should authenticate student via class code and picture password', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-1',
+        name: 'Grade 2A',
+        grade: 2,
+        classCode: 'SUN-DRAGON-42',
+        enrollments: [
+          {
+            student: {
+              id: 'uuid-s1',
+              auth0Id: 'child_p1_1234',
+              displayName: 'Bobby',
+              picturePassword: ['cat', 'star', 'moon'],
+            },
+          },
+          {
+            student: {
+              id: 'uuid-s2',
+              auth0Id: 'child_p2_5678',
+              displayName: 'Alice',
+              picturePassword: ['dog', 'sun', 'tree'],
+            },
+          },
+        ],
+      });
+
+      const result = await service.classCodeLogin(dto);
+
+      expect(prisma.classroom.findUnique).toHaveBeenCalledWith({
+        where: { classCode: 'SUN-DRAGON-42' },
+        include: { enrollments: { include: { student: true } } },
+      });
+      expect(result.authResult.user.id).toBe('uuid-s1');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.classroom.id).toBe('classroom-1');
+      expect(result.classroom.name).toBe('Grade 2A');
+      expect(result.classroom.grade).toBe(2);
+    });
+
+    it('should throw UnauthorizedException for invalid class code', async () => {
+      prisma.classroom.findUnique.mockResolvedValue(null);
+
+      await expect(service.classCodeLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for non-matching picture password', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-1',
+        name: 'Grade 2A',
+        grade: 2,
+        classCode: 'SUN-DRAGON-42',
+        enrollments: [
+          {
+            student: {
+              id: 'uuid-s1',
+              auth0Id: 'child_p1_1234',
+              displayName: 'Bobby',
+              picturePassword: ['dog', 'sun', 'tree'],
+            },
+          },
+        ],
+      });
+
+      await expect(service.classCodeLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for empty classroom', async () => {
+      prisma.classroom.findUnique.mockResolvedValue({
+        id: 'classroom-1',
+        name: 'Grade 2A',
+        grade: 2,
+        classCode: 'SUN-DRAGON-42',
+        enrollments: [],
+      });
+
+      await expect(service.classCodeLogin(dto)).rejects.toThrow(
         UnauthorizedException,
       );
     });

@@ -3,6 +3,7 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
+import { LoginKind, EmailLoginDto, StudentLoginDto, ClassCodeLoginDto } from './dto/login.dto';
 
 function mockResponse() {
   const res = {
@@ -31,6 +32,8 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      studentLogin: jest.fn(),
+      classCodeLogin: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -128,8 +131,8 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    const dto = {
-      kind: 'email' as const,
+    const dto: EmailLoginDto = {
+      kind: LoginKind.EMAIL,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -162,6 +165,75 @@ describe('AuthController', () => {
       );
 
       await expect(controller.login(dto, res)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('studentLogin', () => {
+    const dto: StudentLoginDto = {
+      kind: LoginKind.STUDENT,
+      username: 'bobby1234',
+      password: 'kidpass1',
+    };
+
+    it('should login student and return auth result', async () => {
+      authService.studentLogin.mockResolvedValue({
+        authResult: {
+          access_token: 'at-student',
+          expires_in: 3600,
+          user: { id: 'uuid-s1', role: 'student', name: 'Bobby' },
+        },
+      });
+
+      const result = await controller.studentLogin(dto);
+
+      expect(result.access_token).toBe('at-student');
+      expect(result.user.role).toBe('student');
+      expect(authService.studentLogin).toHaveBeenCalledWith(dto);
+    });
+
+    it('should propagate UnauthorizedException for invalid student credentials', async () => {
+      authService.studentLogin.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('classCodeLogin', () => {
+    const dto: ClassCodeLoginDto = {
+      kind: LoginKind.CLASS_CODE,
+      class_code: 'SUN-DRAGON-42',
+      picture_password: ['cat', 'star', 'moon'],
+    };
+
+    it('should login via class code and return classroom info', async () => {
+      authService.classCodeLogin.mockResolvedValue({
+        authResult: {
+          access_token: 'at-classcode',
+          expires_in: 3600,
+          user: { id: 'uuid-s1', role: 'student', name: 'Bobby' },
+        },
+        classroom: { id: 'classroom-1', name: 'Grade 2A', grade: 2 },
+      });
+
+      const result = await controller.classCodeLogin(dto);
+
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.classroom.name).toBe('Grade 2A');
+      expect(authService.classCodeLogin).toHaveBeenCalledWith(dto);
+    });
+
+    it('should propagate UnauthorizedException for invalid class code', async () => {
+      authService.classCodeLogin.mockRejectedValue(
+        new UnauthorizedException('Invalid class code'),
+      );
+
+      await expect(controller.classCodeLogin(dto)).rejects.toThrow(
         UnauthorizedException,
       );
     });
@@ -258,7 +330,32 @@ describe('AuthController', () => {
     });
   });
 
-  describe('adminCheck', () => {
+  describe('role check endpoints', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'child_p1_1234',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'child_p1_1234',
+      });
+    });
+
+    it('should return parent confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|parent1',
+        email: 'parent@example.com',
+        roles: ['parent'],
+      };
+
+      expect(controller.parentCheck(user)).toEqual({
+        parent: true,
+        userId: 'auth0|parent1',
+      });
+    });
+
     it('should return admin confirmation', () => {
       const user: AuthenticatedUser = {
         userId: 'auth0|admin1',
@@ -271,9 +368,7 @@ describe('AuthController', () => {
         userId: 'auth0|admin1',
       });
     });
-  });
 
-  describe('teacherCheck', () => {
     it('should return teacher confirmation', () => {
       const user: AuthenticatedUser = {
         userId: 'auth0|teacher1',

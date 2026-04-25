@@ -29,9 +29,11 @@ model User {
   grade       Int?
   country     String?
   locale      String?
-  avatarId    String?  @map("avatar_id")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  passwordHash    String?  @map("password_hash")
+  picturePassword String[] @map("picture_password")
+  avatarId        String?  @map("avatar_id")
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
 
   parentLinks      ParentChildLink[] @relation("ParentUser")
   childLinks       ParentChildLink[] @relation("ChildUser")

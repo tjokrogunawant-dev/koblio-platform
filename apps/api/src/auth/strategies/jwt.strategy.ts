@@ -8,6 +8,8 @@ import {
   JwtPayload,
 } from '../interfaces/jwt-payload.interface';
 
+const LOCAL_ISSUER = 'koblio-local';
+
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
   private readonly logger = new Logger(JwtStrategy.name);
@@ -15,21 +17,46 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor(private readonly configService: ConfigService) {
     const issuer = configService.getOrThrow<string>('AUTH0_ISSUER_URL');
     const audience = configService.getOrThrow<string>('AUTH0_AUDIENCE');
+    const localSecret = configService.get<string>(
+      'JWT_LOCAL_SECRET',
+      'koblio-dev-local-jwt-secret',
+    );
 
-    super({
-      secretOrKeyProvider: passportJwtSecret({
-        cache: true,
-        rateLimit: true,
-        jwksRequestsPerMinute: 5,
-        jwksUri: `${issuer}.well-known/jwks.json`,
-      }),
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      audience,
-      issuer,
-      algorithms: ['RS256'],
+    const jwksProvider = passportJwtSecret({
+      cache: true,
+      rateLimit: true,
+      jwksRequestsPerMinute: 5,
+      jwksUri: `${issuer}.well-known/jwks.json`,
     });
 
-    this.logger.log('JWT strategy initialized');
+    super({
+      secretOrKeyProvider: (
+        request: unknown,
+        rawJwtToken: string,
+        done: (err: Error | null, secret?: string | Buffer) => void,
+      ) => {
+        try {
+          const payloadB64 = rawJwtToken.split('.')[1];
+          const decoded = JSON.parse(
+            Buffer.from(payloadB64, 'base64url').toString(),
+          );
+
+          if (decoded.iss === LOCAL_ISSUER) {
+            done(null, localSecret);
+          } else {
+            jwksProvider(request, rawJwtToken, done);
+          }
+        } catch {
+          jwksProvider(request, rawJwtToken, done);
+        }
+      },
+      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      audience,
+      issuer: [issuer, LOCAL_ISSUER],
+      algorithms: ['RS256', 'HS256'],
+    });
+
+    this.logger.log('JWT strategy initialized (Auth0 JWKS + local HS256)');
   }
 
   validate(payload: JwtPayload): AuthenticatedUser {
