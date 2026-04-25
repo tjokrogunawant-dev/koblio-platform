@@ -210,6 +210,23 @@ export class Auth0ClientService {
     }
   }
 
+  async createUserByUsername(
+    username: string,
+    password: string,
+    name: string,
+    appMetadata: Record<string, unknown>,
+  ): Promise<Auth0UserResponse> {
+    const syntheticEmail = `${username}@student.koblio.internal`;
+    return this.createUser(syntheticEmail, password, name, {
+      ...appMetadata,
+      student_username: username,
+    });
+  }
+
+  syntheticEmailForUsername(username: string): string {
+    return `${username}@student.koblio.internal`;
+  }
+
   async assignRoles(
     auth0UserId: string,
     roles: string[],

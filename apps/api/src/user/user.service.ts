@@ -1,3 +1,4 @@
+import { createHash } from 'crypto';
 import {
   ConflictException,
   ForbiddenException,
@@ -7,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { UserRole as PrismaUserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { Auth0ClientService } from '../auth/auth0-client.service';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
 
@@ -14,7 +16,10 @@ import { CreateSchoolDto } from './dto/create-school.dto';
 export class UserService {
   private readonly logger = new Logger(UserService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly auth0Client: Auth0ClientService,
+  ) {}
 
   getStatus() {
     return { module: 'user', status: 'operational' };
@@ -58,13 +63,25 @@ export class UserService {
       );
     }
 
+    const auth0User = await this.auth0Client.createUserByUsername(
+      username,
+      dto.password,
+      dto.name,
+      { role: 'student' },
+    );
+
+    await this.auth0Client.assignRoles(auth0User.user_id, ['student']);
+
+    const passwordHash = this.hashPassword(dto.password);
+
     const child = await this.prisma.$transaction(async (tx) => {
       const newChild = await tx.user.create({
         data: {
-          auth0Id: `child_${parent.id}_${Date.now()}`,
+          auth0Id: auth0User.user_id,
           role: PrismaUserRole.STUDENT,
           displayName: dto.name,
           username,
+          passwordHash,
           grade: dto.grade,
           country: parent.country,
         },
@@ -191,5 +208,9 @@ export class UserService {
       .slice(0, 12);
     const suffix = Math.floor(1000 + Math.random() * 9000);
     return `${sanitized}${suffix}`;
+  }
+
+  private hashPassword(password: string): string {
+    return createHash('sha256').update(password).digest('hex');
   }
 }

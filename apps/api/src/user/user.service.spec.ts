@@ -7,6 +7,7 @@ import {
 import { UserRole } from '@prisma/client';
 import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { Auth0ClientService } from '../auth/auth0-client.service';
 
 const mockParent = {
   id: '00000000-0000-0000-0000-000000000001',
@@ -25,11 +26,12 @@ const mockParent = {
 
 const mockChild = {
   id: '00000000-0000-0000-0000-000000000002',
-  auth0Id: 'child_00000000-0000-0000-0000-000000000001_1234',
+  auth0Id: 'auth0|student-new',
   email: null,
   role: UserRole.STUDENT,
   displayName: 'Bobby Zhang',
   username: 'bobbyzhang1234',
+  passwordHash: null,
   grade: 2,
   country: 'US',
   locale: null,
@@ -71,6 +73,7 @@ describe('UserService', () => {
     parentalConsent: { create: jest.Mock };
     $transaction: jest.Mock;
   };
+  let auth0: Record<string, jest.Mock>;
 
   beforeEach(async () => {
     prisma = {
@@ -82,10 +85,18 @@ describe('UserService', () => {
       $transaction: jest.fn(),
     };
 
+    auth0 = {
+      createUserByUsername: jest
+        .fn()
+        .mockResolvedValue({ user_id: 'auth0|student-new' }),
+      assignRoles: jest.fn().mockResolvedValue(undefined),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
         { provide: PrismaService, useValue: prisma },
+        { provide: Auth0ClientService, useValue: auth0 },
       ],
     }).compile();
 
@@ -150,6 +161,15 @@ describe('UserService', () => {
         '192.168.1.1',
       );
 
+      expect(auth0.createUserByUsername).toHaveBeenCalledWith(
+        expect.any(String),
+        dto.password,
+        dto.name,
+        { role: 'student' },
+      );
+      expect(auth0.assignRoles).toHaveBeenCalledWith('auth0|student-new', [
+        'student',
+      ]);
       expect(result.name).toBe('Bobby Zhang');
       expect(result.role).toBe('student');
       expect(result.grade).toBe(2);
@@ -198,7 +218,7 @@ describe('UserService', () => {
       ).rejects.toThrow(ConflictException);
     });
 
-    it('should not collect email from child account (COPPA)', async () => {
+    it('should not collect email from child account (COPPA) and store password hash', async () => {
       prisma.user.findUnique
         .mockResolvedValueOnce(mockParent)
         .mockResolvedValueOnce(null);
@@ -208,6 +228,8 @@ describe('UserService', () => {
           user: {
             create: jest.fn().mockImplementation((args) => {
               expect(args.data.email).toBeUndefined();
+              expect(args.data.passwordHash).toBeDefined();
+              expect(args.data.auth0Id).toBe('auth0|student-new');
               return mockChild;
             }),
           },

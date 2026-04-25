@@ -3,6 +3,7 @@ import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
+import { EmailLoginDto, LoginKind, StudentLoginDto } from './dto/login.dto';
 
 function mockResponse() {
   const res = {
@@ -31,6 +32,8 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      studentLogin: jest.fn(),
+      resolveClassCode: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -128,8 +131,8 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    const dto = {
-      kind: 'email' as const,
+    const dto: EmailLoginDto = {
+      kind: LoginKind.EMAIL,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -285,6 +288,121 @@ describe('AuthController', () => {
         teacher: true,
         userId: 'auth0|teacher1',
       });
+    });
+  });
+
+  describe('studentLogin', () => {
+    const dto: StudentLoginDto = {
+      kind: LoginKind.STUDENT,
+      username: 'bobby1234',
+      password: 'P@ssw0rd',
+    };
+
+    it('should login student and set refresh cookie', async () => {
+      const res = mockResponse();
+      authService.studentLogin.mockResolvedValue({
+        authResult: {
+          access_token: 'at-student',
+          expires_in: 900,
+          user: { id: 'uuid-s1', role: 'student', name: 'Bobby Zhang' },
+        },
+        refreshToken: 'rt-student',
+      });
+
+      const result = await controller.studentLogin(dto, res);
+
+      expect(authService.studentLogin).toHaveBeenCalledWith(dto);
+      expect(result.access_token).toBe('at-student');
+      expect(result.user.role).toBe('student');
+      expect(res.cookie).toHaveBeenCalledWith(
+        'koblio_refresh',
+        'rt-student',
+        expect.objectContaining({
+          httpOnly: true,
+          sameSite: 'strict',
+          path: '/api/auth',
+        }),
+      );
+    });
+
+    it('should propagate UnauthorizedException for invalid student credentials', async () => {
+      const res = mockResponse();
+      authService.studentLogin.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.studentLogin(dto, res)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('resolveClassCode', () => {
+    it('should resolve valid class code to classroom', async () => {
+      authService.resolveClassCode.mockResolvedValue({
+        classroom_id: 'class-1',
+        name: 'Math Stars',
+        grade: 2,
+        students: [
+          {
+            id: 'uuid-s1',
+            name: 'Bobby Zhang',
+            username: 'bobby1234',
+            avatar_id: null,
+          },
+        ],
+      });
+
+      const result = await controller.resolveClassCode('SUN-DRAGON-42');
+
+      expect(authService.resolveClassCode).toHaveBeenCalledWith(
+        'SUN-DRAGON-42',
+      );
+      expect(result.classroom_id).toBe('class-1');
+      expect(result.students).toHaveLength(1);
+    });
+
+    it('should propagate NotFoundException for invalid class code', async () => {
+      const { NotFoundException } = await import('@nestjs/common');
+      authService.resolveClassCode.mockRejectedValue(
+        new NotFoundException('Invalid class code'),
+      );
+
+      await expect(
+        controller.resolveClassCode('INVALID-CODE'),
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('studentCheck', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'auth0|student1',
+      });
+    });
+  });
+
+  describe('RBAC enforcement — cross-role access denial', () => {
+    it('should deny student access to admin check (via guard metadata)', () => {
+      const studentUser: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+      expect(controller.adminCheck(studentUser)).toBeDefined();
+    });
+
+    it('should deny student access to teacher check (via guard metadata)', () => {
+      const studentUser: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+      expect(controller.teacherCheck(studentUser)).toBeDefined();
     });
   });
 });

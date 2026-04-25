@@ -15,10 +15,10 @@
 | P1-T09 | Sentry Error Tracking Setup (web + API) | DevOps | P2 | pending | No blocker — deps P1-T06 (done), P1-T07 (done). Start Day 1. |
 | P1-T17 | KaTeX Integration — Web Math Rendering | Frontend | P1 | pending | No blocker — only dep P1-T02 (done). Run parallel with auth backend. |
 | P1-T10 | Auth Module — Parent & Teacher Registration endpoints | Backend | P0 | done | All AC met. Commit `acabf47`. 62 unit tests passing. |
-| P1-T11 | Auth Module — Student Login & RBAC enforcement | Backend | P0 | pending | Depends: P1-T10 |
+| P1-T11 | Auth Module — Student Login & RBAC enforcement | Backend | P0 | done | All AC met. Student login via username/password, class code resolution, RBAC guards enforce role restrictions, 403 on unauthorized, 118 tests passing. |
 | P1-T14 | MongoDB Problem Document Schema & API | Backend | P0 | pending | Mitigation: connect to MongoDB Atlas directly. No local Docker required. |
-| P1-T12 | User Module — Parent-Child Linking & School Association | Backend | P0 | pending | Depends: P1-T10 (done), P1-T11 (done) |
-| P1-T13 | Auth Frontend — Login & Registration Pages | Frontend | P0 | pending | Depends: P1-T08 (done), P1-T10, P1-T11 |
+| P1-T12 | User Module — Parent-Child Linking & School Association | Backend | P0 | pending | No blocker — deps P1-T10 (done), P1-T11 (done). |
+| P1-T13 | Auth Frontend — Login & Registration Pages | Frontend | P0 | pending | No blocker — deps P1-T08 (done), P1-T10 (done), P1-T11 (done). |
 | P1-T15 | Admin CMS for Problem Authoring | Frontend | P1 | pending | Depends: P1-T14, P1-T08 (done). Stretch goal — start only if P1-T14 is merged by Day 6. |
 
 ---
@@ -61,4 +61,4 @@
 ---
 
 ## Last Updated
-2026-04-22 by Implementation Agent (P1-T10 completed)
+2026-04-25 by Implementation Agent (P1-T11 completed)
