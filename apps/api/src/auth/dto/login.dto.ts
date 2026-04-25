@@ -8,7 +8,7 @@ import {
   IsString,
 } from 'class-validator';
 
-enum LoginKind {
+export enum LoginKind {
   EMAIL = 'email',
   STUDENT = 'student',
   CLASS_CODE = 'class_code',

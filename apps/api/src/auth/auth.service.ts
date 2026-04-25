@@ -3,19 +3,23 @@ import {
   ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { UserRole as PrismaUserRole } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { EmailLoginDto } from './dto/login.dto';
+import { EmailLoginDto, StudentLoginDto, ClassCodeLoginDto } from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
+const STUDENT_TOKEN_EXPIRES_IN = 900; // 15 minutes
 
 export interface AuthResult {
   access_token: string;
@@ -25,6 +29,9 @@ export interface AuthResult {
     role: string;
     email?: string;
     name: string;
+    username?: string;
+    grade?: number | null;
+    classroom_id?: string | null;
   };
 }
 
@@ -37,6 +44,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
     private readonly auth0Client: Auth0ClientService,
+    private readonly jwtService: JwtService,
   ) {}
 
   getStatus() {
@@ -223,6 +231,102 @@ export class AuthService {
     };
   }
 
+  async studentLogin(dto: StudentLoginDto): Promise<{
+    authResult: AuthResult;
+    refreshToken: string;
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+      include: {
+        enrollments: { select: { classroomId: true }, take: 1 },
+      },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const passwordValid = await bcrypt.compare(dto.password, user.passwordHash);
+    if (!passwordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const accessToken = this.signStudentToken(user.id);
+
+    this.logger.log(`Student logged in: ${user.id}`);
+
+    return {
+      authResult: {
+        access_token: accessToken,
+        expires_in: STUDENT_TOKEN_EXPIRES_IN,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+          username: user.username ?? undefined,
+          grade: user.grade,
+          classroom_id: user.enrollments[0]?.classroomId ?? null,
+        },
+      },
+      refreshToken: '',
+    };
+  }
+
+  async classCodeLogin(dto: ClassCodeLoginDto): Promise<{
+    authResult: AuthResult;
+    refreshToken: string;
+  }> {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode: dto.class_code },
+      include: {
+        enrollments: {
+          include: {
+            student: true,
+          },
+        },
+      },
+    });
+
+    if (!classroom) {
+      throw new NotFoundException('Class code not found');
+    }
+
+    const pictureHash = this.hashPicturePassword(dto.picture_password);
+
+    const matchedEnrollment = classroom.enrollments.find(
+      (e) => e.student.picturePasswordHash === pictureHash,
+    );
+
+    if (!matchedEnrollment) {
+      throw new UnauthorizedException('Invalid picture password');
+    }
+
+    const student = matchedEnrollment.student;
+    const accessToken = this.signStudentToken(student.id);
+
+    this.logger.log(`Student logged in via class code: ${student.id}`);
+
+    return {
+      authResult: {
+        access_token: accessToken,
+        expires_in: STUDENT_TOKEN_EXPIRES_IN,
+        user: {
+          id: student.id,
+          role: 'student',
+          name: student.displayName,
+          username: student.username ?? undefined,
+          grade: student.grade,
+          classroom_id: classroom.id,
+        },
+      },
+      refreshToken: '',
+    };
+  }
+
   async refresh(refreshToken: string): Promise<{
     access_token: string;
     expires_in: number;
@@ -277,6 +381,30 @@ export class AuthService {
       audience: this.configService.getOrThrow<string>('AUTH0_AUDIENCE'),
       clientId: this.configService.getOrThrow<string>('AUTH0_CLIENT_ID'),
     };
+  }
+
+  static async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 10);
+  }
+
+  static hashPicturePassword(selections: string[]): string {
+    const normalized = selections.map((s) => s.toLowerCase().trim()).join('|');
+    return createHash('sha256').update(normalized).digest('hex');
+  }
+
+  private signStudentToken(userId: string): string {
+    const audience = this.configService.getOrThrow<string>('AUTH0_AUDIENCE');
+    return this.jwtService.sign(
+      {
+        sub: userId,
+        roles: ['student'],
+      },
+      { audience },
+    );
+  }
+
+  private hashPicturePassword(selections: string[]): string {
+    return AuthService.hashPicturePassword(selections);
   }
 
   private hashToken(token: string): string {

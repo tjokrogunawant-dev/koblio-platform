@@ -79,4 +79,58 @@ describe('RolesGuard', () => {
     });
     expect(guard.canActivate(context)).toBe(true);
   });
+
+  it('should deny student access to admin endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin']);
+    const context = createContext({
+      userId: 'student1',
+      roles: ['student'],
+    });
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it('should deny student access to parent endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['parent']);
+    const context = createContext({
+      userId: 'student1',
+      roles: ['student'],
+    });
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it('should deny parent access to teacher endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['teacher']);
+    const context = createContext({
+      userId: 'parent1',
+      roles: ['parent'],
+    });
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it('should deny teacher access to admin endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin']);
+    const context = createContext({
+      userId: 'teacher1',
+      roles: ['teacher'],
+    });
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it('should allow student access to student-only endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['student']);
+    const context = createContext({
+      userId: 'student1',
+      roles: ['student'],
+    });
+    expect(guard.canActivate(context)).toBe(true);
+  });
+
+  it('should allow admin access to admin-only endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin']);
+    const context = createContext({
+      userId: 'admin1',
+      roles: ['admin'],
+    });
+    expect(guard.canActivate(context)).toBe(true);
+  });
 });
