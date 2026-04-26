@@ -204,6 +204,55 @@ describe('Auth0ClientService', () => {
     });
   });
 
+  describe('authenticateByUsername', () => {
+    it('should authenticate student via ROPC with username (no email scope)', async () => {
+      mockFetch.mockResolvedValueOnce(
+        jsonResponse(200, {
+          access_token: 'at-student',
+          refresh_token: 'rt-student',
+          token_type: 'Bearer',
+          expires_in: 900,
+        }),
+      );
+
+      const result = await service.authenticateByUsername(
+        'alice_p3',
+        'MyP@ss123',
+      );
+
+      expect(result.access_token).toBe('at-student');
+      expect(result.refresh_token).toBe('rt-student');
+
+      const [url, options] = mockFetch.mock.calls[0];
+      expect(url).toBe('https://test.auth0.com/oauth/token');
+      const body = JSON.parse(options.body);
+      expect(body.grant_type).toBe('password');
+      expect(body.username).toBe('alice_p3');
+      expect(body.scope).toBe('openid profile offline_access');
+      expect(body.scope).not.toContain('email');
+    });
+
+    it('should throw UnauthorizedException on 401', async () => {
+      mockFetch.mockResolvedValueOnce(
+        jsonResponse(401, { error: 'invalid_grant' }),
+      );
+
+      await expect(
+        service.authenticateByUsername('alice_p3', 'wrong-password'),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw InternalServerErrorException on server error', async () => {
+      mockFetch.mockResolvedValueOnce(
+        jsonResponse(500, { error: 'server_error' }),
+      );
+
+      await expect(
+        service.authenticateByUsername('alice_p3', 'password'),
+      ).rejects.toThrow(InternalServerErrorException);
+    });
+  });
+
   describe('assignRoles', () => {
     it('should assign roles to user via Management API', async () => {
       mockFetch

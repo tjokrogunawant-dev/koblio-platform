@@ -165,6 +165,40 @@ export class Auth0ClientService {
     return (await response.json()) as Auth0TokenResponse;
   }
 
+  async authenticateByUsername(
+    username: string,
+    password: string,
+  ): Promise<Auth0TokenResponse> {
+    const response = await fetch(`${this.baseUrl}/oauth/token`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        grant_type: 'password',
+        client_id: this.clientId,
+        client_secret: this.clientSecret,
+        audience: this.audience,
+        username,
+        password,
+        scope: 'openid profile offline_access',
+      }),
+      signal: AbortSignal.timeout(10_000),
+    });
+
+    if (response.status === 401 || response.status === 403) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!response.ok) {
+      const body = await response.text();
+      this.logger.error(`Auth0 student authentication failed: ${body}`);
+      throw new InternalServerErrorException(
+        'Authentication service error',
+      );
+    }
+
+    return (await response.json()) as Auth0TokenResponse;
+  }
+
   async refreshToken(refreshToken: string): Promise<Auth0TokenResponse> {
     const response = await fetch(`${this.baseUrl}/oauth/token`, {
       method: 'POST',

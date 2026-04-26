@@ -12,7 +12,11 @@ import { RedisService } from '../redis/redis.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { EmailLoginDto } from './dto/login.dto';
+import {
+  EmailLoginDto,
+  StudentLoginDto,
+  ClassCodeLoginDto,
+} from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
@@ -223,6 +227,107 @@ export class AuthService {
     };
   }
 
+  async studentLogin(dto: StudentLoginDto): Promise<{
+    authResult: AuthResult;
+    refreshToken: string;
+  }> {
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const tokens = await this.auth0Client.authenticateByUsername(
+      dto.username,
+      dto.password,
+    );
+
+    if (tokens.refresh_token) {
+      await this.redis.storeRefreshToken(
+        user.id,
+        this.hashToken(tokens.refresh_token),
+        REFRESH_TOKEN_TTL_SECONDS,
+      );
+    }
+
+    return {
+      authResult: {
+        access_token: tokens.access_token,
+        expires_in: tokens.expires_in,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+        },
+      },
+      refreshToken: tokens.refresh_token ?? '',
+    };
+  }
+
+  async classCodeLogin(dto: ClassCodeLoginDto): Promise<{
+    authResult: AuthResult;
+    refreshToken: string;
+    classroom: { id: string; name: string; grade: number };
+  }> {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode: dto.class_code },
+      include: {
+        enrollments: {
+          include: { student: true },
+        },
+      },
+    });
+
+    if (!classroom) {
+      throw new UnauthorizedException('Invalid class code');
+    }
+
+    const pictureHash = this.hashPicturePassword(dto.picture_password);
+
+    const enrollment = classroom.enrollments.find(
+      (e) => e.student.picturePasswordHash === pictureHash,
+    );
+
+    if (!enrollment) {
+      throw new UnauthorizedException('Invalid picture password');
+    }
+
+    const student = enrollment.student;
+
+    const tokens = await this.auth0Client.authenticateByUsername(
+      student.username!,
+      dto.picture_password.join('-'),
+    );
+
+    if (tokens.refresh_token) {
+      await this.redis.storeRefreshToken(
+        student.id,
+        this.hashToken(tokens.refresh_token),
+        REFRESH_TOKEN_TTL_SECONDS,
+      );
+    }
+
+    return {
+      authResult: {
+        access_token: tokens.access_token,
+        expires_in: tokens.expires_in,
+        user: {
+          id: student.id,
+          role: 'student',
+          name: student.displayName,
+        },
+      },
+      refreshToken: tokens.refresh_token ?? '',
+      classroom: {
+        id: classroom.id,
+        name: classroom.name,
+        grade: classroom.grade,
+      },
+    };
+  }
+
   async refresh(refreshToken: string): Promise<{
     access_token: string;
     expires_in: number;
@@ -281,5 +386,11 @@ export class AuthService {
 
   private hashToken(token: string): string {
     return createHash('sha256').update(token).digest('hex');
+  }
+
+  private hashPicturePassword(selections: string[]): string {
+    return createHash('sha256')
+      .update(selections.join('-'))
+      .digest('hex');
   }
 }
