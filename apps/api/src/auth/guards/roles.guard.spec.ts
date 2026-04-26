@@ -79,4 +79,40 @@ describe('RolesGuard', () => {
     });
     expect(guard.canActivate(context)).toBe(true);
   });
+
+  it('should deny student access to admin-only endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['admin']);
+    const context = createContext({
+      userId: 'student1',
+      roles: ['student'],
+    });
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it('should allow student access to student-only endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['student']);
+    const context = createContext({
+      userId: 'student1',
+      roles: ['student'],
+    });
+    expect(guard.canActivate(context)).toBe(true);
+  });
+
+  it('should deny parent access to teacher-only endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['teacher']);
+    const context = createContext({
+      userId: 'parent1',
+      roles: ['parent'],
+    });
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
+
+  it('should deny student access to parent-only endpoint', () => {
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['parent']);
+    const context = createContext({
+      userId: 'student1',
+      roles: ['student'],
+    });
+    expect(() => guard.canActivate(context)).toThrow(ForbiddenException);
+  });
 });

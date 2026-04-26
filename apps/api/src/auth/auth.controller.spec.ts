@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { EmailLoginDto, LoginKind, StudentLoginDto } from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 
 function mockResponse() {
@@ -31,6 +32,8 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      loginStudent: jest.fn(),
+      resolveClassCode: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -128,8 +131,8 @@ describe('AuthController', () => {
   });
 
   describe('login', () => {
-    const dto = {
-      kind: 'email' as const,
+    const dto: EmailLoginDto = {
+      kind: LoginKind.EMAIL,
       email: 'alice@example.com',
       password: 'Str0ngP@ss',
     };
@@ -164,6 +167,75 @@ describe('AuthController', () => {
       await expect(controller.login(dto, res)).rejects.toThrow(
         UnauthorizedException,
       );
+    });
+  });
+
+  describe('loginStudent', () => {
+    const dto: StudentLoginDto = {
+      kind: LoginKind.STUDENT,
+      username: 'alice_p3',
+      password: 'MyP@ss123',
+    };
+
+    it('should login student and set refresh cookie', async () => {
+      const res = mockResponse();
+      authService.loginStudent.mockResolvedValue({
+        authResult: {
+          access_token: 'at-student',
+          expires_in: 900,
+          user: { id: 'uuid-s1', role: 'student', name: 'Alice' },
+        },
+        refreshToken: 'rt-student',
+      });
+
+      const result = await controller.loginStudent(dto, res);
+
+      expect(result.access_token).toBe('at-student');
+      expect(result.user.role).toBe('student');
+      expect(res.cookie).toHaveBeenCalledWith(
+        'koblio_refresh',
+        'rt-student',
+        expect.objectContaining({
+          httpOnly: true,
+          sameSite: 'strict',
+          path: '/api/auth',
+        }),
+      );
+    });
+
+    it('should propagate UnauthorizedException for bad credentials', async () => {
+      const res = mockResponse();
+      authService.loginStudent.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.loginStudent(dto, res)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('resolveClassCode', () => {
+    it('should return classroom info for valid class code', async () => {
+      authService.resolveClassCode.mockResolvedValue({
+        classroom: {
+          id: 'cls-1',
+          name: 'Math 101',
+          grade: 3,
+          class_code: 'SUN-DRAGON-42',
+        },
+        students: [
+          { id: 'uuid-s1', display_name: 'Alice', avatar_id: 'av-1' },
+        ],
+      });
+
+      const result = await controller.resolveClassCode('SUN-DRAGON-42');
+
+      expect(authService.resolveClassCode).toHaveBeenCalledWith(
+        'SUN-DRAGON-42',
+      );
+      expect(result.classroom.name).toBe('Math 101');
+      expect(result.students).toHaveLength(1);
     });
   });
 
@@ -284,6 +356,35 @@ describe('AuthController', () => {
       expect(controller.teacherCheck(user)).toEqual({
         teacher: true,
         userId: 'auth0|teacher1',
+      });
+    });
+  });
+
+  describe('studentCheck', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|student1',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'auth0|student1',
+      });
+    });
+  });
+
+  describe('parentCheck', () => {
+    it('should return parent confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|parent1',
+        email: 'parent@example.com',
+        roles: ['parent'],
+      };
+
+      expect(controller.parentCheck(user)).toEqual({
+        parent: true,
+        userId: 'auth0|parent1',
       });
     });
   });

@@ -4,6 +4,7 @@ import {
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Req,
   Res,
@@ -23,7 +24,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { EmailLoginDto } from './dto/login.dto';
+import { EmailLoginDto, StudentLoginDto } from './dto/login.dto';
 
 const REFRESH_COOKIE_NAME = 'koblio_refresh';
 const REFRESH_COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -115,6 +116,37 @@ export class AuthController {
     return authResult;
   }
 
+  @Post('login/student')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Login (students via username/password)' })
+  @ApiResponse({ status: 200, description: 'Student login successful' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  async loginStudent(
+    @Body() dto: StudentLoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
+    const { authResult, refreshToken } =
+      await this.authService.loginStudent(dto);
+
+    if (refreshToken) {
+      setRefreshCookie(res, refreshToken);
+    }
+
+    return authResult;
+  }
+
+  @Get('classcode/:code')
+  @Public()
+  @ApiOperation({
+    summary: 'Resolve class code to classroom (K-2 login flow)',
+  })
+  @ApiResponse({ status: 200, description: 'Classroom found' })
+  @ApiResponse({ status: 404, description: 'Invalid class code' })
+  resolveClassCode(@Param('code') code: string) {
+    return this.authService.resolveClassCode(code);
+  }
+
   @Post('refresh')
   @Public()
   @HttpCode(HttpStatus.OK)
@@ -191,5 +223,25 @@ export class AuthController {
   @ApiResponse({ status: 403, description: 'Insufficient permissions' })
   teacherCheck(@CurrentUser() user: AuthenticatedUser) {
     return { teacher: true, userId: user.userId };
+  }
+
+  @Get('student/check')
+  @ApiBearerAuth()
+  @Roles(UserRole.STUDENT)
+  @ApiOperation({ summary: 'Verify student role access' })
+  @ApiResponse({ status: 200, description: 'Student access confirmed' })
+  @ApiResponse({ status: 403, description: 'Insufficient permissions' })
+  studentCheck(@CurrentUser() user: AuthenticatedUser) {
+    return { student: true, userId: user.userId };
+  }
+
+  @Get('parent/check')
+  @ApiBearerAuth()
+  @Roles(UserRole.PARENT)
+  @ApiOperation({ summary: 'Verify parent role access' })
+  @ApiResponse({ status: 200, description: 'Parent access confirmed' })
+  @ApiResponse({ status: 403, description: 'Insufficient permissions' })
+  parentCheck(@CurrentUser() user: AuthenticatedUser) {
+    return { parent: true, userId: user.userId };
   }
 }
