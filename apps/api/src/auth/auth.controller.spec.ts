@@ -31,6 +31,8 @@ describe('AuthController', () => {
       registerParent: jest.fn(),
       registerTeacher: jest.fn(),
       login: jest.fn(),
+      studentLogin: jest.fn(),
+      classCodeLogin: jest.fn(),
       refresh: jest.fn(),
       logout: jest.fn().mockResolvedValue(undefined),
       validateUserRoles: jest.fn(),
@@ -285,6 +287,121 @@ describe('AuthController', () => {
         teacher: true,
         userId: 'auth0|teacher1',
       });
+    });
+  });
+
+  describe('studentLogin', () => {
+    const dto = {
+      kind: 'student' as const,
+      username: 'bobby1234',
+      password: 'Secret123',
+    };
+
+    it('should return auth result for valid student login', async () => {
+      authService.studentLogin.mockResolvedValue({
+        authResult: {
+          access_token: 'at-student',
+          expires_in: 900,
+          user: { id: 'uuid-student-1', role: 'student', name: 'Bobby' },
+        },
+      });
+
+      const result = await controller.studentLogin(dto);
+
+      expect(result.access_token).toBe('at-student');
+      expect(result.user.role).toBe('student');
+      expect(authService.studentLogin).toHaveBeenCalledWith(dto);
+    });
+
+    it('should propagate UnauthorizedException for bad credentials', async () => {
+      authService.studentLogin.mockRejectedValue(
+        new UnauthorizedException('Invalid credentials'),
+      );
+
+      await expect(controller.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('classCodeLogin', () => {
+    const dto = {
+      kind: 'class_code' as const,
+      class_code: 'SUN-DRAGON-42',
+      picture_password: ['cat', 'dog', 'fish'],
+    };
+
+    it('should return auth result with classroom info', async () => {
+      authService.classCodeLogin.mockResolvedValue({
+        authResult: {
+          access_token: 'at-k2-student',
+          expires_in: 900,
+          user: { id: 'uuid-k2-1', role: 'student', name: 'Lily' },
+        },
+        classroom: { id: 'classroom-1', name: 'Grade 1A', grade: 1 },
+      });
+
+      const result = await controller.classCodeLogin(dto);
+
+      expect(result.access_token).toBe('at-k2-student');
+      expect(result.classroom.id).toBe('classroom-1');
+      expect(result.classroom.name).toBe('Grade 1A');
+    });
+
+    it('should propagate NotFoundException for invalid class code', async () => {
+      const { NotFoundException } = require('@nestjs/common');
+      authService.classCodeLogin.mockRejectedValue(
+        new NotFoundException('Class code not found'),
+      );
+
+      await expect(controller.classCodeLogin(dto)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should propagate UnauthorizedException for wrong picture password', async () => {
+      authService.classCodeLogin.mockRejectedValue(
+        new UnauthorizedException('Invalid picture password'),
+      );
+
+      await expect(controller.classCodeLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+  });
+
+  describe('studentCheck', () => {
+    it('should return student confirmation', () => {
+      const user: AuthenticatedUser = {
+        userId: 'uuid-student-1',
+        roles: ['student'],
+      };
+
+      expect(controller.studentCheck(user)).toEqual({
+        student: true,
+        userId: 'uuid-student-1',
+      });
+    });
+  });
+
+  describe('RBAC enforcement', () => {
+    it('should allow student to access getMe endpoint', () => {
+      const student: AuthenticatedUser = {
+        userId: 'uuid-student-1',
+        roles: ['student'],
+      };
+      const result = controller.getMe(student);
+      expect(result.roles).toEqual(['student']);
+      expect(result.email).toBeUndefined();
+    });
+
+    it('should verify students have no email (COPPA)', () => {
+      const student: AuthenticatedUser = {
+        userId: 'uuid-student-1',
+        roles: ['student'],
+      };
+      const result = controller.getMe(student);
+      expect(result.email).toBeUndefined();
     });
   });
 });

@@ -6,6 +6,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { UserRole as PrismaUserRole } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
@@ -58,6 +59,11 @@ export class UserService {
       );
     }
 
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+    const picturePasswordHash = dto.picture_password
+      ? await bcrypt.hash(JSON.stringify(dto.picture_password), 10)
+      : null;
+
     const child = await this.prisma.$transaction(async (tx) => {
       const newChild = await tx.user.create({
         data: {
@@ -65,6 +71,8 @@ export class UserService {
           role: PrismaUserRole.STUDENT,
           displayName: dto.name,
           username,
+          passwordHash,
+          picturePasswordHash,
           grade: dto.grade,
           country: parent.country,
         },

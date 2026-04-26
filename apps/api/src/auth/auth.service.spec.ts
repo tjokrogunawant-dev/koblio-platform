@@ -50,7 +50,12 @@ describe('AuthService', () => {
               };
               return config[key];
             }),
-            get: jest.fn(),
+            get: jest.fn((key: string, defaultValue?: string) => {
+              const config: Record<string, string> = {
+                JWT_LOCAL_SECRET: 'test-local-secret',
+              };
+              return config[key] ?? defaultValue;
+            }),
           },
         },
         { provide: PrismaService, useValue: prisma },
@@ -367,6 +372,212 @@ describe('AuthService', () => {
       expect(
         service.isStudentAccount({ userId: '1', roles: ['parent'] }),
       ).toBe(false);
+    });
+  });
+
+  describe('studentLogin', () => {
+    const dto = {
+      kind: 'student' as const,
+      username: 'bobby1234',
+      password: 'Secret123',
+    };
+
+    it('should authenticate student with valid username and password', async () => {
+      const bcrypt = require('bcryptjs');
+      const hash = await bcrypt.hash('Secret123', 10);
+
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-student-1',
+        auth0Id: 'child_uuid-parent_1234',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: hash,
+      });
+
+      const result = await service.studentLogin(dto);
+
+      expect(result.authResult.user.id).toBe('uuid-student-1');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.authResult.access_token).toBeDefined();
+      expect(result.authResult.expires_in).toBe(900);
+    });
+
+    it('should throw UnauthorizedException for non-existent username', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for wrong password', async () => {
+      const bcrypt = require('bcryptjs');
+      const hash = await bcrypt.hash('DifferentPassword', 10);
+
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-student-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: hash,
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException for non-student user', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-parent-1',
+        role: 'PARENT',
+        displayName: 'Alice',
+        username: 'bobby1234',
+        passwordHash: 'some-hash',
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException if student has no passwordHash', async () => {
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-student-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: null,
+      });
+
+      await expect(service.studentLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should return a valid JWT token for student', async () => {
+      const bcrypt = require('bcryptjs');
+      const jwt = require('jsonwebtoken');
+      const hash = await bcrypt.hash('Secret123', 10);
+
+      prisma.user.findUnique.mockResolvedValue({
+        id: 'uuid-student-1',
+        role: 'STUDENT',
+        displayName: 'Bobby',
+        username: 'bobby1234',
+        passwordHash: hash,
+      });
+
+      const result = await service.studentLogin(dto);
+      const decoded = jwt.decode(result.authResult.access_token) as Record<string, unknown>;
+
+      expect(decoded.sub).toBe('uuid-student-1');
+      expect(decoded.roles).toEqual(['student']);
+      expect(decoded.iss).toBe('koblio-local');
+    });
+  });
+
+  describe('classCodeLogin', () => {
+    const dto = {
+      kind: 'class_code' as const,
+      class_code: 'SUN-DRAGON-42',
+      picture_password: ['cat', 'dog', 'fish'],
+    };
+
+    it('should authenticate student via class code and picture password', async () => {
+      const bcrypt = require('bcryptjs');
+      const pictureHash = await bcrypt.hash(JSON.stringify(['cat', 'dog', 'fish']), 10);
+
+      prisma.classroom = {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'classroom-1',
+          name: 'Grade 1A',
+          grade: 1,
+          classCode: 'SUN-DRAGON-42',
+          enrollments: [
+            {
+              student: {
+                id: 'uuid-student-k2',
+                role: 'STUDENT',
+                displayName: 'Lily',
+                picturePasswordHash: pictureHash,
+              },
+            },
+          ],
+        }),
+      };
+
+      const result = await service.classCodeLogin(dto);
+
+      expect(result.authResult.user.id).toBe('uuid-student-k2');
+      expect(result.authResult.user.role).toBe('student');
+      expect(result.classroom.id).toBe('classroom-1');
+      expect(result.classroom.name).toBe('Grade 1A');
+      expect(result.classroom.grade).toBe(1);
+    });
+
+    it('should throw NotFoundException for invalid class code', async () => {
+      prisma.classroom = {
+        findUnique: jest.fn().mockResolvedValue(null),
+      };
+
+      await expect(service.classCodeLogin(dto)).rejects.toThrow(
+        'Class code not found',
+      );
+    });
+
+    it('should throw UnauthorizedException for wrong picture password', async () => {
+      const bcrypt = require('bcryptjs');
+      const pictureHash = await bcrypt.hash(JSON.stringify(['star', 'moon', 'sun']), 10);
+
+      prisma.classroom = {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'classroom-1',
+          name: 'Grade 1A',
+          grade: 1,
+          classCode: 'SUN-DRAGON-42',
+          enrollments: [
+            {
+              student: {
+                id: 'uuid-student-k2',
+                role: 'STUDENT',
+                displayName: 'Lily',
+                picturePasswordHash: pictureHash,
+              },
+            },
+          ],
+        }),
+      };
+
+      await expect(service.classCodeLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
+    });
+
+    it('should throw UnauthorizedException when no students have picture passwords', async () => {
+      prisma.classroom = {
+        findUnique: jest.fn().mockResolvedValue({
+          id: 'classroom-1',
+          name: 'Grade 1A',
+          grade: 1,
+          classCode: 'SUN-DRAGON-42',
+          enrollments: [
+            {
+              student: {
+                id: 'uuid-student-k2',
+                role: 'STUDENT',
+                displayName: 'Lily',
+                picturePasswordHash: null,
+              },
+            },
+          ],
+        }),
+      };
+
+      await expect(service.classCodeLogin(dto)).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 

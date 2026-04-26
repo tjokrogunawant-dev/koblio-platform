@@ -198,6 +198,82 @@ describe('UserService', () => {
       ).rejects.toThrow(ConflictException);
     });
 
+    it('should hash and store password when creating child account', async () => {
+      prisma.user.findUnique
+        .mockResolvedValueOnce(mockParent)
+        .mockResolvedValueOnce(null);
+
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          user: {
+            create: jest.fn().mockImplementation((args) => {
+              expect(args.data.passwordHash).toBeDefined();
+              expect(args.data.passwordHash).not.toBe(dto.password);
+              expect(typeof args.data.passwordHash).toBe('string');
+              return mockChild;
+            }),
+          },
+          parentChildLink: { create: jest.fn().mockResolvedValue({}) },
+          parentalConsent: { create: jest.fn().mockResolvedValue({}) },
+        };
+        return fn(tx);
+      });
+
+      await service.createChildAccount('auth0|parent1', dto, '192.168.1.1');
+    });
+
+    it('should hash and store picture password when provided', async () => {
+      const dtoWithPicture = {
+        ...dto,
+        picture_password: ['cat', 'dog', 'fish'],
+      };
+
+      prisma.user.findUnique
+        .mockResolvedValueOnce(mockParent)
+        .mockResolvedValueOnce(null);
+
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          user: {
+            create: jest.fn().mockImplementation((args) => {
+              expect(args.data.picturePasswordHash).toBeDefined();
+              expect(args.data.picturePasswordHash).not.toBe(
+                JSON.stringify(dtoWithPicture.picture_password),
+              );
+              return mockChild;
+            }),
+          },
+          parentChildLink: { create: jest.fn().mockResolvedValue({}) },
+          parentalConsent: { create: jest.fn().mockResolvedValue({}) },
+        };
+        return fn(tx);
+      });
+
+      await service.createChildAccount('auth0|parent1', dtoWithPicture, '192.168.1.1');
+    });
+
+    it('should set picturePasswordHash to null when not provided', async () => {
+      prisma.user.findUnique
+        .mockResolvedValueOnce(mockParent)
+        .mockResolvedValueOnce(null);
+
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          user: {
+            create: jest.fn().mockImplementation((args) => {
+              expect(args.data.picturePasswordHash).toBeNull();
+              return mockChild;
+            }),
+          },
+          parentChildLink: { create: jest.fn().mockResolvedValue({}) },
+          parentalConsent: { create: jest.fn().mockResolvedValue({}) },
+        };
+        return fn(tx);
+      });
+
+      await service.createChildAccount('auth0|parent1', dto, '192.168.1.1');
+    });
+
     it('should not collect email from child account (COPPA)', async () => {
       prisma.user.findUnique
         .mockResolvedValueOnce(mockParent)

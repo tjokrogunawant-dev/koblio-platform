@@ -25,9 +25,11 @@ model User {
   email       String?  @unique
   role        UserRole
   displayName String   @map("display_name")
-  username    String?  @unique
-  grade       Int?
-  country     String?
+  username            String?  @unique
+  passwordHash        String?  @map("password_hash")
+  picturePasswordHash String?  @map("picture_password_hash")
+  grade               Int?
+  country             String?
   locale      String?
   avatarId    String?  @map("avatar_id")
   createdAt   DateTime @default(now()) @map("created_at")

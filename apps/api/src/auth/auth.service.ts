@@ -3,17 +3,21 @@ import {
   ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserRole as PrismaUserRole } from '@prisma/client';
+import * as bcrypt from 'bcryptjs';
+import * as jwt from 'jsonwebtoken';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
-import { EmailLoginDto } from './dto/login.dto';
+import { EmailLoginDto, StudentLoginDto, ClassCodeLoginDto } from './dto/login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
+import { LOCAL_JWT_ISSUER } from './constants';
 
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
@@ -271,12 +275,121 @@ export class AuthService {
     return user.roles.includes('student') && !user.email;
   }
 
+  async studentLogin(dto: StudentLoginDto): Promise<{ authResult: AuthResult }> {
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT || !user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const passwordValid = await bcrypt.compare(dto.password, user.passwordHash);
+    if (!passwordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    this.logger.log(`Student login: ${user.id}`);
+
+    return {
+      authResult: {
+        access_token: this.signLocalToken(user.id, 'student'),
+        expires_in: 900,
+        user: {
+          id: user.id,
+          role: 'student',
+          name: user.displayName,
+        },
+      },
+    };
+  }
+
+  async classCodeLogin(dto: ClassCodeLoginDto): Promise<{
+    authResult: AuthResult;
+    classroom: { id: string; name: string; grade: number };
+  }> {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode: dto.class_code },
+      include: {
+        enrollments: {
+          include: { student: true },
+        },
+      },
+    });
+
+    if (!classroom) {
+      throw new NotFoundException('Class code not found');
+    }
+
+    const picturePasswordJson = JSON.stringify(dto.picture_password);
+
+    let matchedStudent: typeof classroom.enrollments[0]['student'] | null = null;
+    for (const enrollment of classroom.enrollments) {
+      const student = enrollment.student;
+      if (student.picturePasswordHash) {
+        const match = await bcrypt.compare(
+          picturePasswordJson,
+          student.picturePasswordHash,
+        );
+        if (match) {
+          matchedStudent = student;
+          break;
+        }
+      }
+    }
+
+    if (!matchedStudent) {
+      throw new UnauthorizedException('Invalid picture password');
+    }
+
+    this.logger.log(`Class code login: student ${matchedStudent.id} via classroom ${classroom.id}`);
+
+    return {
+      authResult: {
+        access_token: this.signLocalToken(matchedStudent.id, 'student'),
+        expires_in: 900,
+        user: {
+          id: matchedStudent.id,
+          role: 'student',
+          name: matchedStudent.displayName,
+        },
+      },
+      classroom: {
+        id: classroom.id,
+        name: classroom.name,
+        grade: classroom.grade,
+      },
+    };
+  }
+
   getAuth0Config() {
     return {
       domain: this.configService.getOrThrow<string>('AUTH0_ISSUER_URL'),
       audience: this.configService.getOrThrow<string>('AUTH0_AUDIENCE'),
       clientId: this.configService.getOrThrow<string>('AUTH0_CLIENT_ID'),
     };
+  }
+
+  private signLocalToken(userId: string, role: string): string {
+    const secret = this.configService.get<string>(
+      'JWT_LOCAL_SECRET',
+      'koblio-local-dev-secret-change-in-production',
+    );
+    const audience = this.configService.getOrThrow<string>('AUTH0_AUDIENCE');
+
+    return jwt.sign(
+      {
+        sub: userId,
+        roles: [role],
+      },
+      secret,
+      {
+        algorithm: 'HS256',
+        expiresIn: '15m',
+        issuer: LOCAL_JWT_ISSUER,
+        audience,
+      },
+    );
   }
 
   private hashToken(token: string): string {
