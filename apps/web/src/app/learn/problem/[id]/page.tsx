@@ -21,6 +21,9 @@ interface AnswerResult {
   correctAnswer: string;
   solution: string;
   yourAnswer: string;
+  coinsEarned?: number;
+  xpEarned?: number;
+  leveledUp?: boolean;
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -160,6 +163,9 @@ export default function ProblemPage() {
         correctAnswer: res.correctAnswer,
         solution: res.solution,
         yourAnswer: answer,
+        coinsEarned: res.coinsEarned,
+        xpEarned: res.xpEarned,
+        leveledUp: res.leveledUp,
       });
     } catch {
       // Backend not available — fall back to local comparison
@@ -385,6 +391,13 @@ export default function ProblemPage() {
       </header>
 
       <main className="mx-auto max-w-2xl p-8">
+        {/* Level Up banner */}
+        {result?.leveledUp && (
+          <div className="mb-4 rounded-xl bg-indigo-100 p-4 text-center text-lg font-bold text-indigo-700 animate-pulse">
+            Level Up! 🎉
+          </div>
+        )}
+
         {/* Feedback banner */}
         <div
           className={`mb-6 rounded-xl p-5 ${
@@ -398,6 +411,22 @@ export default function ProblemPage() {
           >
             {isCorrect ? '✅ Correct!' : '❌ Not quite.'}
           </p>
+
+          {/* Reward badges — shown when API returns reward fields */}
+          {result && (result.coinsEarned !== undefined || result.xpEarned !== undefined) && (
+            <div className="mt-3 flex flex-wrap gap-2">
+              {result.coinsEarned !== undefined && result.coinsEarned > 0 && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-yellow-100 px-3 py-1 text-sm font-semibold text-yellow-700">
+                  +{result.coinsEarned} 🪙
+                </span>
+              )}
+              {result.xpEarned !== undefined && result.xpEarned > 0 && (
+                <span className="inline-flex items-center gap-1 rounded-full bg-indigo-100 px-3 py-1 text-sm font-semibold text-indigo-700">
+                  +{result.xpEarned} XP
+                </span>
+              )}
+            </div>
+          )}
 
           {!isCorrect && result && (
             <div className="mt-3 space-y-1 text-sm">

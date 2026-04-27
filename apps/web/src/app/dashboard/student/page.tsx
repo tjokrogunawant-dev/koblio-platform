@@ -1,27 +1,58 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
 import { useAuth } from '@/components/providers/auth-provider';
+import { CoinCounter } from '@/components/gamification/coin-counter';
+import { XPBar } from '@/components/gamification/xp-bar';
+import { StreakBadge } from '@/components/gamification/streak-badge';
+import { DailyChallengeCard } from '@/components/gamification/daily-challenge-card';
+import {
+  getStudentProfile,
+  getDailyChallenge,
+  type StudentGamificationProfile,
+  type Problem,
+} from '@/lib/api';
 
 export default function StudentDashboardPage() {
   const router = useRouter();
-  const { user, logout } = useAuth();
+  const { user, token, logout } = useAuth();
+
+  const [profile, setProfile] = useState<StudentGamificationProfile | null>(null);
+  const [dailyChallenge, setDailyChallenge] = useState<Problem | null>(null);
+  const [loadingProfile, setLoadingProfile] = useState(false);
+
+  const displayName = user?.username ?? user?.name ?? 'Student';
+  const grade = user?.grade ?? 1;
+
+  useEffect(() => {
+    if (!token) return;
+
+    setLoadingProfile(true);
+    void getStudentProfile(token)
+      .then((p) => setProfile(p))
+      .catch(() => {
+        // Backend not available — silently degrade
+      })
+      .finally(() => setLoadingProfile(false));
+  }, [token]);
+
+  useEffect(() => {
+    void getDailyChallenge(grade).then((p) => setDailyChallenge(p));
+  }, [grade]);
 
   function handleLogout() {
     logout();
     router.push('/login');
   }
 
-  const displayName = user?.username ?? user?.name ?? 'Student';
-  const grade = user?.grade;
+  function handleStartChallenge() {
+    if (dailyChallenge) {
+      router.push(`/learn/problem/${dailyChallenge.id}`);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -32,15 +63,49 @@ export default function StudentDashboardPage() {
         </Button>
       </header>
 
-      <main className="mx-auto max-w-4xl space-y-8 p-8">
+      <main className="mx-auto max-w-4xl space-y-6 p-8">
+        {/* Welcome row */}
         <div>
           <h1 className="text-3xl font-bold text-slate-800">
-            Welcome, {displayName}!
+            Welcome back, {displayName}!
           </h1>
-          {grade !== undefined && (
-            <p className="mt-1 text-slate-500">Grade {grade}</p>
-          )}
+          <p className="mt-1 text-slate-500">Grade {grade}</p>
         </div>
+
+        {/* Stats row */}
+        {(profile || loadingProfile) && (
+          <div className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            {loadingProfile && !profile ? (
+              <p className="text-sm text-slate-400">Loading stats…</p>
+            ) : profile ? (
+              <div className="space-y-4">
+                <div className="flex flex-wrap items-center gap-6">
+                  <CoinCounter coins={profile.coins} animated />
+                  <StreakBadge streakCount={profile.streakCount} />
+                  <Link
+                    href="/dashboard/student/leaderboard"
+                    className="ml-auto text-sm font-medium text-indigo-600 hover:text-indigo-700"
+                  >
+                    View Leaderboard →
+                  </Link>
+                </div>
+                <XPBar
+                  xp={profile.xp}
+                  level={profile.level}
+                  xpToNextLevel={profile.levelInfo.xpToNextLevel}
+                  progressPercent={profile.levelInfo.progressPercent}
+                />
+              </div>
+            ) : null}
+          </div>
+        )}
+
+        {/* Daily Challenge */}
+        <DailyChallengeCard
+          problem={dailyChallenge}
+          grade={grade}
+          onStart={handleStartChallenge}
+        />
 
         {/* Start Learning CTA */}
         <div>
@@ -50,43 +115,6 @@ export default function StudentDashboardPage() {
           >
             🚀 Start Learning
           </Link>
-        </div>
-
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base text-slate-600">
-                Today&apos;s Practice
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-slate-500">
-                Your practice session will appear here.
-              </p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base text-slate-600">
-                Coins Earned
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-indigo-600">—</p>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-base text-slate-600">
-                Streak
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-3xl font-bold text-indigo-600">—</p>
-            </CardContent>
-          </Card>
         </div>
       </main>
     </div>
