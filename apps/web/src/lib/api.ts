@@ -90,6 +90,24 @@ export async function registerTeacher(
   return handleResponse<AuthResponse>(res);
 }
 
+export interface RegisterStudentData {
+  classCode: string;
+  displayName: string;
+  username: string;
+  password: string;
+}
+
+export async function registerStudent(
+  data: RegisterStudentData,
+): Promise<AuthResponse> {
+  const res = await fetch(`${API_BASE}/auth/register/student`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<AuthResponse>(res);
+}
+
 // ─── Content / Problems ──────────────────────────────────────────────────────
 
 export type ProblemType = 'MCQ' | 'FILL_BLANK' | 'TRUE_FALSE';

@@ -20,7 +20,22 @@ export default function RegisterPage() {
         <p className="mt-2 text-slate-500">Who are you signing up as?</p>
       </div>
 
-      <div className="grid w-full max-w-lg gap-4 sm:grid-cols-2">
+      <div className="grid w-full max-w-2xl gap-4 sm:grid-cols-3">
+        <Card className="flex flex-col items-center gap-4 p-6 text-center hover:shadow-md transition-shadow">
+          <CardHeader className="p-0">
+            <div className="text-4xl">🎒</div>
+            <CardTitle className="mt-2 text-xl">I&apos;m a Student</CardTitle>
+            <CardDescription>
+              Join your class with a code from your teacher
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="p-0">
+            <Button asChild className="bg-indigo-600 hover:bg-indigo-700">
+              <Link href="/register/student">Join with class code</Link>
+            </Button>
+          </CardContent>
+        </Card>
+
         <Card className="flex flex-col items-center gap-4 p-6 text-center hover:shadow-md transition-shadow">
           <CardHeader className="p-0">
             <div className="text-4xl">👨‍👩‍👧</div>
@@ -30,7 +45,7 @@ export default function RegisterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <Button asChild className="bg-indigo-600 hover:bg-indigo-700">
+            <Button asChild variant="outline">
               <Link href="/register/parent">Sign up as Parent</Link>
             </Button>
           </CardContent>
@@ -45,7 +60,7 @@ export default function RegisterPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="p-0">
-            <Button asChild className="bg-indigo-600 hover:bg-indigo-700">
+            <Button asChild variant="outline">
               <Link href="/register/teacher">Sign up as Teacher</Link>
             </Button>
           </CardContent>

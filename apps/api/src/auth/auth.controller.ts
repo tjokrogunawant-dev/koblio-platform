@@ -23,6 +23,7 @@ import { CurrentUser } from './decorators/current-user.decorator';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
+import { RegisterStudentDto } from './dto/register-student.dto';
 import { EmailLoginDto } from './dto/login.dto';
 import { StudentLoginDto } from './dto/student-login.dto';
 
@@ -95,6 +96,17 @@ export class AuthController {
     }
 
     return authResult;
+  }
+
+  @Post('register/student')
+  @Public()
+  @HttpCode(HttpStatus.CREATED)
+  @ApiOperation({ summary: 'Register a new student account using a class code' })
+  @ApiResponse({ status: 201, description: 'Student account created and enrolled' })
+  @ApiResponse({ status: 409, description: 'Class code not found or username taken' })
+  @ApiResponse({ status: 422, description: 'Validation failed' })
+  async registerStudent(@Body() dto: RegisterStudentDto) {
+    return this.authService.registerStudent(dto);
   }
 
   @Post('login')

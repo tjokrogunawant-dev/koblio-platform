@@ -14,6 +14,7 @@ import { RedisService } from '../redis/redis.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
+import { RegisterStudentDto } from './dto/register-student.dto';
 import { EmailLoginDto } from './dto/login.dto';
 import { StudentLoginDto } from './dto/student-login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
@@ -265,6 +266,56 @@ export class AuthService {
     ]);
 
     this.logger.log('User logged out, refresh token revoked');
+  }
+
+  async registerStudent(dto: RegisterStudentDto): Promise<AuthResult> {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode: dto.classCode.toUpperCase() },
+    });
+    if (!classroom) {
+      throw new ConflictException('Class code not found');
+    }
+
+    const existing = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+    if (existing) {
+      throw new ConflictException('Username already taken');
+    }
+
+    const passwordHash = await bcrypt.hash(dto.password, 10);
+
+    const student = await this.prisma.$transaction(async (tx) => {
+      const user = await tx.user.create({
+        data: {
+          role: PrismaUserRole.STUDENT,
+          displayName: dto.displayName,
+          username: dto.username,
+          passwordHash,
+          grade: classroom.grade,
+        },
+      });
+      await tx.enrollment.create({
+        data: { studentId: user.id, classroomId: classroom.id },
+      });
+      return user;
+    });
+
+    this.logger.log(`Student registered: ${student.id} joined classroom ${classroom.id}`);
+
+    const payload = {
+      sub: student.id,
+      roles: ['student'],
+      iss: 'koblio-internal',
+      username: student.username,
+      grade: student.grade,
+    };
+
+    return {
+      access_token: this.jwtService.sign(payload),
+      expires_in: 3600,
+      user: { id: student.id, role: 'student', name: student.displayName },
+    };
   }
 
   async loginStudent(dto: StudentLoginDto): Promise<AuthResult> {
