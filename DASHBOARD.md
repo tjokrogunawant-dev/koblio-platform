@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-27 | **By:** PM | **Sprint:** 19
+**Last updated:** 2026-04-27 | **By:** PM | **Sprint:** 19 (TG1-T01 brief written)
 
 ---
 
@@ -35,7 +35,7 @@
 
 | Task ID | Title | Status | Last Actor |
 |---|---|---|---|
-| TG1-T01 | Student profile setup page | pending | — |
+| TG1-T01 | Student profile setup page | in-progress | PM |
 | TG1-T02 | Student home dashboard | pending | — |
 | TG1-T03 | Forgot password / reset flow | pending | — |
 | TG1-T04 | Playwright e2e smoke tests | pending | — |
@@ -46,8 +46,8 @@
 
 | Field | Value |
 |---|---|
-| Next role | PM |
-| Current task | (none) |
+| Next role | DEV |
+| Current task | TG1-T01 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
 ---
@@ -79,6 +79,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-27 | PM | Brief written for TG1-T01: Student profile setup page |
 | 2026-04-27 | PM | Sprint 19 launched — Trial Gate 1 polish tasks |
 | 2026-04-27 | DEV | Auth0 removed — internal bcrypt + JWT (`b16ec63`) |
 | 2026-04-27 | DEV | Student self-registration via class code (`c7e5af1`) |
