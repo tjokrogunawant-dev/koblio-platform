@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/providers/auth-provider';
 import { Avatar } from '@/components/avatar';
+import { BadgeShelf } from '@/components/badge-shelf';
 import { CoinCounter } from '@/components/gamification/coin-counter';
 import { XPBar } from '@/components/gamification/xp-bar';
 import { StreakBadge } from '@/components/gamification/streak-badge';
@@ -14,9 +15,11 @@ import {
   getStudentProfile,
   getDailyChallenge,
   getStudentAssignments,
+  getMyBadges,
   type StudentGamificationProfile,
   type Problem,
   type StudentAssignment,
+  type BadgeDto,
 } from '@/lib/api';
 
 export default function StudentDashboardPage() {
@@ -28,6 +31,7 @@ export default function StudentDashboardPage() {
   const [loadingProfile, setLoadingProfile] = useState(false);
   const [assignments, setAssignments] = useState<StudentAssignment[]>([]);
   const [loadingAssignments, setLoadingAssignments] = useState(false);
+  const [badges, setBadges] = useState<BadgeDto[]>([]);
 
   const displayName = user?.username ?? user?.name ?? 'Student';
   const grade = user?.grade ?? 1;
@@ -50,6 +54,12 @@ export default function StudentDashboardPage() {
         // silently degrade — assignments section will be empty
       })
       .finally(() => setLoadingAssignments(false));
+
+    void getMyBadges(token)
+      .then((b) => setBadges(b))
+      .catch(() => {
+        // silently degrade — badge shelf will show empty state
+      });
   }, [token]);
 
   useEffect(() => {
@@ -144,6 +154,9 @@ export default function StudentDashboardPage() {
             🚀 Start Learning
           </Link>
         </div>
+
+        {/* Badge shelf */}
+        <BadgeShelf badges={badges} />
 
         {/* Assignments section */}
         <section>

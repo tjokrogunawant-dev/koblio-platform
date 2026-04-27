@@ -460,6 +460,37 @@ export async function getMyChildren(token: string): Promise<ChildRef[]> {
   return handleResponse<ChildRef[]>(res);
 }
 
+// ─── Badges ───────────────────────────────────────────────────────────────────
+
+export type BadgeType =
+  | 'FIRST_CORRECT'
+  | 'PERFECT_10'
+  | 'STREAK_7'
+  | 'STREAK_30'
+  | 'PROBLEMS_100'
+  | 'CORRECT_50'
+  | 'FRACTION_MASTER'
+  | 'SPEED_DEMON'
+  | 'MATH_EXPLORER'
+  | 'TOP_OF_CLASS';
+
+export interface BadgeDto {
+  id: string;
+  type: BadgeType;
+  awardedAt: string;
+  name: string;
+  description: string;
+  iconEmoji: string;
+}
+
+export async function getMyBadges(token: string): Promise<BadgeDto[]> {
+  const res = await fetch(`${API_BASE}/badges/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  const data = await handleResponse<{ badges: BadgeDto[] }>(res);
+  return data.badges;
+}
+
 // ─── Avatar / Profile ─────────────────────────────────────────────────────────
 
 export interface StudentProfile {
