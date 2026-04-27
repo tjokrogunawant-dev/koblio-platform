@@ -1,4 +1,7 @@
+import 'package:flutter_appauth/flutter_appauth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:koblio_mobile/config/env_config.dart';
 import 'package:koblio_mobile/services/api_client.dart';
 import 'package:koblio_mobile/services/auth_interceptor.dart';
 
@@ -111,23 +114,65 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
-  /// Parent / Teacher login — Auth0 PKCE flow via flutter_appauth.
+  /// Parent / Teacher login — Auth0 Authorization Code + PKCE flow.
   ///
-  /// Auth0 credentials are environment-specific and are loaded from [EnvConfig].
-  /// This stub logs the intent and surfaces a not-yet-configured message;
-  /// the real implementation will be wired up in P3-T04 once Auth0 is provisioned.
+  /// Opens the Auth0 universal login page in a secure browser session.
+  /// On success, stores the access token via [AuthInterceptor] and updates
+  /// state to authenticated.
+  ///
+  /// When [EnvConfig] credentials are still placeholder values the PKCE
+  /// exchange will fail — the error propagates so the UI can show a SnackBar.
   Future<void> loginWithAuth0({required String role}) async {
-    // Auth0 PKCE integration is pending Auth0 tenant provisioning (P3-T04).
-    // The full flow will use FlutterAppAuth.authorizeAndExchangeCode() with
-    // the redirect URI registered in the Auth0 dashboard.
-    throw UnimplementedError(
-      'Auth0 PKCE login is not yet configured. '
-      'Provision an Auth0 tenant and set EnvConfig auth0* fields to enable.',
-    );
+    state = state.copyWith(isLoading: true);
+    try {
+      const appAuth = FlutterAppAuth();
+      final result = await appAuth.authorizeAndExchangeCode(
+        AuthorizationTokenRequest(
+          EnvConfig.current.auth0ClientId,
+          EnvConfig.auth0RedirectUri,
+          issuer: 'https://${EnvConfig.current.auth0Domain}',
+          scopes: ['openid', 'profile', 'email', 'offline_access'],
+          additionalParameters: {
+            // Pass the desired role as a login_hint so the Auth0 action can
+            // pre-select the correct connection or apply role-based rules.
+            'login_hint': role.toLowerCase(),
+          },
+        ),
+      );
+
+      if (result?.accessToken == null) {
+        throw Exception('Auth0 returned no access token');
+      }
+
+      final accessToken = result!.accessToken!;
+      final refreshToken = result.refreshToken;
+
+      // Persist tokens through the shared AuthInterceptor so all Dio calls
+      // automatically include the Authorization header.
+      await _authInterceptor.saveTokens(
+        accessToken: accessToken,
+        refreshToken: refreshToken,
+      );
+
+      // Also persist the role so it survives cold restarts (read back in
+      // checkAuthStatus via /auth/me; stored here as a fast-path cache).
+      const storage = FlutterSecureStorage();
+      await storage.write(key: 'auth_role', value: role);
+
+      // Verify against the API and populate full state (userId, displayName).
+      await checkAuthStatus();
+    } catch (_) {
+      state = state.copyWith(isLoading: false);
+      rethrow;
+    }
   }
 
+  /// Clears all stored tokens and resets auth state to unauthenticated.
   Future<void> logout() async {
+    const storage = FlutterSecureStorage();
     await _authInterceptor.clearTokens();
+    await storage.delete(key: 'auth_role');
+    await storage.delete(key: 'auth_user_id');
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 
