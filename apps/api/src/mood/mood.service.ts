@@ -64,21 +64,10 @@ export class MoodService {
       `Mood detection: student=${studentId} window=${attempts.length} accuracy=${accuracy.toFixed(2)} avgTimeMs=${Math.round(avgTimeMs)}`,
     );
 
-    // State transition rules (applied in specificity order)
-    if (accuracy >= 0.8 && avgTimeMs < 5000) {
-      return MoodState.BORED;
-    }
-    if (accuracy >= 0.7 && avgTimeMs >= 5000 && avgTimeMs <= 30000) {
-      return MoodState.FLOW;
-    }
-    if (accuracy < 0.4 && avgTimeMs < 10000) {
-      return MoodState.FRUSTRATED;
-    }
-    if (accuracy < 0.4 && avgTimeMs >= 10000) {
-      return MoodState.CONFUSED;
-    }
-
-    // Default
+    // BORED checked before FLOW — subset condition (accuracy>=0.8 satisfies both)
+    if (accuracy >= 0.8 && avgTimeMs < 5000) return MoodState.BORED;
+    if (accuracy < 0.4 && avgTimeMs < 10000) return MoodState.FRUSTRATED;
+    if (accuracy < 0.4 && avgTimeMs >= 10000) return MoodState.CONFUSED;
     return MoodState.FLOW;
   }
 

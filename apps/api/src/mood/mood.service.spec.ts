@@ -66,6 +66,18 @@ describe('MoodService', () => {
       expect(await service.detectMood('student-1')).toBe(MoodState.FLOW);
     });
 
+    it('returns FLOW via default fall-through (mid accuracy, slow pace)', async () => {
+      // accuracy=0.6 (<0.7 so not BORED, >=0.4 so not FRUSTRATED/CONFUSED) → FLOW default
+      await build([
+        { correct: true, timeSpentMs: 40000 },
+        { correct: true, timeSpentMs: 40000 },
+        { correct: true, timeSpentMs: 40000 },
+        { correct: false, timeSpentMs: 40000 },
+        { correct: false, timeSpentMs: 40000 },
+      ]);
+      expect(await service.detectMood('student-1')).toBe(MoodState.FLOW);
+    });
+
     it('returns FLOW when accuracy is exactly 0.7 and avgTimeMs is exactly 5000 (lower bound)', async () => {
       // 3.5/5 is not possible with integers — simulate with 7 correct in a 10-attempt
       // window limited to 5: use 5 attempts where accuracy rounds to >=0.7

@@ -154,7 +154,7 @@ export class SchedulerService {
   /**
    * Get the next recommended problem for a student.
    * Priority: due cards first, then new cards.
-   * Returns null if no problems are available.
+   * @deprecated Use getNextProblemBlended — this method ignores mood weights and BKT scoring.
    */
   async getNextProblem(
     studentId: string,
