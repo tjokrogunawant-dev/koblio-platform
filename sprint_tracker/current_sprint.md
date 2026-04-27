@@ -21,7 +21,7 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-None yet — Sprint 08 just started.
+QC Agent reviewing Sprint 08 deliverables (P2-T01, P2-T02, P2-T08). Pending QA pass before Sprint 09 launches.
 
 ---
 
@@ -76,6 +76,9 @@ None yet — Sprint 08 just started.
 | P1-T34* | Teacher Dashboard UI (classes, assignments, progress tabs) | S07 | `e1fdd52` |
 | P1-T35* | Parent Dashboard UI (child progress cards, linked children) | S07 | `49a625c` |
 | P1-T36* | Student Assignment Solve Flow | S07 | `e1fdd52` |
+| P2-T01 | Badge System (10 types, synchronous award, idempotent) | S08 | `9261cb0` |
+| P2-T02 | Avatar Selection (8 slugs, PUT /me/avatar, avatar component) | S08 | `44bfbe6` |
+| P2-T08 | Problem Seed Expansion (50 → 200 problems, Grades 1-3) | S08 | `44bfbe6` |
 
 ---
 
@@ -85,26 +88,16 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 08 — Section 6, Part 1)
+## Up Next (Sprint 09 — Section 6, Part 2)
 
-Tasks from `koblio_mvp_roadmap.md` Section 6:
+Tasks from `koblio_mvp_roadmap.md` Section 6 (pending Sprint 08 QA pass):
 
-- **P2-T01**: Badge system — 10 badge types, synchronous award in AttemptService (no BullMQ for MVP)
-  - Badge types: First Correct, First Perfect Score, 7-Day Streak, 30-Day Streak, 100 Problems Attempted, 50 Correct, Fraction Master (grade 3 fractions 100% correct), Speed Demon (correct answer in <10s), Math Explorer (5 different topics), Top of Class (leaderboard rank 1)
-  - Prisma: `Badge` model (type enum, studentId, awardedAt), `GET /badges/me` endpoint
-  - Award badges after each attempt submit; idempotent (no duplicates)
-  - Frontend: badge shelf in student dashboard + badge detail tooltip
-
-- **P2-T02**: Avatar selection
-  - 8 pre-made avatars identified by slug (fox, owl, bear, penguin, cat, dog, rabbit, dragon)
-  - `User.avatarSlug String?` field; `PUT /me/avatar` endpoint
-  - Frontend: avatar picker on student profile setup, avatar shown in dashboard header
-
-- **P2-T08**: Expand seed content to 200+ problems (P0 priority)
-  - Add Grade 1-3 complete coverage: expand from 50 to 200+ problems
-  - All problem types (MCQ, fill-in-blank, true/false), all strands
+- **P2-T03**: Badge shelf UI — student dashboard badge grid, tooltip with name/description/earned date
+- **P2-T04**: Weekly email digest (SendGrid/Resend) — parent gets child weekly summary (attempts, XP, badges earned)
+- **P2-T07**: Admin CMS — basic problem authoring UI at `/admin/problems` (teacher/admin only); create/edit JSONB problems
+- **TOP_OF_CLASS badge**: Wire into BadgeService once leaderboard rank-1 detection is in place
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 07 complete. Section 5 (Teacher Dashboard) closed. Moving to Sprint 08 (Section 6 — Growth Features Part 1) immediately.
+2026-04-27 by PM — Sprint 08 implementation complete (P2-T01 badge system, P2-T02 avatar, P2-T08 seed expansion). QA in progress before Sprint 09 launch.
