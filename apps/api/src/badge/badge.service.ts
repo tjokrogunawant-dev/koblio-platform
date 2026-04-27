@@ -185,7 +185,7 @@ export class BadgeService {
             studentId,
             problem: {
               grade: 3,
-              strand: { contains: 'fraction', mode: 'insensitive' },
+              topic: { contains: 'fraction', mode: 'insensitive' },
             },
           },
           select: { correct: true },
