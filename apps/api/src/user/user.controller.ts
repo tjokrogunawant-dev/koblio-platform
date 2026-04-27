@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Ip, Post } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@koblio/shared';
 import { UserService } from './user.service';
@@ -8,6 +8,7 @@ import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { AuthenticatedUser } from '../auth/interfaces/jwt-payload.interface';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
+import { JoinClassDto } from './dto/join-class.dto';
 
 @ApiTags('Users')
 @Controller()
@@ -43,6 +44,27 @@ export class UserController {
     return this.userService.listChildren(user.userId);
   }
 
+  @Get('parents/me/children/:childId')
+  @Roles(UserRole.PARENT)
+  @ApiOperation({ summary: 'Get a single child profile (parent only)' })
+  getChild(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('childId', ParseUUIDPipe) childId: string,
+  ) {
+    return this.userService.getChild(user.userId, childId);
+  }
+
+  @Post('parents/me/children/:childId/join-class')
+  @Roles(UserRole.PARENT)
+  @ApiOperation({ summary: 'Join a classroom via class code (parent only)' })
+  joinClass(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('childId', ParseUUIDPipe) childId: string,
+    @Body() dto: JoinClassDto,
+  ) {
+    return this.userService.joinClassByCode(user.userId, childId, dto);
+  }
+
   @Post('schools')
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a school (teacher/admin only)' })
@@ -51,5 +73,12 @@ export class UserController {
     @Body() dto: CreateSchoolDto,
   ) {
     return this.userService.createSchool(user.userId, dto);
+  }
+
+  @Get('schools/:schoolId')
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get school info with teacher and classroom counts' })
+  getSchool(@Param('schoolId', ParseUUIDPipe) schoolId: string) {
+    return this.userService.getSchool(schoolId);
   }
 }

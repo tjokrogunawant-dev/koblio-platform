@@ -10,6 +10,7 @@ import { UserRole as PrismaUserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
+import { JoinClassDto } from './dto/join-class.dto';
 
 @Injectable()
 export class UserService {
@@ -185,6 +186,152 @@ export class UserService {
       id: school.id,
       name: school.name,
       country: school.country,
+    };
+  }
+
+  async getChild(parentAuth0Id: string, childId: string) {
+    const parent = await this.prisma.user.findUnique({
+      where: { auth0Id: parentAuth0Id },
+    });
+
+    if (!parent) {
+      throw new NotFoundException('Parent account not found');
+    }
+
+    const link = await this.prisma.parentChildLink.findUnique({
+      where: {
+        parentId_childId: {
+          parentId: parent.id,
+          childId,
+        },
+      },
+      include: {
+        child: {
+          include: {
+            enrollments: {
+              include: { classroom: true },
+            },
+          },
+        },
+      },
+    });
+
+    if (!link) {
+      throw new NotFoundException('Child not found or does not belong to this parent');
+    }
+
+    const child = link.child;
+    return {
+      id: child.id,
+      role: 'student',
+      name: child.displayName,
+      username: child.username,
+      grade: child.grade,
+      country: child.country,
+      classroom_id: child.enrollments[0]?.classroomId ?? null,
+      linked_parent_ids: [parent.id],
+    };
+  }
+
+  async joinClassByCode(
+    parentAuth0Id: string,
+    childId: string,
+    dto: JoinClassDto,
+  ) {
+    const parent = await this.prisma.user.findUnique({
+      where: { auth0Id: parentAuth0Id },
+    });
+
+    if (!parent) {
+      throw new NotFoundException('Parent account not found');
+    }
+
+    const link = await this.prisma.parentChildLink.findUnique({
+      where: {
+        parentId_childId: {
+          parentId: parent.id,
+          childId,
+        },
+      },
+      include: { child: true },
+    });
+
+    if (!link) {
+      throw new NotFoundException('Child not found or does not belong to this parent');
+    }
+
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { classCode: dto.class_code.toUpperCase() },
+    });
+
+    if (!classroom) {
+      throw new NotFoundException(`Classroom with code "${dto.class_code}" not found`);
+    }
+
+    const existing = await this.prisma.enrollment.findUnique({
+      where: {
+        studentId_classroomId: {
+          studentId: childId,
+          classroomId: classroom.id,
+        },
+      },
+    });
+
+    if (existing) {
+      throw new ConflictException('Child is already enrolled in this classroom');
+    }
+
+    const enrollment = await this.prisma.$transaction(async (tx) => {
+      return tx.enrollment.create({
+        data: {
+          studentId: childId,
+          classroomId: classroom.id,
+        },
+      });
+    });
+
+    this.logger.log(
+      `Child ${childId} joined classroom ${classroom.id} via code ${dto.class_code}`,
+    );
+
+    const child = link.child;
+    return {
+      id: child.id,
+      role: 'student',
+      name: child.displayName,
+      username: child.username,
+      grade: child.grade,
+      country: child.country,
+      classroom_id: enrollment.classroomId,
+      classroom_name: classroom.name,
+      classroom_grade: classroom.grade,
+      linked_parent_ids: [parent.id],
+    };
+  }
+
+  async getSchool(schoolId: string) {
+    const school = await this.prisma.school.findUnique({
+      where: { id: schoolId },
+      include: {
+        _count: {
+          select: {
+            teachers: true,
+            classrooms: true,
+          },
+        },
+      },
+    });
+
+    if (!school) {
+      throw new NotFoundException('School not found');
+    }
+
+    return {
+      id: school.id,
+      name: school.name,
+      country: school.country,
+      teacher_count: school._count.teachers,
+      classroom_count: school._count.classrooms,
     };
   }
 

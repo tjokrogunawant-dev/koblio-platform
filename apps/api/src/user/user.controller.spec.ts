@@ -13,7 +13,10 @@ describe('UserController', () => {
       findByAuth0Id: jest.fn(),
       createChildAccount: jest.fn(),
       listChildren: jest.fn(),
+      getChild: jest.fn(),
+      joinClassByCode: jest.fn(),
       createSchool: jest.fn(),
+      getSchool: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -105,6 +108,51 @@ describe('UserController', () => {
     });
   });
 
+  describe('getChild', () => {
+    it('should call getChild with correct args', async () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|parent1',
+        roles: ['parent'],
+      };
+      const childId = '00000000-0000-0000-0000-000000000002';
+      const expected = { id: childId, role: 'student', name: 'Bobby Zhang' };
+
+      userService.getChild.mockResolvedValue(expected);
+
+      const result = await controller.getChild(user, childId);
+
+      expect(userService.getChild).toHaveBeenCalledWith('auth0|parent1', childId);
+      expect(result).toEqual(expected);
+    });
+  });
+
+  describe('joinClass', () => {
+    it('should call joinClassByCode with correct args', async () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|parent1',
+        roles: ['parent'],
+      };
+      const childId = '00000000-0000-0000-0000-000000000002';
+      const dto = { class_code: 'SUN-DRAGON-42' };
+      const expected = {
+        id: childId,
+        role: 'student',
+        classroom_id: '00000000-0000-0000-0000-000000000020',
+      };
+
+      userService.joinClassByCode.mockResolvedValue(expected);
+
+      const result = await controller.joinClass(user, childId, dto);
+
+      expect(userService.joinClassByCode).toHaveBeenCalledWith(
+        'auth0|parent1',
+        childId,
+        dto,
+      );
+      expect(result).toEqual(expected);
+    });
+  });
+
   describe('createSchool', () => {
     it('should call createSchool', async () => {
       const user: AuthenticatedUser = {
@@ -125,6 +173,25 @@ describe('UserController', () => {
         dto,
       );
       expect(result).toEqual({ id: 'school-1', name: 'Test School' });
+    });
+  });
+
+  describe('getSchool', () => {
+    it('should call getSchool with school id', async () => {
+      const schoolId = '00000000-0000-0000-0000-000000000010';
+      const expected = {
+        id: schoolId,
+        name: 'Springfield Elementary',
+        teacher_count: 3,
+        classroom_count: 5,
+      };
+
+      userService.getSchool.mockResolvedValue(expected);
+
+      const result = await controller.getSchool(schoolId);
+
+      expect(userService.getSchool).toHaveBeenCalledWith(schoolId);
+      expect(result).toEqual(expected);
     });
   });
 });

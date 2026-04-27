@@ -61,24 +61,39 @@ const mockSchool = {
   updatedAt: new Date(),
 };
 
+const mockClassroom = {
+  id: '00000000-0000-0000-0000-000000000020',
+  name: '3A',
+  grade: 3,
+  classCode: 'SUN-DRAGON-42',
+  teacherId: '00000000-0000-0000-0000-000000000003',
+  schoolId: null,
+  createdAt: new Date(),
+  updatedAt: new Date(),
+};
+
 describe('UserService', () => {
   let service: UserService;
   let prisma: {
     user: { findUnique: jest.Mock };
-    school: { create: jest.Mock };
+    school: { findUnique: jest.Mock; create: jest.Mock };
     schoolTeacher: { create: jest.Mock };
-    parentChildLink: { create: jest.Mock };
+    parentChildLink: { create: jest.Mock; findUnique: jest.Mock };
     parentalConsent: { create: jest.Mock };
+    classroom: { findUnique: jest.Mock };
+    enrollment: { findUnique: jest.Mock; create: jest.Mock };
     $transaction: jest.Mock;
   };
 
   beforeEach(async () => {
     prisma = {
       user: { findUnique: jest.fn() },
-      school: { create: jest.fn() },
+      school: { findUnique: jest.fn(), create: jest.fn() },
       schoolTeacher: { create: jest.fn() },
-      parentChildLink: { create: jest.fn() },
+      parentChildLink: { create: jest.fn(), findUnique: jest.fn() },
       parentalConsent: { create: jest.fn() },
+      classroom: { findUnique: jest.fn() },
+      enrollment: { findUnique: jest.fn(), create: jest.fn() },
       $transaction: jest.fn(),
     };
 
@@ -286,6 +301,146 @@ describe('UserService', () => {
       await expect(
         service.createSchool('auth0|parent1', dto),
       ).rejects.toThrow(ForbiddenException);
+    });
+  });
+
+  describe('getChild', () => {
+    const childId = mockChild.id;
+
+    it('should return the child profile for a valid parent-child pair', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockParent);
+      prisma.parentChildLink.findUnique.mockResolvedValue({
+        child: {
+          ...mockChild,
+          enrollments: [],
+        },
+      });
+
+      const result = await service.getChild('auth0|parent1', childId);
+
+      expect(result.id).toBe(childId);
+      expect(result.role).toBe('student');
+      expect(result.name).toBe('Bobby Zhang');
+      expect(result.classroom_id).toBeNull();
+      expect(result.linked_parent_ids).toContain(mockParent.id);
+    });
+
+    it('should throw NotFoundException if parent not found', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.getChild('auth0|nonexistent', childId),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException if child does not belong to parent', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockParent);
+      prisma.parentChildLink.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.getChild('auth0|parent1', 'some-other-child-id'),
+      ).rejects.toThrow(NotFoundException);
+    });
+  });
+
+  describe('joinClassByCode', () => {
+    const childId = mockChild.id;
+    const dto = { class_code: 'SUN-DRAGON-42' };
+
+    it('should enroll child in classroom and return updated profile', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockParent);
+      prisma.parentChildLink.findUnique.mockResolvedValue({
+        child: mockChild,
+      });
+      prisma.classroom.findUnique.mockResolvedValue(mockClassroom);
+      prisma.enrollment.findUnique.mockResolvedValue(null);
+      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
+        const tx = {
+          enrollment: {
+            create: jest.fn().mockResolvedValue({
+              id: 'enrollment-1',
+              studentId: childId,
+              classroomId: mockClassroom.id,
+              enrolledAt: new Date(),
+            }),
+          },
+        };
+        return fn(tx);
+      });
+
+      const result = await service.joinClassByCode('auth0|parent1', childId, dto);
+
+      expect(result.classroom_id).toBe(mockClassroom.id);
+      expect(result.classroom_name).toBe('3A');
+      expect(result.role).toBe('student');
+    });
+
+    it('should throw NotFoundException if parent not found', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.joinClassByCode('auth0|nonexistent', childId, dto),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException if child does not belong to parent', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockParent);
+      prisma.parentChildLink.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.joinClassByCode('auth0|parent1', 'other-child', dto),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw NotFoundException if class code not found', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockParent);
+      prisma.parentChildLink.findUnique.mockResolvedValue({
+        child: mockChild,
+      });
+      prisma.classroom.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.joinClassByCode('auth0|parent1', childId, { class_code: 'INVALID' }),
+      ).rejects.toThrow(NotFoundException);
+    });
+
+    it('should throw ConflictException if child is already enrolled', async () => {
+      prisma.user.findUnique.mockResolvedValue(mockParent);
+      prisma.parentChildLink.findUnique.mockResolvedValue({
+        child: mockChild,
+      });
+      prisma.classroom.findUnique.mockResolvedValue(mockClassroom);
+      prisma.enrollment.findUnique.mockResolvedValue({ id: 'existing-enrollment' });
+
+      await expect(
+        service.joinClassByCode('auth0|parent1', childId, dto),
+      ).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('getSchool', () => {
+    const schoolId = mockSchool.id;
+
+    it('should return school info with teacher and classroom counts', async () => {
+      prisma.school.findUnique.mockResolvedValue({
+        ...mockSchool,
+        _count: { teachers: 3, classrooms: 5 },
+      });
+
+      const result = await service.getSchool(schoolId);
+
+      expect(result.id).toBe(schoolId);
+      expect(result.name).toBe('Springfield Elementary');
+      expect(result.teacher_count).toBe(3);
+      expect(result.classroom_count).toBe(5);
+    });
+
+    it('should throw NotFoundException if school not found', async () => {
+      prisma.school.findUnique.mockResolvedValue(null);
+
+      await expect(service.getSchool('nonexistent-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });
