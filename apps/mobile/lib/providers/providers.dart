@@ -172,7 +172,6 @@ class AuthNotifier extends StateNotifier<AuthState> {
     const storage = FlutterSecureStorage();
     await _authInterceptor.clearTokens();
     await storage.delete(key: 'auth_role');
-    await storage.delete(key: 'auth_user_id');
     state = const AuthState(status: AuthStatus.unauthenticated);
   }
 
