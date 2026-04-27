@@ -2,6 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
+import { UserRole } from '@prisma/client';
 import { AuthenticatedUser } from '../auth/interfaces/jwt-payload.interface';
 import { MasteryService } from './mastery.service';
 
@@ -11,7 +12,7 @@ export class MasteryController {
   constructor(private readonly masteryService: MasteryService) {}
 
   @Get('me')
-  @Roles('student')
+  @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: "Get all skill masteries for the current student" })
   async getMyMasteries(@CurrentUser() user: AuthenticatedUser) {
     const masteries = await this.masteryService.getStudentMasteries(user.userId);

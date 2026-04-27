@@ -61,7 +61,8 @@ export class FsrsService {
    *     S' = S * exp(-0.3 * R)
    *
    * Difficulty update:
-   *   D' = clamp(D + (rating - 3) * 0.1, 1.0, 10.0)
+   *   D' = clamp(D + (3 - rating) * 0.1, 1.0, 10.0)
+   *   Again(1) → D+0.2 (harder), Easy(4) → D-0.1 (easier)
    *
    * Next review interval (90% retention target):
    *   I = S * 9/10  (derived from R_target = 0.9 = e^(-I/(9S)))
@@ -92,8 +93,8 @@ export class FsrsService {
     // Stability must be at least 0.1 days (avoid scheduling in the past)
     newStability = Math.max(0.1, newStability);
 
-    // Difficulty update: D' = clamp(D + (rating - 3) * 0.1, 1.0, 10.0)
-    const rawDifficulty = difficulty + (rating - 3) * 0.1;
+    // Difficulty update: D' = clamp(D + (3 - rating) * 0.1, 1.0, 10.0)
+    const rawDifficulty = difficulty + (3 - rating) * 0.1;
     const newDifficulty = Math.max(1.0, Math.min(10.0, rawDifficulty));
 
     // Next review interval for 90% retention target
