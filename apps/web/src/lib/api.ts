@@ -582,3 +582,15 @@ export async function updateAvatar(
   });
   return handleResponse<UpdateAvatarResponse>(res);
 }
+
+// ─── Stripe / Subscriptions ───────────────────────────────────────────────────
+
+export async function createCheckoutSession(
+  token: string,
+): Promise<{ url: string | null }> {
+  const res = await fetch(`${API_BASE}/stripe/create-checkout`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<{ url: string | null }>(res);
+}
