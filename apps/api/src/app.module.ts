@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
+import { ScheduleModule } from '@nestjs/schedule';
 import { SentryModule } from '@sentry/nestjs/setup';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
 import { APP_GUARD } from '@nestjs/core';
@@ -19,11 +20,13 @@ import { AttemptModule } from './attempt/attempt.module';
 import { AssignmentModule } from './assignment/assignment.module';
 import { ParentModule } from './parent/parent.module';
 import { BadgeModule } from './badge/badge.module';
+import { StripeModule } from './stripe/stripe.module';
 
 @Module({
   imports: [
     SentryModule.forRoot(),
     ConfigModule.forRoot({ isGlobal: true }),
+    ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
     PrismaModule,
     RedisModule,
@@ -37,6 +40,7 @@ import { BadgeModule } from './badge/badge.module';
     AssignmentModule,
     ParentModule,
     BadgeModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [
