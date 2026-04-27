@@ -62,18 +62,29 @@ export class AttemptService {
       `Attempt recorded: student=${studentId} problem=${dto.problemId} correct=${correct}`,
     );
 
-    // Award coins/XP for the attempt
-    const { coinsEarned, xpEarned, leveledUp } =
-      await this.gamificationService.awardForAttempt(
+    // Award coins/XP and update streak — failures do not block the attempt response
+    let coinsEarned = 0;
+    let xpEarned = 0;
+    let leveledUp = false;
+
+    try {
+      const award = await this.gamificationService.awardForAttempt(
         studentId,
         String(problem.difficulty),
         correct,
         attempt.id,
       );
+      coinsEarned = award.coinsEarned;
+      xpEarned = award.xpEarned;
+      leveledUp = award.leveledUp;
 
-    // Update streak only on correct answers
-    if (correct) {
-      await this.gamificationService.updateStreak(studentId);
+      if (correct) {
+        await this.gamificationService.updateStreak(studentId);
+      }
+    } catch (err) {
+      this.logger.error(
+        `Gamification side-effects failed for attempt ${attempt.id}: ${err}`,
+      );
     }
 
     return { correct, correctAnswer, solution, attemptId: attempt.id, coinsEarned, xpEarned, leveledUp };

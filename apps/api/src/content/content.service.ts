@@ -2,6 +2,56 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { Problem } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 
+export interface ProblemOption {
+  label: string;
+  text: string;
+}
+
+export interface ProblemDto {
+  id: string;
+  grade: number;
+  strand: string;
+  topic: string;
+  difficulty: string;
+  type: string;
+  questionText: string;
+  options?: ProblemOption[];
+  correctAnswer: string;
+  solution: string;
+  hints?: string[];
+}
+
+const OPTION_LABELS = ['A', 'B', 'C', 'D'];
+
+export function mapProblem(row: Problem): ProblemDto {
+  const content = row.content as {
+    question: string;
+    answer: string;
+    options?: string[] | null;
+    hints?: string[];
+    solution?: string;
+  };
+
+  return {
+    id: row.id,
+    grade: row.grade,
+    strand: row.strand,
+    topic: row.topic,
+    difficulty: row.difficulty,
+    type: row.type,
+    questionText: content.question,
+    correctAnswer: content.answer,
+    solution: content.solution ?? '',
+    hints: content.hints,
+    options: Array.isArray(content.options)
+      ? content.options.map((text, i) => ({
+          label: OPTION_LABELS[i] ?? String(i + 1),
+          text,
+        }))
+      : undefined,
+  };
+}
+
 @Injectable()
 export class ContentService {
   constructor(private readonly prisma: PrismaService) {}
@@ -18,7 +68,7 @@ export class ContentService {
     type?: string;
     limit?: number;
     offset?: number;
-  }): Promise<{ data: Problem[]; total: number }> {
+  }): Promise<{ data: ProblemDto[]; total: number }> {
     const { grade, strand, topic, difficulty, type, limit = 20, offset = 0 } =
       filters;
 
@@ -29,7 +79,7 @@ export class ContentService {
     if (difficulty !== undefined) where['difficulty'] = difficulty;
     if (type !== undefined) where['type'] = type;
 
-    const [data, total] = await Promise.all([
+    const [rows, total] = await Promise.all([
       this.prisma.problem.findMany({
         where,
         take: limit,
@@ -39,21 +89,22 @@ export class ContentService {
       this.prisma.problem.count({ where }),
     ]);
 
-    return { data, total };
+    return { data: rows.map(mapProblem), total };
   }
 
-  async findOne(id: string): Promise<Problem> {
+  async findOne(id: string): Promise<ProblemDto> {
     const problem = await this.prisma.problem.findUnique({ where: { id } });
     if (!problem) {
       throw new NotFoundException(`Problem with id "${id}" not found`);
     }
-    return problem;
+    return mapProblem(problem);
   }
 
-  async findByGrade(grade: number): Promise<Problem[]> {
-    return this.prisma.problem.findMany({
+  async findByGrade(grade: number): Promise<ProblemDto[]> {
+    const rows = await this.prisma.problem.findMany({
       where: { grade },
       orderBy: [{ strand: 'asc' }, { topic: 'asc' }],
     });
+    return rows.map(mapProblem);
   }
 }

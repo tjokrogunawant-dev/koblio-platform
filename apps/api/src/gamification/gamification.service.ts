@@ -1,5 +1,6 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { mapProblem, ProblemDto } from '../content/content.service';
 
 // Cumulative XP required to reach each level index (1-indexed, level 1 = index 0)
 const LEVEL_THRESHOLDS = [0, 100, 250, 500, 900, 1400, 2000, 2800, 3800, 5000];
@@ -116,8 +117,8 @@ export class GamificationService {
       xpEarned = 1;
     }
 
-    // Persist the award in a transaction
-    const user = await this.prisma.$transaction(async (tx) => {
+    // Persist the award atomically — level-up detection and update inside the same transaction
+    const { newLevel, leveledUp } = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.user.update({
         where: { id: studentId },
         data: {
@@ -138,27 +139,27 @@ export class GamificationService {
         });
       }
 
-      return updated;
+      const newLevelInfo = this.getLevelInfo(updated.xp);
+      const previousLevelInfo = this.getLevelInfo(updated.xp - xpEarned);
+      const didLevelUp = newLevelInfo.level > previousLevelInfo.level;
+
+      if (didLevelUp) {
+        await tx.user.update({
+          where: { id: studentId },
+          data: { level: newLevelInfo.level },
+        });
+        this.logger.log(
+          `Student ${studentId} leveled up to level ${newLevelInfo.level}`,
+        );
+      }
+
+      return { newLevel: newLevelInfo.level, leveledUp: didLevelUp };
     });
-
-    const newLevelInfo = this.getLevelInfo(user.xp);
-    const previousLevelInfo = this.getLevelInfo(user.xp - xpEarned);
-    const leveledUp = newLevelInfo.level > previousLevelInfo.level;
-
-    if (leveledUp) {
-      await this.prisma.user.update({
-        where: { id: studentId },
-        data: { level: newLevelInfo.level },
-      });
-      this.logger.log(
-        `Student ${studentId} leveled up to level ${newLevelInfo.level}`,
-      );
-    }
 
     return {
       coinsEarned,
       xpEarned,
-      newLevel: newLevelInfo.level,
+      newLevel,
       leveledUp,
     };
   }
@@ -296,27 +297,10 @@ export class GamificationService {
 
   // ─── P1-T27: Daily challenge ──────────────────────────────────────────────
 
-  async getDailyChallenge(grade: number): Promise<{
-    id: string;
-    grade: number;
-    strand: string;
-    topic: string;
-    difficulty: string;
-    type: string;
-    content: unknown;
-  } | null> {
+  async getDailyChallenge(grade: number): Promise<ProblemDto | null> {
     const problems = await this.prisma.problem.findMany({
       where: { grade },
       orderBy: { createdAt: 'asc' },
-      select: {
-        id: true,
-        grade: true,
-        strand: true,
-        topic: true,
-        difficulty: true,
-        type: true,
-        content: true,
-      },
     });
 
     if (problems.length === 0) {
@@ -325,7 +309,7 @@ export class GamificationService {
 
     const dayIndex = Math.floor(Date.now() / 86400000);
     const index = dayIndex % problems.length;
-    return problems[index];
+    return mapProblem(problems[index]);
   }
 
   // Legacy status check
