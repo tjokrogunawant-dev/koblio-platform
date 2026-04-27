@@ -17,6 +17,8 @@
     "@koblio/shared": "workspace:*",
     "@nestjs/common": "^11.0.0",
     "@nestjs/jwt": "^10.2.0",
+    "@sentry/nestjs": "^8",
+    "@sentry/profiling-node": "^8",
     "bcrypt": "^5.1.1",
     "@nestjs/config": "^4.0.4",
     "@nestjs/core": "^11.0.0",

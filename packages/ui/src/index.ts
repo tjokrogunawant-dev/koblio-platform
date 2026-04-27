@@ -49,3 +49,5 @@ export {
   TooltipContent,
   TooltipProvider,
 } from './tooltip';
+export { MathRenderer } from './math-renderer';
+export type { MathRendererProps } from './math-renderer';
