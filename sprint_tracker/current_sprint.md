@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 12  
-**Phase:** 2 — Growth & Retention (Section 7 continued)  
+**Sprint:** 13  
+**Phase:** 2 — Growth & Retention (Section 7 wrap-up)  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Section 7 continued — KaTeX math rendering in Flutter (flutter_math_forge) + Auth0 PKCE full implementation for Parent/Teacher login.
+**Sprint Goal:** Section 7 wrap-up — Flutter gamification UI (coins/XP/streak/badges in app) + Flutter parent dashboard (child progress cards).
 
 ---
 
@@ -21,8 +21,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-- **P3-T03** (Dev1): flutter_math_forge integration — replace plain Text with math rendering in problem solver
-- **P3-T04** (Dev2): Auth0 PKCE full implementation for Parent/Teacher login
+- **P3-T05** (Dev1): Flutter gamification UI — coins/XP/level bar, streak flame, badge shelf
+- **P3-T06** (Dev2): Flutter parent dashboard — linked children list, per-child progress cards
 
 ---
 
@@ -86,6 +86,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P2-T05 | Stripe Subscriptions (Checkout, webhook, subscriptionStatus on User) | S10 | `96605a1` |
 | P3-T01 | Flutter Android App Shell (GoRouter, Riverpod, Auth0 stub, login screen) | S11 | `4b76789` |
 | P3-T02 | Flutter Student Screens (home, problem list, problem solver, all 3 types) | S11 | `6d719cf` |
+| P3-T03 | Flutter Math Rendering (MathText widget, flutter_math_fork, LaTeX in solver) | S12 | `4f52099` |
+| P3-T04 | Auth0 PKCE Login (flutter_appauth, Parent/Teacher, logout confirmation) | S12 | `da6c675` |
 
 ---
 
@@ -95,14 +97,13 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 13 — Section 7 wrap-up)
+## Up Next (Sprint 14 — Trial Gate 2 prep)
 
-- Flutter gamification UI (coins, XP bar, streak, badge shelf in mobile)
-- Flutter parent dashboard (child progress cards)
+- Railway deployment config (Dockerfile, Railway TOML, environment variable documentation)
+- Trial Gate 2: deploy web + API to Railway, invite closed beta testers
 - TOP_OF_CLASS badge (needs leaderboard rank-1 signal)
-- Trial Gate 2 prep (closed beta deploy to Railway)
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 11 complete (P3-T01 app shell, P3-T02 student screens). Sprint 12 launched: math rendering + Auth0 PKCE.
+2026-04-27 by PM — Sprint 12 complete (P3-T03 math rendering, P3-T04 Auth0 PKCE). Sprint 13 launched: Flutter gamification UI + parent dashboard.
