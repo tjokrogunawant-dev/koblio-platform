@@ -11,8 +11,9 @@ class EnvConfig {
   final String auth0ClientId;
   final String auth0Audience;
 
+  /// 10.0.2.2 resolves to the host machine's localhost from the Android emulator.
   static const dev = EnvConfig(
-    apiBaseUrl: 'http://localhost:3001/api',
+    apiBaseUrl: 'http://10.0.2.2:3001/api',
     auth0Domain: 'YOUR_TENANT.auth0.com',
     auth0ClientId: 'YOUR_CLIENT_ID',
     auth0Audience: 'https://api.koblio.com',

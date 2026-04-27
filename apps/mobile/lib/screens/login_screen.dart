@@ -3,6 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:koblio_mobile/providers/providers.dart';
 import 'package:koblio_mobile/theme/app_theme.dart';
 
+/// Student login screen — username + password only.
+///
+/// COPPA requirement: no email collected from students under 13.
+/// Parent / Teacher login is handled via Auth0 PKCE from [RoleSelectScreen].
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
 
@@ -14,16 +18,14 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
   final _usernameController = TextEditingController();
   final _passwordController = TextEditingController();
-  final _classCodeController = TextEditingController();
   bool _isLoading = false;
-  bool _isClassCodeMode = false;
+  bool _obscurePassword = true;
   String? _errorMessage;
 
   @override
   void dispose() {
     _usernameController.dispose();
     _passwordController.dispose();
-    _classCodeController.dispose();
     super.dispose();
   }
 
@@ -36,25 +38,18 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     });
 
     try {
-      if (_isClassCodeMode) {
-        await ref.read(authProvider.notifier).loginWithClassCode(
-              classCode: _classCodeController.text.trim(),
-            );
-      } else {
-        await ref.read(authProvider.notifier).login(
-              username: _usernameController.text.trim(),
-              password: _passwordController.text,
-            );
-      }
-    } on Exception catch (e) {
-      setState(() {
-        _errorMessage = 'Login failed. Please check your credentials.';
-      });
-      debugPrint('Login error: $e');
-    } finally {
+      await ref.read(authProvider.notifier).loginStudent(
+            username: _usernameController.text.trim(),
+            password: _passwordController.text,
+          );
+    } on Exception {
       if (mounted) {
-        setState(() => _isLoading = false);
+        setState(() {
+          _errorMessage = 'Incorrect username or password. Please try again.';
+        });
       }
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 
@@ -62,60 +57,150 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        foregroundColor: AppColors.textPrimary,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 24),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 48),
-              Container(
-                width: 80,
-                height: 80,
-                decoration: BoxDecoration(
-                  color: AppColors.primary,
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: const Center(
-                  child: Text(
-                    'K',
-                    style: TextStyle(
-                      fontSize: 44,
-                      fontWeight: FontWeight.w900,
-                      color: Colors.white,
+              const SizedBox(height: 16),
+              // Brand mark
+              Center(
+                child: Container(
+                  width: 72,
+                  height: 72,
+                  decoration: BoxDecoration(
+                    color: AppColors.primary,
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: const Center(
+                    child: Text(
+                      'K',
+                      style: TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              Text(
-                'Welcome to Koblio!',
-                style: Theme.of(context).textTheme.headlineMedium,
+              Center(
+                child: Text(
+                  'Student Login',
+                  style: Theme.of(context).textTheme.headlineMedium,
+                ),
               ),
-              const SizedBox(height: 8),
-              Text(
-                'Let\'s start learning math!',
-                style: Theme.of(context).textTheme.bodyMedium,
+              Center(
+                child: Text(
+                  'Enter your username and password to continue',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
               ),
               const SizedBox(height: 40),
-              _buildModeToggle(),
-              const SizedBox(height: 24),
               Form(
                 key: _formKey,
-                child: _isClassCodeMode
-                    ? _buildClassCodeForm()
-                    : _buildUsernameForm(),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Username',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _usernameController,
+                      textInputAction: TextInputAction.next,
+                      autocorrect: false,
+                      enableSuggestions: false,
+                      decoration: const InputDecoration(
+                        hintText: 'e.g. bobby1234',
+                        prefixIcon: Icon(Icons.person_outline),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your username';
+                        }
+                        return null;
+                      },
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Password',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
+                    ),
+                    const SizedBox(height: 8),
+                    TextFormField(
+                      controller: _passwordController,
+                      obscureText: _obscurePassword,
+                      textInputAction: TextInputAction.done,
+                      onFieldSubmitted: (_) => _handleLogin(),
+                      decoration: InputDecoration(
+                        hintText: 'Your password',
+                        prefixIcon: const Icon(Icons.lock_outline),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                          ),
+                          onPressed: () {
+                            setState(() => _obscurePassword = !_obscurePassword);
+                          },
+                        ),
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Please enter your password';
+                        }
+                        return null;
+                      },
+                    ),
+                  ],
+                ),
               ),
               if (_errorMessage != null) ...[
                 const SizedBox(height: 16),
-                Text(
-                  _errorMessage!,
-                  style: const TextStyle(
-                    color: AppColors.error,
-                    fontSize: 14,
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withAlpha(20),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.error.withAlpha(60)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(
+                        Icons.error_outline,
+                        color: AppColors.error,
+                        size: 18,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          _errorMessage!,
+                          style: const TextStyle(
+                            color: AppColors.error,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                 ),
               ],
-              const SizedBox(height: 24),
+              const SizedBox(height: 32),
               SizedBox(
                 width: double.infinity,
                 height: 56,
@@ -133,128 +218,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                       : const Text('Log In'),
                 ),
               ),
+              const SizedBox(height: 24),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildModeToggle() {
-    return Container(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.circular(16),
-      ),
-      padding: const EdgeInsets.all(4),
-      child: Row(
-        children: [
-          Expanded(
-            child: _ToggleButton(
-              label: 'Username',
-              isActive: !_isClassCodeMode,
-              onTap: () => setState(() => _isClassCodeMode = false),
-            ),
-          ),
-          Expanded(
-            child: _ToggleButton(
-              label: 'Class Code',
-              isActive: _isClassCodeMode,
-              onTap: () => setState(() => _isClassCodeMode = true),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildUsernameForm() {
-    return Column(
-      children: [
-        TextFormField(
-          controller: _usernameController,
-          decoration: const InputDecoration(
-            hintText: 'Username',
-            prefixIcon: Icon(Icons.person_outline),
-          ),
-          validator: (value) {
-            if (value == null || value.trim().isEmpty) {
-              return 'Please enter your username';
-            }
-            return null;
-          },
-        ),
-        const SizedBox(height: 16),
-        TextFormField(
-          controller: _passwordController,
-          obscureText: true,
-          decoration: const InputDecoration(
-            hintText: 'Password',
-            prefixIcon: Icon(Icons.lock_outline),
-          ),
-          validator: (value) {
-            if (value == null || value.isEmpty) {
-              return 'Please enter your password';
-            }
-            return null;
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildClassCodeForm() {
-    return TextFormField(
-      controller: _classCodeController,
-      textCapitalization: TextCapitalization.characters,
-      style: const TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.w700,
-        letterSpacing: 8,
-      ),
-      textAlign: TextAlign.center,
-      decoration: const InputDecoration(
-        hintText: 'ABCD12',
-        prefixIcon: Icon(Icons.class_outlined),
-      ),
-      validator: (value) {
-        if (value == null || value.trim().isEmpty) {
-          return 'Please enter your class code';
-        }
-        return null;
-      },
-    );
-  }
-}
-
-class _ToggleButton extends StatelessWidget {
-  const _ToggleButton({
-    required this.label,
-    required this.isActive,
-    required this.onTap,
-  });
-
-  final String label;
-  final bool isActive;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12),
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.primary : Colors.transparent,
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: TextStyle(
-              color: isActive ? Colors.white : AppColors.textSecondary,
-              fontWeight: FontWeight.w600,
-            ),
           ),
         ),
       ),

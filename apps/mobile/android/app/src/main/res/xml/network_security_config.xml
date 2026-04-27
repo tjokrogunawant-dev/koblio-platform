@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Network security config for Koblio Android app.
+
+  Allows cleartext HTTP to the Android emulator's host loopback alias (10.0.2.2)
+  so the app can reach the local NestJS dev server on port 3001 without TLS.
+  All other traffic requires HTTPS.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Android emulator routes 10.0.2.2 → host machine's localhost -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+    </domain-config>
+    <base-config cleartextTrafficPermitted="false">
+        <trust-anchors>
+            <certificates src="system"/>
+        </trust-anchors>
+    </base-config>
+</network-security-config>

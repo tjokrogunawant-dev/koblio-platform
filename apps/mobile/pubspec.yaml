@@ -20,6 +20,12 @@ dependencies:
   # HTTP client
   dio: ^5.8.0+1
 
+  # Auth0 PKCE (parent / teacher login)
+  flutter_appauth: ^7.0.1
+
+  # Image caching
+  cached_network_image: ^3.3.1
+
   # Offline storage
   drift: ^2.25.0
   sqlite3_flutter_libs: ^0.5.32
@@ -30,7 +36,7 @@ dependencies:
   rive: ^0.14.5
   lottie: ^3.3.1
 
-  # Math rendering
+  # Math rendering (KaTeX-style)
   flutter_math_fork: ^0.7.2
 
   # Secure storage (JWT tokens)

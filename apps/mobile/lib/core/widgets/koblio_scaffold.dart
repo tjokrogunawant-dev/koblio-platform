@@ -2,18 +2,29 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:koblio_mobile/theme/app_theme.dart';
 
-/// Persistent bottom navigation shell wrapping the student's main tabs.
+/// Standard Koblio scaffold with the persistent bottom navigation bar.
 ///
-/// Tabs:
-///   0 — Home (/home)   — StudentHomeScreen
-///   1 — Profile (/profile) — ProfileScreen
+/// Wraps content in a [Scaffold] and adds the two-tab bottom nav
+/// (Home / Profile). Use this in screens that live inside the authenticated
+/// [ShellRoute] — i.e., do NOT use it in full-screen overlays such as the
+/// problem solver.
 ///
-/// Problem solving (/student/problems, /student/problems/solve) is accessed
-/// via push navigation and renders full-screen outside this shell.
-class ShellScreen extends StatelessWidget {
-  const ShellScreen({super.key, required this.child});
+/// [body]        — The screen content.
+/// [appBar]      — Optional app bar. Pass null to suppress it.
+/// [floatingActionButton] — Optional FAB.
+class KoblioScaffold extends StatelessWidget {
+  const KoblioScaffold({
+    super.key,
+    required this.body,
+    this.appBar,
+    this.floatingActionButton,
+    this.backgroundColor,
+  });
 
-  final Widget child;
+  final Widget body;
+  final PreferredSizeWidget? appBar;
+  final Widget? floatingActionButton;
+  final Color? backgroundColor;
 
   int _currentIndex(BuildContext context) {
     final location = GoRouterState.of(context).matchedLocation;
@@ -33,7 +44,10 @@ class ShellScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: child,
+      appBar: appBar,
+      backgroundColor: backgroundColor ?? AppColors.background,
+      floatingActionButton: floatingActionButton,
+      body: body,
       bottomNavigationBar: Container(
         decoration: const BoxDecoration(
           boxShadow: [
