@@ -255,3 +255,193 @@ export async function getDailyChallenge(grade: number): Promise<Problem | null> 
     return null;
   }
 }
+
+// ─── Classrooms ───────────────────────────────────────────────────────────────
+
+export interface Classroom {
+  id: string;
+  name: string;
+  grade: number;
+  classCode: string;
+  createdAt: string;
+}
+
+export interface ClassroomSummary extends Classroom {
+  studentCount: number;
+}
+
+export interface StudentSummary {
+  studentId: string;
+  name: string;
+  grade?: number;
+  streakCount: number;
+  coins: number;
+  xp: number;
+}
+
+export async function createClassroom(
+  data: { name: string; grade: number },
+  token: string,
+): Promise<Classroom> {
+  const res = await fetch(`${API_BASE}/classrooms`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<Classroom>(res);
+}
+
+export async function getMyClassrooms(token: string): Promise<ClassroomSummary[]> {
+  const res = await fetch(`${API_BASE}/classrooms/my`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<ClassroomSummary[]>(res);
+}
+
+export async function getClassroomStudents(
+  classroomId: string,
+  token: string,
+): Promise<StudentSummary[]> {
+  const res = await fetch(`${API_BASE}/classrooms/${classroomId}/students`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<StudentSummary[]>(res);
+}
+
+// ─── Assignments ──────────────────────────────────────────────────────────────
+
+export interface CreateAssignmentData {
+  classroomId: string;
+  title: string;
+  topic: string;
+  strand: string;
+  grade: number;
+  difficulty: 'EASY' | 'MEDIUM' | 'HARD';
+  problemIds: string[];
+  dueDate?: string;
+}
+
+export interface Assignment {
+  id: string;
+  title: string;
+  topic: string;
+  difficulty: string;
+  dueDate?: string;
+  classroomId: string;
+}
+
+export interface AssignmentSummary extends Assignment {
+  submissionCount: number;
+  classroomName: string;
+}
+
+export interface StudentAssignment {
+  assignmentId: string;
+  title: string;
+  topic: string;
+  difficulty: string;
+  dueDate?: string;
+  classroomName: string;
+  problemIds: string[];
+}
+
+export interface AssignmentResult {
+  correct: number;
+  total: number;
+  results: { problemId: string; correct: boolean; correctAnswer: string }[];
+}
+
+export async function createAssignment(
+  data: CreateAssignmentData,
+  token: string,
+): Promise<Assignment> {
+  const res = await fetch(`${API_BASE}/assignments`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<Assignment>(res);
+}
+
+export async function getMyAssignments(token: string): Promise<AssignmentSummary[]> {
+  const res = await fetch(`${API_BASE}/assignments/my`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<AssignmentSummary[]>(res);
+}
+
+export async function getStudentAssignments(token: string): Promise<StudentAssignment[]> {
+  const res = await fetch(`${API_BASE}/assignments/student`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<StudentAssignment[]>(res);
+}
+
+export async function submitAssignment(
+  assignmentId: string,
+  data: { answers: { problemId: string; answer: string }[] },
+  token: string,
+): Promise<AssignmentResult> {
+  const res = await fetch(`${API_BASE}/assignments/${assignmentId}/submit`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<AssignmentResult>(res);
+}
+
+// ─── Progress ─────────────────────────────────────────────────────────────────
+
+export interface StudentProgressRow {
+  studentId: string;
+  name: string;
+  totalAttempts: number;
+  correctAttempts: number;
+  accuracyPercent: number;
+  streakCount: number;
+  topicBreakdown: { topic: string; attempted: number; correct: number }[];
+}
+
+export interface ClassroomProgress {
+  students: StudentProgressRow[];
+}
+
+export interface ChildProgress {
+  totalAttempts: number;
+  correctAttempts: number;
+  accuracyPercent: number;
+  streakCount: number;
+  coins: number;
+  xp: number;
+  level: number;
+  topicBreakdown: { topic: string; attempted: number; correct: number }[];
+}
+
+export async function getClassroomProgress(
+  classroomId: string,
+  token: string,
+): Promise<ClassroomProgress> {
+  const res = await fetch(`${API_BASE}/classrooms/${classroomId}/progress`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<ClassroomProgress>(res);
+}
+
+export async function getChildProgress(
+  childId: string,
+  token: string,
+): Promise<ChildProgress> {
+  const res = await fetch(`${API_BASE}/parent/children/${childId}/progress`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<ChildProgress>(res);
+}

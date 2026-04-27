@@ -12,8 +12,10 @@ import { DailyChallengeCard } from '@/components/gamification/daily-challenge-ca
 import {
   getStudentProfile,
   getDailyChallenge,
+  getStudentAssignments,
   type StudentGamificationProfile,
   type Problem,
+  type StudentAssignment,
 } from '@/lib/api';
 
 export default function StudentDashboardPage() {
@@ -23,6 +25,8 @@ export default function StudentDashboardPage() {
   const [profile, setProfile] = useState<StudentGamificationProfile | null>(null);
   const [dailyChallenge, setDailyChallenge] = useState<Problem | null>(null);
   const [loadingProfile, setLoadingProfile] = useState(false);
+  const [assignments, setAssignments] = useState<StudentAssignment[]>([]);
+  const [loadingAssignments, setLoadingAssignments] = useState(false);
 
   const displayName = user?.username ?? user?.name ?? 'Student';
   const grade = user?.grade ?? 1;
@@ -37,6 +41,14 @@ export default function StudentDashboardPage() {
         // Backend not available — silently degrade
       })
       .finally(() => setLoadingProfile(false));
+
+    setLoadingAssignments(true);
+    void getStudentAssignments(token)
+      .then((a) => setAssignments(a))
+      .catch(() => {
+        // silently degrade — assignments section will be empty
+      })
+      .finally(() => setLoadingAssignments(false));
   }, [token]);
 
   useEffect(() => {
@@ -116,6 +128,59 @@ export default function StudentDashboardPage() {
             🚀 Start Learning
           </Link>
         </div>
+
+        {/* Assignments section */}
+        <section>
+          <h2 className="mb-4 text-xl font-semibold text-slate-800">
+            Assignments
+          </h2>
+          {loadingAssignments && assignments.length === 0 ? (
+            <p className="text-sm text-slate-400">Loading assignments…</p>
+          ) : assignments.length === 0 ? (
+            <div className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-8 text-center">
+              <p className="text-slate-500">No assignments yet. Check back later!</p>
+            </div>
+          ) : (
+            <div className="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="border-b border-slate-100 bg-slate-50 text-xs font-medium uppercase tracking-wide text-slate-500">
+                    <th className="px-5 py-3 text-left">Title</th>
+                    <th className="px-5 py-3 text-left">Class</th>
+                    <th className="px-5 py-3 text-left">Topic</th>
+                    <th className="px-5 py-3 text-left">Due</th>
+                    <th className="px-5 py-3 text-left"></th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100">
+                  {assignments.map((a) => (
+                    <tr key={a.assignmentId} className="hover:bg-slate-50">
+                      <td className="px-5 py-3 font-medium text-slate-800">{a.title}</td>
+                      <td className="px-5 py-3 text-slate-600">{a.classroomName}</td>
+                      <td className="px-5 py-3 text-slate-600">{a.topic}</td>
+                      <td className="px-5 py-3 text-slate-500">
+                        {a.dueDate
+                          ? new Date(a.dueDate).toLocaleDateString(undefined, {
+                              month: 'short',
+                              day: 'numeric',
+                            })
+                          : '—'}
+                      </td>
+                      <td className="px-5 py-3">
+                        <Link
+                          href={`/dashboard/student/assignments/${a.assignmentId}`}
+                          className="inline-flex items-center gap-1 rounded-lg bg-indigo-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700"
+                        >
+                          Start →
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </section>
       </main>
     </div>
   );
