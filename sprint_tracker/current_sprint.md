@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 17  
+**Sprint:** 18  
 **Phase:** 4 — Scale Infrastructure (Section 9)  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Section 9 — Redis leaderboard caching + TOP_OF_CLASS badge. Replace PostgreSQL RANK() with Redis sorted sets for sub-millisecond leaderboard reads at scale.
+**Sprint Goal:** Section 9 — AWS ECS Fargate Terraform config + CI/CD ECS deploy pipeline. Write production-ready IaC for VPC, ECS, RDS, ElastiCache, S3/CloudFront, IAM, and Secrets Manager. Replace Railway deploy in CI with ECR push + ECS rolling deploy.
 
 ---
 
@@ -12,17 +12,17 @@
 
 The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
-- **No BullMQ/Redis until Section 9** — badge awarding is synchronous (in AttemptService, same as gamification side-effects)
-- **Web-only until Trial Gate 2** — Flutter/Android resumes in Sprint 11+
-- **No AWS/Terraform until Section 9** — still targeting Railway at Trial Gate 1
-- **Trial Gate 1 context** — all Sections 1-5 complete; the MVP core is functionally done. Section 6 adds the retention layer before beta launch.
+- **Redis leaderboard done (S17)** — ZINCRBY sorted sets with 8-day TTL, classroom + global keys, TOP_OF_CLASS badge wired
+- **Web-only until Trial Gate 2** — Flutter/Android parked until Section 7
+- **AWS/Terraform = Section 9** — write IaC now; actual deploy requires AWS IAM credentials (not yet provisioned)
+- **Railway remains live** — do not remove Railway config; AWS deploy is additive until credentials arrive
 
 ---
 
 ## Active Tasks
 
-- **P6-T01** (Dev1): Redis sorted-set leaderboard (zadd/zrank/zrevrange) with write-through cache
-- **P6-T02** (Dev2): TOP_OF_CLASS badge + leaderboard API endpoints
+- **P7-T01** (Dev1): Terraform modules — VPC, ECS Fargate, RDS PostgreSQL, ElastiCache Redis, S3+CloudFront, IAM, Secrets Manager, S3 state backend + DynamoDB lock
+- **P7-T02** (Dev2): GitHub Actions ECS CD pipeline — ECR build+push, task definition update, ECS rolling deploy
 
 ---
 
@@ -32,9 +32,6 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 |---|---|---|---|
 | P1-T15 | Admin CMS for Problem Authoring | Section 6 Sprint 10 | Seed problems via JSON files; CMS needed only when non-devs author content |
 | P1-T04 | Docker Compose Local Dev Environment | Nice-to-have | Use Neon + Docker Desktop on Windows |
-| P1-T05 (AWS) | Provision AWS Staging Environment | Section 9 | Deploy to Railway at Trial Gate 1; AWS at 5K+ MAU |
-| P2-T04 | Weekly Email Digest | Sprint 09 | Needs SendGrid/Resend credentials; not blocking Section 6 Part 1 |
-| P2-T05/T06 | Stripe Subscriptions + Paywall | Sprint 10 | Needs Stripe test keys; doing badges + avatars first |
 
 ---
 
@@ -96,22 +93,24 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P5-T02 | BKT Mastery Tracking (SkillMastery model, per-attempt update, GET /mastery/me) | S15 | `96720e6` |
 | P5-T03 | Mood Detection (FLOW/FRUSTRATED/CONFUSED/BORED, weight-shift table, GET /mood/me) | S16 | `fc1c381` |
 | P5-T04 | Blended Scheduler (FSRS urgency + BKT novelty + mood weights, O(1) batch scoring) | S16 | `bb0d22a` |
+| P6-T01 | Redis Leaderboard (ZINCRBY/ZREVRANGE, classroom + global keys, 8-day TTL, SQL fallback) | S17 | `2ccabf8` |
+| P6-T02 | TOP_OF_CLASS Badge (ZREVRANK === 0 trigger, classroomId wired from Enrollment) | S17 | `2f6880d` |
 
 ---
 
 ## Sprint Blockers
 
-None. All active tasks are unblocked.
+None. AWS IAM credentials not yet provisioned — Terraform modules can be written without them (plan-only mode).
 
 ---
 
-## Up Next (Sprint 18 — Section 9: AWS Migration)
+## Up Next (Sprint 19 — Section 9: Production Hardening)
 
-- AWS ECS Fargate Terraform config (Section 9 — production scale)
-- Terraform state backend (S3 + DynamoDB lock)
-- RDS PostgreSQL migration from Railway
+- CloudWatch alarms + Datadog integration
+- PostgreSQL read replica for analytics queries
+- Load testing (k6 scripts targeting 10K MAU)
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 16 complete (mood detection + blended scheduler). Sprint 17 launched: Redis leaderboard + TOP_OF_CLASS badge.
+2026-04-27 by PM — Sprint 17 complete (Redis leaderboard + TOP_OF_CLASS badge, QA PASS WITH NBI). Sprint 18 launched: AWS Terraform + ECS CI/CD.
