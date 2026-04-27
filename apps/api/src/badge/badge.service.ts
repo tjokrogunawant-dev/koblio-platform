@@ -15,6 +15,8 @@ export interface BadgeAwardContext {
     correctTotal: number;
     streakCount: number;
   };
+  /** 0-indexed ZREVRANK in the student's classroom leaderboard. null = no classroom or Redis miss. */
+  classroomRank?: number | null;
 }
 
 export interface BadgeMeta {
@@ -215,8 +217,14 @@ export class BadgeService {
       }
     }
 
-    // ── TOP_OF_CLASS — deferred to Sprint 09 ──────────────────────────────────
-    // (requires leaderboard context not available in the attempt flow)
+    // ── TOP_OF_CLASS ──────────────────────────────────────────────────────────
+    // Award once when student first reaches rank 1 (0-indexed ZREVRANK === 0)
+    if (
+      context.classroomRank === 0 &&
+      !alreadyHas.has(BadgeType.TOP_OF_CLASS)
+    ) {
+      toAward.push(BadgeType.TOP_OF_CLASS);
+    }
 
     if (toAward.length === 0) {
       return [];

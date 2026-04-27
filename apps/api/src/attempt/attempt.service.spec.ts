@@ -4,6 +4,9 @@ import { AttemptService } from './attempt.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
 import { BadgeService } from '../badge/badge.service';
+import { MasteryService } from '../mastery/mastery.service';
+import { SchedulerService } from '../scheduler/scheduler.service';
+import { LeaderboardService } from '../leaderboard/leaderboard.service';
 
 const STUDENT_ID = '00000000-0000-0000-0000-000000000001';
 const PROBLEM_ID = '00000000-0000-0000-0000-000000000010';
@@ -36,21 +39,18 @@ const mockAttempt = {
   createdAt: new Date(),
 };
 
+const CLASSROOM_ID = '00000000-0000-0000-0000-000000000099';
+
 describe('AttemptService', () => {
   let service: AttemptService;
   let prisma: {
     problem: { findUnique: jest.Mock };
-    studentProblemAttempt: {
-      create: jest.Mock;
-      findMany: jest.Mock;
-      count: jest.Mock;
-    };
+    studentProblemAttempt: { create: jest.Mock; findMany: jest.Mock; count: jest.Mock };
+    enrollment: { findFirst: jest.Mock };
   };
-  let gamification: {
-    awardForAttempt: jest.Mock;
-    updateStreak: jest.Mock;
-  };
+  let gamification: { awardForAttempt: jest.Mock; updateStreak: jest.Mock };
   let badgeService: { checkAndAwardBadges: jest.Mock };
+  let leaderboardService: { getStudentRank: jest.Mock };
 
   beforeEach(async () => {
     prisma = {
@@ -59,6 +59,9 @@ describe('AttemptService', () => {
         create: jest.fn(),
         findMany: jest.fn(),
         count: jest.fn().mockResolvedValue(0),
+      },
+      enrollment: {
+        findFirst: jest.fn().mockResolvedValue({ classroomId: CLASSROOM_ID }),
       },
     };
 
@@ -76,12 +79,19 @@ describe('AttemptService', () => {
       checkAndAwardBadges: jest.fn().mockResolvedValue([]),
     };
 
+    leaderboardService = {
+      getStudentRank: jest.fn().mockResolvedValue(null),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AttemptService,
         { provide: PrismaService, useValue: prisma },
         { provide: GamificationService, useValue: gamification },
         { provide: BadgeService, useValue: badgeService },
+        { provide: MasteryService, useValue: { recordAttempt: jest.fn().mockResolvedValue({ justMastered: false }) } },
+        { provide: SchedulerService, useValue: { recordReview: jest.fn().mockResolvedValue(undefined) } },
+        { provide: LeaderboardService, useValue: leaderboardService },
       ],
     }).compile();
 
@@ -212,6 +222,19 @@ describe('AttemptService', () => {
       expect(badgeService.checkAndAwardBadges).toHaveBeenCalledWith(
         STUDENT_ID,
         expect.objectContaining({ correct: true, studentStats: expect.objectContaining({ streakCount: 1 }) }),
+      );
+    });
+
+    it('should pass classroomRank=0 to badge service when student is rank 1', async () => {
+      prisma.problem.findUnique.mockResolvedValue(mockProblem);
+      prisma.studentProblemAttempt.create.mockResolvedValue(mockAttempt);
+      leaderboardService.getStudentRank.mockResolvedValue(0); // rank 1 (0-indexed)
+
+      await service.submitAnswer(STUDENT_ID, { problemId: PROBLEM_ID, answer: '5', timeSpentMs: 3000 });
+
+      expect(badgeService.checkAndAwardBadges).toHaveBeenCalledWith(
+        STUDENT_ID,
+        expect.objectContaining({ classroomRank: 0 }),
       );
     });
 

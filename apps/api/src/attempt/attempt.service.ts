@@ -5,6 +5,7 @@ import { GamificationService } from '../gamification/gamification.service';
 import { BadgeService } from '../badge/badge.service';
 import { MasteryService } from '../mastery/mastery.service';
 import { SchedulerService } from '../scheduler/scheduler.service';
+import { LeaderboardService } from '../leaderboard/leaderboard.service';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Injectable()
@@ -17,6 +18,7 @@ export class AttemptService {
     private readonly badgeService: BadgeService,
     private readonly masteryService: MasteryService,
     private readonly schedulerService: SchedulerService,
+    private readonly leaderboardService: LeaderboardService,
   ) {}
 
   async submitAnswer(
@@ -99,6 +101,23 @@ export class AttemptService {
         this.prisma.studentProblemAttempt.count({ where: { studentId, correct: true } }),
       ]);
 
+      // Resolve classroom rank for TOP_OF_CLASS badge
+      let classroomRank: number | null = null;
+      try {
+        const enrollment = await this.prisma.enrollment.findFirst({
+          where: { studentId },
+          select: { classroomId: true },
+        });
+        if (enrollment) {
+          classroomRank = await this.leaderboardService.getStudentRank(
+            enrollment.classroomId,
+            studentId,
+          );
+        }
+      } catch (err) {
+        this.logger.warn(`Could not resolve classroom rank for badge check: ${err}`);
+      }
+
       badgesEarned = await this.badgeService.checkAndAwardBadges(studentId, {
         correct,
         timeSpentMs: dto.timeSpentMs,
@@ -108,6 +127,7 @@ export class AttemptService {
           strand: problem.strand,
         },
         studentStats: { totalAttempts, correctTotal, streakCount },
+        classroomRank,
       });
     } catch (err) {
       this.logger.error(
