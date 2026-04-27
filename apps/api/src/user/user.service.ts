@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import {
   ConflictException,
   ForbiddenException,
@@ -59,12 +60,15 @@ export class UserService {
     }
 
     const child = await this.prisma.$transaction(async (tx) => {
+      const passwordHash = await bcrypt.hash(dto.password, 10);
+
       const newChild = await tx.user.create({
         data: {
           auth0Id: `child_${parent.id}_${Date.now()}`,
           role: PrismaUserRole.STUDENT,
           displayName: dto.name,
           username,
+          passwordHash,
           grade: dto.grade,
           country: parent.country,
         },

@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ConfigService } from '@nestjs/config';
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { AuthService } from './auth.service';
 import { Auth0ClientService } from './auth0-client.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -11,6 +12,7 @@ describe('AuthService', () => {
   let prisma: { user: Record<string, jest.Mock>; $transaction: jest.Mock };
   let redis: Record<string, jest.Mock>;
   let auth0: Record<string, jest.Mock>;
+  let jwtService: Record<string, jest.Mock>;
 
   beforeEach(async () => {
     prisma = {
@@ -36,6 +38,10 @@ describe('AuthService', () => {
       revokeRefreshToken: jest.fn().mockResolvedValue(undefined),
     };
 
+    jwtService = {
+      sign: jest.fn().mockReturnValue('student-access-token'),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -56,6 +62,7 @@ describe('AuthService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: RedisService, useValue: redis },
         { provide: Auth0ClientService, useValue: auth0 },
+        { provide: JwtService, useValue: jwtService },
       ],
     }).compile();
 
@@ -378,6 +385,106 @@ describe('AuthService', () => {
         audience: 'https://api.koblio.com',
         clientId: 'test-client-id',
       });
+    });
+  });
+
+  describe('loginStudent', () => {
+    // bcrypt hash for 'Pass1234' (10 rounds) — generated offline for test stability
+    const PLAIN_PASSWORD = 'Pass1234';
+
+    // We will use a real bcrypt hash so tests don't rely on spying bcrypt internals.
+    // The hash is computed lazily in beforeEach.
+    let passwordHash: string;
+
+    beforeEach(async () => {
+      // Import bcrypt here to keep the hash realistic
+      const bcrypt = await import('bcrypt');
+      passwordHash = await bcrypt.hash(PLAIN_PASSWORD, 10);
+    });
+
+    const makeStudent = (overrides: Record<string, unknown> = {}) => ({
+      id: 'student-uuid-1',
+      auth0Id: 'child_parent-1_123456',
+      role: 'STUDENT',
+      displayName: 'Bobby Zhang',
+      username: 'bobby1234',
+      grade: 2,
+      email: null,
+      passwordHash: null as string | null,
+      ...overrides,
+    });
+
+    it('should return access_token with id/role/name but NO email on success', async () => {
+      prisma.user.findUnique.mockResolvedValue(
+        makeStudent({ passwordHash }),
+      );
+
+      const dto = { username: 'bobby1234', password: PLAIN_PASSWORD };
+      const result = await service.loginStudent(dto);
+
+      expect(result.access_token).toBe('student-access-token');
+      expect(result.expires_in).toBe(3600);
+      expect(result.user.id).toBe('student-uuid-1');
+      expect(result.user.role).toBe('student');
+      expect(result.user.name).toBe('Bobby Zhang');
+      // COPPA: email MUST NOT be present
+      expect('email' in result.user).toBe(false);
+    });
+
+    it('should throw UnauthorizedException for unknown username', async () => {
+      prisma.user.findUnique.mockResolvedValue(null);
+
+      await expect(
+        service.loginStudent({ username: 'ghost', password: PLAIN_PASSWORD }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw UnauthorizedException for wrong password', async () => {
+      prisma.user.findUnique.mockResolvedValue(
+        makeStudent({ passwordHash }),
+      );
+
+      await expect(
+        service.loginStudent({ username: 'bobby1234', password: 'wrongpass' }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw UnauthorizedException for non-student account', async () => {
+      prisma.user.findUnique.mockResolvedValue(
+        makeStudent({ role: 'PARENT', passwordHash }),
+      );
+
+      await expect(
+        service.loginStudent({ username: 'bobby1234', password: PLAIN_PASSWORD }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should throw UnauthorizedException when passwordHash is null', async () => {
+      prisma.user.findUnique.mockResolvedValue(
+        makeStudent({ passwordHash: null }),
+      );
+
+      await expect(
+        service.loginStudent({ username: 'bobby1234', password: PLAIN_PASSWORD }),
+      ).rejects.toThrow(UnauthorizedException);
+    });
+
+    it('should sign JWT with koblio-internal issuer and student role', async () => {
+      prisma.user.findUnique.mockResolvedValue(
+        makeStudent({ passwordHash }),
+      );
+
+      await service.loginStudent({ username: 'bobby1234', password: PLAIN_PASSWORD });
+
+      expect(jwtService.sign).toHaveBeenCalledWith(
+        expect.objectContaining({
+          sub: 'student-uuid-1',
+          roles: ['student'],
+          iss: 'koblio-internal',
+          username: 'bobby1234',
+          grade: 2,
+        }),
+      );
     });
   });
 });

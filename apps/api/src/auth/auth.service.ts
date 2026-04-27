@@ -1,4 +1,5 @@
 import { createHash } from 'crypto';
+import * as bcrypt from 'bcrypt';
 import {
   ConflictException,
   Injectable,
@@ -6,6 +7,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
 import { UserRole as PrismaUserRole } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { RedisService } from '../redis/redis.service';
@@ -13,6 +15,7 @@ import { Auth0ClientService } from './auth0-client.service';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
 import { EmailLoginDto } from './dto/login.dto';
+import { StudentLoginDto } from './dto/student-login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 
 const REFRESH_TOKEN_TTL_SECONDS = 7 * 24 * 60 * 60; // 7 days
@@ -37,6 +40,7 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly redis: RedisService,
     private readonly auth0Client: Auth0ClientService,
+    private readonly jwtService: JwtService,
   ) {}
 
   getStatus() {
@@ -261,6 +265,46 @@ export class AuthService {
     ]);
 
     this.logger.log('User logged out, refresh token revoked');
+  }
+
+  async loginStudent(dto: StudentLoginDto): Promise<AuthResult> {
+    const user = await this.prisma.user.findUnique({
+      where: { username: dto.username },
+    });
+
+    if (!user || user.role !== PrismaUserRole.STUDENT) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    if (!user.passwordHash) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const valid = await bcrypt.compare(dto.password, user.passwordHash);
+    if (!valid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+
+    const payload = {
+      sub: user.id,
+      roles: ['student'],
+      iss: 'koblio-internal',
+      username: user.username,
+      grade: user.grade,
+    };
+
+    const access_token = this.jwtService.sign(payload);
+
+    return {
+      access_token,
+      expires_in: 3600,
+      // COPPA: no email field — only safe, non-PII fields returned
+      user: {
+        id: user.id,
+        role: 'student',
+        name: user.displayName,
+      },
+    };
   }
 
   validateUserRoles(user: AuthenticatedUser, requiredRoles: string[]): boolean {
