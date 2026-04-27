@@ -134,15 +134,19 @@ export class ContentService {
   }
 
   /**
-   * Return the next adaptive problem for a student using the FSRS scheduler.
-   * Priority: due (review) cards first, then unseen (new) cards.
+   * Return the next adaptive problem for a student using the blended scheduler
+   * (Strategy C+D: FSRS urgency + BKT novelty + mood-gated weights).
    */
   async getNextAdaptiveProblem(
     studentId: string,
     grade: number,
     topic: string,
   ): Promise<ProblemDto | null> {
-    const problem = await this.schedulerService.getNextProblem(studentId, grade, topic);
+    const problem = await this.schedulerService.getNextProblemBlended(
+      studentId,
+      grade,
+      topic,
+    );
     if (!problem) return null;
     return mapProblem(problem);
   }
