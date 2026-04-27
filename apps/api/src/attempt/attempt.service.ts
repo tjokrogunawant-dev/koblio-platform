@@ -67,6 +67,18 @@ export class AttemptService {
       `Attempt recorded: student=${studentId} problem=${dto.problemId} correct=${correct}`,
     );
 
+    // Resolve classroom once — used for both leaderboard write and rank check
+    let classroomId: string | null = null;
+    try {
+      const enrollment = await this.prisma.enrollment.findFirst({
+        where: { studentId },
+        select: { classroomId: true },
+      });
+      if (enrollment) classroomId = enrollment.classroomId;
+    } catch (err) {
+      this.logger.warn(`Could not resolve classroom for student ${studentId}: ${err}`);
+    }
+
     // Award coins/XP, update streak, and check badges — failures never block the attempt response
     let coinsEarned = 0;
     let xpEarned = 0;
@@ -80,6 +92,7 @@ export class AttemptService {
         String(problem.difficulty),
         correct,
         attempt.id,
+        classroomId,
       );
       coinsEarned = award.coinsEarned;
       xpEarned = award.xpEarned;
@@ -103,19 +116,12 @@ export class AttemptService {
 
       // Resolve classroom rank for TOP_OF_CLASS badge
       let classroomRank: number | null = null;
-      try {
-        const enrollment = await this.prisma.enrollment.findFirst({
-          where: { studentId },
-          select: { classroomId: true },
-        });
-        if (enrollment) {
-          classroomRank = await this.leaderboardService.getStudentRank(
-            enrollment.classroomId,
-            studentId,
-          );
+      if (classroomId) {
+        try {
+          classroomRank = await this.leaderboardService.getStudentRank(classroomId, studentId);
+        } catch (err) {
+          this.logger.warn(`Could not resolve classroom rank for badge check: ${err}`);
         }
-      } catch (err) {
-        this.logger.warn(`Could not resolve classroom rank for badge check: ${err}`);
       }
 
       badgesEarned = await this.badgeService.checkAndAwardBadges(studentId, {

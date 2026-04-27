@@ -217,6 +217,7 @@ describe('AttemptService', () => {
         'EASY',
         true,
         ATTEMPT_ID,
+        CLASSROOM_ID,
       );
       expect(gamification.updateStreak).toHaveBeenCalledWith(STUDENT_ID);
       expect(badgeService.checkAndAwardBadges).toHaveBeenCalledWith(
@@ -232,6 +233,9 @@ describe('AttemptService', () => {
 
       await service.submitAnswer(STUDENT_ID, { problemId: PROBLEM_ID, answer: '5', timeSpentMs: 3000 });
 
+      expect(gamification.awardForAttempt).toHaveBeenCalledWith(
+        STUDENT_ID, 'EASY', true, ATTEMPT_ID, CLASSROOM_ID,
+      );
       expect(badgeService.checkAndAwardBadges).toHaveBeenCalledWith(
         STUDENT_ID,
         expect.objectContaining({ classroomRank: 0 }),
