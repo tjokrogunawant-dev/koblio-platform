@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 15  
-**Phase:** 3 — Adaptive Engine (Section 8)  
+**Sprint:** 16  
+**Phase:** 3 — Adaptive Engine Part 2 (Section 8)  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Section 8 — FSRS-4.5 spaced repetition scheduler + BKT per-skill mastery tracking. Core adaptive loop that drives personalised problem selection.
+**Sprint Goal:** Section 8 continued — Mood-gated weight shifts + blended scheduler combining FSRS urgency, BKT mastery, and novelty bonus into a single problem-selection score.
 
 ---
 
@@ -21,8 +21,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-- **P5-T01** (Dev1): FSRS-4.5 scheduler — card state model, stability/difficulty update, next-review interval
-- **P5-T02** (Dev2): BKT mastery tracking — per-skill mastery model, problem selection weighted by BKT state
+- **P5-T03** (Dev1): Mood detection + weight-shift state machine (FLOW/FRUSTRATED/CONFUSED/BORED)
+- **P5-T04** (Dev2): Blended scheduler — combine FSRS urgency + BKT urgency + novelty bonus into selection score
 
 ---
 
@@ -92,6 +92,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P3-T06 | Flutter Parent Dashboard (children list, child progress detail, role-based nav) | S13 | `85fefcc` |
 | P4-T01 | Docker + Railway Config (multi-stage pnpm builds, railway.toml, Procfile) | S14 | `a2fac62` |
 | P4-T02 | Health Check + DEPLOY.md + CORS hardening | S14 | `b06b571` |
+| P5-T01 | FSRS-4.5 Scheduler (CardState model, review recording, adaptive endpoint) | S15 | `65df6c7` |
+| P5-T02 | BKT Mastery Tracking (SkillMastery model, per-attempt update, GET /mastery/me) | S15 | `96720e6` |
 
 ---
 
@@ -101,14 +103,13 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 16 — Adaptive Engine Part 2)
+## Up Next (Sprint 17 — Section 9: Redis + Scale)
 
-- Mood-gated weight shifts (FLOW/FRUSTRATED/CONFUSED/BORED state machine)
-- Blended scheduler: combine FSRS urgency + BKT urgency + novelty bonus
+- Redis leaderboard caching (replace PostgreSQL RANK() at 5K+ MAU)
 - TOP_OF_CLASS badge (leaderboard rank-1 detection)
-- Redis leaderboard caching (Section 9 — at 5K+ MAU)
+- AWS ECS Fargate migration (Section 9 — at 5K+ MAU)
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 14 complete (Docker, Railway, health check, DEPLOY.md). Sprint 15 launched: FSRS-4.5 + BKT adaptive engine.
+2026-04-27 by PM — Sprint 15 complete (FSRS + BKT). Sprint 16 launched: mood detection + blended scheduler.
