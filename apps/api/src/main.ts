@@ -8,11 +8,14 @@ import express from 'express';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  // bodyParser: false lets us register raw/json parsers ourselves so Stripe
+  // webhook signature verification receives the unmodified Buffer.
+  const app = await NestFactory.create(AppModule, { bodyParser: false });
   const logger = new Logger('Bootstrap');
 
-  // Stripe requires raw body for webhook signature verification
   app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
+  app.use(express.json());
+  app.use(express.urlencoded({ extended: true }));
 
   app.use(helmet());
   app.use(cookieParser());
