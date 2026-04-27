@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { Problem } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { SchedulerService } from '../scheduler/scheduler.service';
 
 export interface ProblemOption {
   label: string;
@@ -54,7 +55,10 @@ export function mapProblem(row: Problem): ProblemDto {
 
 @Injectable()
 export class ContentService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly schedulerService: SchedulerService,
+  ) {}
 
   getStatus() {
     return { module: 'content', status: 'operational' };
@@ -127,6 +131,20 @@ export class ContentService {
       },
     });
     return mapProblem(row);
+  }
+
+  /**
+   * Return the next adaptive problem for a student using the FSRS scheduler.
+   * Priority: due (review) cards first, then unseen (new) cards.
+   */
+  async getNextAdaptiveProblem(
+    studentId: string,
+    grade: number,
+    topic: string,
+  ): Promise<ProblemDto | null> {
+    const problem = await this.schedulerService.getNextProblem(studentId, grade, topic);
+    if (!problem) return null;
+    return mapProblem(problem);
   }
 
   async updateProblem(

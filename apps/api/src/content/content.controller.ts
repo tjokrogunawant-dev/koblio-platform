@@ -17,6 +17,7 @@ import { ContentService } from './content.service';
 import { ProblemQueryDto } from './dto/problem-query.dto';
 import { CreateProblemDto } from './dto/create-problem.dto';
 import { UpdateProblemDto } from './dto/update-problem.dto';
+import { AdaptiveProblemDto } from './dto/adaptive-problem.dto';
 
 @ApiTags('Content')
 @Controller('content')
@@ -66,6 +67,20 @@ export class ContentController {
   @ApiParam({ name: 'id', type: String, description: 'Problem UUID' })
   async getProblemById(@Param('id', ParseUUIDPipe) id: string) {
     return this.contentService.findOne(id);
+  }
+
+  @Post('problems/adaptive')
+  @Roles(UserRole.STUDENT)
+  @ApiOperation({
+    summary: 'Get the next adaptive problem for a student (FSRS-scheduled)',
+  })
+  async getAdaptiveProblem(@Body() dto: AdaptiveProblemDto) {
+    const problem = await this.contentService.getNextAdaptiveProblem(
+      dto.studentId,
+      dto.grade,
+      dto.topic,
+    );
+    return { problem };
   }
 
   @Post('problems')
