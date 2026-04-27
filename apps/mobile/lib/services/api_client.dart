@@ -100,4 +100,25 @@ class ApiClient {
   Future<Response<Map<String, dynamic>>> getStudentStats() {
     return get<Map<String, dynamic>>('/gamification/me');
   }
+
+  Future<Response<List<dynamic>>> getMyBadges() {
+    return get<List<dynamic>>('/badges/me');
+  }
+
+  // ─── Parent convenience methods ──────────────────────────────────────────────
+
+  /// Returns the list of children linked to the authenticated parent.
+  /// GET /parent/children → List<dynamic>
+  Future<List<dynamic>> getMyChildren() async {
+    final response = await get<List<dynamic>>('/parent/children');
+    return response.data ?? [];
+  }
+
+  /// Returns the progress snapshot for a specific child.
+  /// GET /parent/children/:childId/progress → Map<String, dynamic>
+  Future<Map<String, dynamic>> getChildProgress(String childId) async {
+    final response =
+        await get<Map<String, dynamic>>('/parent/children/$childId/progress');
+    return response.data ?? {};
+  }
 }

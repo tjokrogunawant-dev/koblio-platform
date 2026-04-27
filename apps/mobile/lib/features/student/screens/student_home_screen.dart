@@ -2,9 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:koblio_mobile/features/student/models/problem.dart';
+import 'package:koblio_mobile/features/student/providers/badges_provider.dart';
 import 'package:koblio_mobile/features/student/providers/problems_provider.dart';
 import 'package:koblio_mobile/features/student/providers/student_stats_provider.dart';
+import 'package:koblio_mobile/features/student/widgets/badge_shelf.dart';
 import 'package:koblio_mobile/features/student/widgets/stat_card.dart';
+import 'package:koblio_mobile/features/student/widgets/streak_counter.dart';
+import 'package:koblio_mobile/features/student/widgets/xp_progress_bar.dart';
 import 'package:koblio_mobile/providers/providers.dart';
 import 'package:koblio_mobile/theme/app_theme.dart';
 
@@ -20,6 +24,7 @@ class StudentHomeScreen extends ConsumerWidget {
     final displayName = auth.displayName ?? 'Student';
     final statsAsync = ref.watch(studentStatsProvider);
     final dailyAsync = ref.watch(dailyChallengeProvider(_defaultGrade));
+    final badgesAsync = ref.watch(badgesProvider);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -28,6 +33,7 @@ class StudentHomeScreen extends ConsumerWidget {
           onRefresh: () async {
             ref.invalidate(studentStatsProvider);
             ref.invalidate(dailyChallengeProvider(_defaultGrade));
+            ref.invalidate(badgesProvider);
           },
           child: SingleChildScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
@@ -37,18 +43,11 @@ class StudentHomeScreen extends ConsumerWidget {
               children: [
                 _buildGreeting(context, displayName),
                 const SizedBox(height: 24),
-                // Stats row
+
+                // ── Stats row (coins, level) ────────────────────────────────
                 statsAsync.when(
                   data: (stats) => Row(
                     children: [
-                      Expanded(
-                        child: StatCard(
-                          icon: Icons.local_fire_department_rounded,
-                          value: stats.streakCount.toString(),
-                          label: 'Streak',
-                        ),
-                      ),
-                      const SizedBox(width: 12),
                       Expanded(
                         child: StatCard(
                           icon: Icons.monetization_on_rounded,
@@ -66,10 +65,43 @@ class StudentHomeScreen extends ConsumerWidget {
                       ),
                     ],
                   ),
-                  loading: () => const _StatsPlaceholder(),
-                  error: (_, __) => const _StatsPlaceholder(),
+                  loading: () => const _TwoCardPlaceholder(),
+                  error: (_, __) => const _TwoCardPlaceholder(),
+                ),
+                const SizedBox(height: 12),
+
+                // ── XP progress bar ────────────────────────────────────────
+                statsAsync.when(
+                  data: (stats) => XpProgressBar(
+                    currentXp: stats.xp,
+                    level: stats.levelInfo.currentLevel,
+                    progressPercent: stats.levelInfo.progressPercent,
+                  ),
+                  loading: () => const _BarPlaceholder(),
+                  error: (_, __) => const _BarPlaceholder(),
+                ),
+                const SizedBox(height: 12),
+
+                // ── Streak counter ─────────────────────────────────────────
+                statsAsync.when(
+                  data: (stats) => StreakCounter(
+                    streakCount: stats.streakCount,
+                  ),
+                  loading: () => const _BarPlaceholder(),
+                  error: (_, __) => const SizedBox.shrink(),
                 ),
                 const SizedBox(height: 24),
+
+                // ── Badge shelf ────────────────────────────────────────────
+                badgesAsync.when(
+                  data: (badges) => BadgeShelf(badges: badges),
+                  loading: () => const _BadgeShelfPlaceholder(),
+                  // On error, skip silently rather than breaking the screen
+                  error: (_, __) => const SizedBox.shrink(),
+                ),
+                const SizedBox(height: 24),
+
+                // ── Daily challenge ────────────────────────────────────────
                 Text(
                   'Daily Challenge',
                   style: Theme.of(context).textTheme.titleLarge,
@@ -216,23 +248,52 @@ class _DailyChallengeCard extends StatelessWidget {
   }
 }
 
-class _StatsPlaceholder extends StatelessWidget {
-  const _StatsPlaceholder();
+class _TwoCardPlaceholder extends StatelessWidget {
+  const _TwoCardPlaceholder();
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: List.generate(
-        3,
+        2,
         (i) => Expanded(
           child: Padding(
             padding: EdgeInsets.only(left: i == 0 ? 0 : 12),
-            child: Card(
-              child: const SizedBox(height: 88),
-            ),
+            child: const Card(child: SizedBox(height: 88)),
           ),
         ),
       ),
+    );
+  }
+}
+
+class _BarPlaceholder extends StatelessWidget {
+  const _BarPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Card(child: SizedBox(height: 72, width: double.infinity));
+  }
+}
+
+class _BadgeShelfPlaceholder extends StatelessWidget {
+  const _BadgeShelfPlaceholder();
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'My Badges',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+        const SizedBox(height: 12),
+        const SizedBox(
+          height: 110,
+          child: Card(child: SizedBox.expand()),
+        ),
+      ],
     );
   }
 }
