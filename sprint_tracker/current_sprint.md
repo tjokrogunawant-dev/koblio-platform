@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 10  
-**Phase:** 2 — Growth & Retention  
+**Sprint:** 11  
+**Phase:** 2 — Growth & Retention (Section 7)  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Section 6 Part 3 — Weekly email digest to parents (SendGrid) + Stripe subscription paywall. Completes the monetisation layer needed before closed beta.
+**Sprint Goal:** Section 7 — Android app shell (Flutter): GoRouter navigation, Riverpod state, Auth0 PKCE login, bottom nav, student dashboard skeleton.
 
 ---
 
@@ -21,8 +21,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-- **P2-T04** (Dev1): Weekly email digest — SendGrid integration, parent weekly summary cron job
-- **P2-T05** (Dev2): Stripe subscription setup — Checkout session, webhook, subscription status on User
+- **P3-T01** (Dev1): Flutter Android app shell — project setup, GoRouter, Riverpod, Auth0 PKCE
+- **P3-T02** (Dev2): Flutter student dashboard — bottom nav, problem list screen, attempt flow
 
 ---
 
@@ -82,6 +82,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P2-T08 | Problem Seed Expansion (50 → 200 problems, Grades 1-3) | S08 | `44bfbe6` |
 | P2-T03 | Badge Shelf UI (responsive grid, tooltips, student dashboard) | S09 | `33c7420` |
 | P2-T07 | Admin CMS — Problem Authoring UI + POST/PUT /content/problems | S09 | `0f4b9b1` |
+| P2-T04 | Weekly Email Digest (SendGrid, Monday 8am UTC cron) | S10 | `6b087e2` |
+| P2-T05 | Stripe Subscriptions (Checkout, webhook, subscriptionStatus on User) | S10 | `96605a1` |
 
 ---
 
@@ -91,13 +93,13 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 11 — Section 7, Android App)
+## Up Next (Sprint 12 — Section 7 continued)
 
-- Flutter Android app (Section 7 begins after Trial Gate 2 — closed beta)
+- Flutter problem-solving flow (MCQ + fill-blank + true-false rendering with flutter_math_forge)
+- Flutter gamification UI (coins, XP bar, streak display)
 - TOP_OF_CLASS badge (needs leaderboard rank-1 signal)
-- Redis leaderboard caching (Section 9)
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 09 complete (P2-T03 badge shelf, P2-T07 admin CMS). Sprint 10 launched: P2-T04 email digest + P2-T05 Stripe.
+2026-04-27 by PM — Sprint 10 complete (P2-T04 email digest, P2-T05 Stripe). Sprint 11 launched: Flutter Android app shell.
