@@ -1,0 +1,243 @@
+# Koblio — AWS ECS CD Pipeline
+#
+# Triggered exclusively on pushes to main (not PRs).
+# CI checks (lint / typecheck / test / build) run in ci.yml first;
+# this workflow handles building Docker images, pushing to ECR, and
+# deploying to ECS Fargate with a rolling update.
+#
+# Required GitHub Secrets:
+#   AWS_ACCESS_KEY_ID         — IAM key with ECR push + ECS deploy permissions
+#   AWS_SECRET_ACCESS_KEY     — Corresponding secret
+#   AWS_REGION                — (optional) defaults to ap-southeast-1
+#   AWS_ECR_API_URL           — Full ECR URI, e.g. 123456789.dkr.ecr.ap-southeast-1.amazonaws.com/koblio-api
+#   AWS_ECR_WEB_URL           — Full ECR URI, e.g. 123456789.dkr.ecr.ap-southeast-1.amazonaws.com/koblio-web
+
+name: Deploy to ECS
+
+on:
+  push:
+    branches: [main]
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: false  # Never cancel in-flight deploys — finish them
+
+env:
+  TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
+  TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
+
+# ---------------------------------------------------------------------------
+# Job 1 — Build Docker images and push to ECR
+# ---------------------------------------------------------------------------
+jobs:
+  build-and-push:
+    name: Build & Push Docker Images
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    outputs:
+      image-tag: ${{ steps.set-tag.outputs.image-tag }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+
+      - name: Login to Amazon ECR
+        id: ecr-login
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Set image tag (short SHA)
+        id: set-tag
+        run: |
+          IMAGE_TAG="${GITHUB_SHA::7}"
+          echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "image-tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+
+      # --- API image ---
+      - name: Build API Docker image
+        run: |
+          docker build \
+            -f apps/api/Dockerfile \
+            -t "${{ secrets.AWS_ECR_API_URL }}:${IMAGE_TAG}" \
+            -t "${{ secrets.AWS_ECR_API_URL }}:latest" \
+            .
+
+      - name: Push API Docker image
+        run: |
+          docker push "${{ secrets.AWS_ECR_API_URL }}:${IMAGE_TAG}"
+          docker push "${{ secrets.AWS_ECR_API_URL }}:latest"
+
+      # --- Web image ---
+      - name: Build Web Docker image
+        run: |
+          docker build \
+            -f apps/web/Dockerfile \
+            -t "${{ secrets.AWS_ECR_WEB_URL }}:${IMAGE_TAG}" \
+            -t "${{ secrets.AWS_ECR_WEB_URL }}:latest" \
+            .
+
+      - name: Push Web Docker image
+        run: |
+          docker push "${{ secrets.AWS_ECR_WEB_URL }}:${IMAGE_TAG}"
+          docker push "${{ secrets.AWS_ECR_WEB_URL }}:latest"
+
+# ---------------------------------------------------------------------------
+# Job 2 — Deploy API service to ECS
+# ---------------------------------------------------------------------------
+  deploy-api:
+    name: Deploy API to ECS
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build-and-push
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+
+      - name: Download current API task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition koblio-api \
+            --query taskDefinition \
+            > task-def-api.json
+
+      - name: Render new API task definition with updated image
+        id: render-api-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-def-api.json
+          container-name: koblio-api
+          image: ${{ secrets.AWS_ECR_API_URL }}:${{ needs.build-and-push.outputs.image-tag }}
+
+      - name: Deploy API to ECS (rolling update)
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-api-task-def.outputs.task-definition }}
+          service: koblio-api
+          cluster: koblio-production
+          wait-for-service-stability: true
+
+# ---------------------------------------------------------------------------
+# Job 3 — Deploy Web service to ECS
+# ---------------------------------------------------------------------------
+  deploy-web:
+    name: Deploy Web to ECS
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: build-and-push
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+
+      - name: Download current Web task definition
+        run: |
+          aws ecs describe-task-definition \
+            --task-definition koblio-web \
+            --query taskDefinition \
+            > task-def-web.json
+
+      - name: Render new Web task definition with updated image
+        id: render-web-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-def-web.json
+          container-name: koblio-web
+          image: ${{ secrets.AWS_ECR_WEB_URL }}:${{ needs.build-and-push.outputs.image-tag }}
+
+      - name: Deploy Web to ECS (rolling update)
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v2
+        with:
+          task-definition: ${{ steps.render-web-task-def.outputs.task-definition }}
+          service: koblio-web
+          cluster: koblio-production
+          wait-for-service-stability: true
+
+# ---------------------------------------------------------------------------
+# Job 4 — Run Prisma migrations against production RDS
+#
+# Runs AFTER deploy-api so the new API image (which contains the latest
+# migration files) is already registered as the active task definition.
+# A one-shot Fargate task overrides the container command to run
+# `npx prisma migrate deploy` and then exits.  The step polls until the
+# task finishes and fails the job if the container exit code is non-zero.
+# ---------------------------------------------------------------------------
+  run-migrations:
+    name: Run DB Migrations
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    needs: deploy-api
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION || 'ap-southeast-1' }}
+
+      - name: Run prisma migrate deploy via one-shot Fargate task
+        run: |
+          TASK_ARN=$(aws ecs run-task \
+            --cluster koblio-production \
+            --task-definition koblio-api \
+            --launch-type FARGATE \
+            --overrides '{
+              "containerOverrides": [{
+                "name": "koblio-api",
+                "command": ["npx", "prisma", "migrate", "deploy"]
+              }]
+            }' \
+            --query 'tasks[0].taskArn' \
+            --output text)
+
+          echo "Migration task ARN: ${TASK_ARN}"
+
+          # Poll until the task reaches STOPPED state
+          echo "Waiting for migration task to complete..."
+          aws ecs wait tasks-stopped \
+            --cluster koblio-production \
+            --tasks "${TASK_ARN}"
+
+          # Retrieve the container exit code
+          EXIT_CODE=$(aws ecs describe-tasks \
+            --cluster koblio-production \
+            --tasks "${TASK_ARN}" \
+            --query 'tasks[0].containers[?name==`koblio-api`].exitCode' \
+            --output text)
+
+          echo "Migration container exit code: ${EXIT_CODE}"
+
+          if [ "${EXIT_CODE}" != "0" ]; then
+            echo "ERROR: Migration task failed with exit code ${EXIT_CODE}"
+            exit 1
+          fi
+
+          echo "Migrations applied successfully."
