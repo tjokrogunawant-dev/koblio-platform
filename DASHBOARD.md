@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-27 | **By:** PM | **Sprint:** 19 (TG1-T01 brief written)
+**Last updated:** 2026-04-27 | **By:** DEV | **Sprint:** 19 (TG1-T01 implemented)
 
 ---
 
@@ -20,12 +20,12 @@
 | Parent dashboard (child progress) | ✅ Done |
 | Badge system (10 badge types) | ✅ Done |
 | Docker Compose VPS deployment + DEPLOY.md | ✅ Done |
-| Student profile setup page (`/profile/setup`) | ⏳ Sprint 19 |
+| Student profile setup page (`/profile/setup`) | ✅ Done |
 | Student home dashboard (`/student/dashboard`) | ⏳ Sprint 19 |
 | Forgot password / reset flow | ⏳ Sprint 19 |
 | Playwright e2e smoke tests | ⏳ Sprint 19 |
 
-**Trial Gate 1 progress: 10 / 14 done**
+**Trial Gate 1 progress: 11 / 14 done**
 
 ---
 
@@ -35,7 +35,7 @@
 
 | Task ID | Title | Status | Last Actor |
 |---|---|---|---|
-| TG1-T01 | Student profile setup page | in-progress | PM |
+| TG1-T01 | Student profile setup page | done | DEV |
 | TG1-T02 | Student home dashboard | pending | — |
 | TG1-T03 | Forgot password / reset flow | pending | — |
 | TG1-T04 | Playwright e2e smoke tests | pending | — |
@@ -46,7 +46,7 @@
 
 | Field | Value |
 |---|---|
-| Next role | DEV |
+| Next role | QA |
 | Current task | TG1-T01 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
@@ -79,6 +79,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-27 | DEV | TG1-T01 Student profile setup: UpdateProfileDto, PUT /me/profile, updateUser, /profile/setup rewrite (4c23f8a) |
 | 2026-04-27 | PM | Brief written for TG1-T01: Student profile setup page |
 | 2026-04-27 | PM | Sprint 19 launched — Trial Gate 1 polish tasks |
 | 2026-04-27 | DEV | Auth0 removed — internal bcrypt + JWT (`b16ec63`) |
