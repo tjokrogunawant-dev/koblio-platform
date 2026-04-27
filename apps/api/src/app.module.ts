@@ -23,6 +23,7 @@ import { BadgeModule } from './badge/badge.module';
 import { StripeModule } from './stripe/stripe.module';
 import { MasteryModule } from './mastery/mastery.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
+import { MoodModule } from './mood/mood.module';
 
 @Module({
   imports: [
@@ -45,6 +46,7 @@ import { SchedulerModule } from './scheduler/scheduler.module';
     StripeModule,
     MasteryModule,
     SchedulerModule,
+    MoodModule,
   ],
   controllers: [AppController],
   providers: [
