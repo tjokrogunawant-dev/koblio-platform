@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server';
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  if (pathname.startsWith('/dashboard')) {
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/student')) {
     const session = request.cookies.get('koblio_session');
     if (!session?.value) {
       const loginUrl = new URL('/login', request.url);
@@ -16,5 +16,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard/:path*'],
+  matcher: ['/dashboard/:path*', '/student/:path*'],
 };
