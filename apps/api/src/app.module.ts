@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { ThrottlerModule, ThrottlerGuard } from '@nestjs/throttler';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_GUARD, APP_FILTER } from '@nestjs/core';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
@@ -14,9 +14,12 @@ import { ContentModule } from './content/content.module';
 import { GamificationModule } from './gamification/gamification.module';
 import { ClassroomModule } from './classroom/classroom.module';
 import { NotificationModule } from './notification/notification.module';
+import { SentryModule } from './sentry/sentry.module';
+import { SentryFilter } from './sentry/sentry.filter';
 
 @Module({
   imports: [
+    SentryModule,
     ConfigModule.forRoot({ isGlobal: true }),
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
     PrismaModule,
@@ -31,6 +34,7 @@ import { NotificationModule } from './notification/notification.module';
   controllers: [AppController],
   providers: [
     AppService,
+    { provide: APP_FILTER, useClass: SentryFilter },
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     { provide: APP_GUARD, useClass: JwtAuthGuard },
     { provide: APP_GUARD, useClass: RolesGuard },

@@ -12,7 +12,7 @@
 
 | Task ID | Title | Owner Role | Priority | Status | Progress / Blocker |
 |---|---|---|---|---|---|
-| P1-T09 | Sentry Error Tracking Setup (web + API) | DevOps | P2 | pending | No blocker — deps P1-T06 (done), P1-T07 (done). Start Day 1. |
+| P1-T09 | Sentry Error Tracking Setup (web + API) | DevOps | P2 | in-progress | Progress: Claimed by Implementation Agent 2026-04-27. |
 | P1-T17 | KaTeX Integration — Web Math Rendering | Frontend | P1 | pending | No blocker — only dep P1-T02 (done). Run parallel with auth backend. |
 | P1-T10 | Auth Module — Parent & Teacher Registration endpoints | Backend | P0 | done | All AC met. Commit `acabf47`. 62 unit tests passing. |
 | P1-T11 | Auth Module — Student Login & RBAC enforcement | Backend | P0 | pending | Depends: P1-T10 |
