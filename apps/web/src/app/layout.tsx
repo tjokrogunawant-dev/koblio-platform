@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
 import { QueryProvider } from '@/components/providers/query-provider';
+import { AuthProvider } from '@/components/providers/auth-provider';
 import './globals.css';
 
 export const metadata: Metadata = {
@@ -15,7 +16,9 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className="min-h-screen bg-background antialiased">
-        <QueryProvider>{children}</QueryProvider>
+        <QueryProvider>
+          <AuthProvider>{children}</AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );
