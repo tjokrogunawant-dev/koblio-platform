@@ -5,7 +5,7 @@ import { AuthenticatedUser } from '../auth/interfaces/jwt-payload.interface';
 
 describe('ClassroomController', () => {
   let controller: ClassroomController;
-  let classroomService: { [K in keyof ClassroomService]: jest.Mock };
+  let classroomService: Partial<{ [K in keyof ClassroomService]: jest.Mock }> & Record<string, jest.Mock>;
 
   beforeEach(async () => {
     classroomService = {
@@ -14,6 +14,7 @@ describe('ClassroomController', () => {
       listTeacherClassrooms: jest.fn(),
       enrollStudent: jest.fn(),
       listClassroomStudents: jest.fn(),
+      getClassroomProgress: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -104,15 +105,39 @@ describe('ClassroomController', () => {
   });
 
   describe('listStudents', () => {
-    it('should call listClassroomStudents', async () => {
+    it('should call listClassroomStudents with user and classroomId', async () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|teacher1',
+        roles: ['teacher'],
+      };
       classroomService.listClassroomStudents.mockResolvedValue([]);
 
-      const result = await controller.listStudents('classroom-id');
+      const result = await controller.listStudents(user, 'classroom-id');
 
       expect(classroomService.listClassroomStudents).toHaveBeenCalledWith(
         'classroom-id',
+        'auth0|teacher1',
       );
       expect(result).toEqual([]);
+    });
+  });
+
+  describe('getClassroomProgress', () => {
+    it('should call getClassroomProgress with user and classroomId', async () => {
+      const user: AuthenticatedUser = {
+        userId: 'auth0|teacher1',
+        roles: ['teacher'],
+      };
+      const expected = { students: [] };
+      classroomService.getClassroomProgress.mockResolvedValue(expected);
+
+      const result = await controller.getClassroomProgress(user, 'classroom-id');
+
+      expect(classroomService.getClassroomProgress).toHaveBeenCalledWith(
+        'classroom-id',
+        'auth0|teacher1',
+      );
+      expect(result).toEqual(expected);
     });
   });
 });

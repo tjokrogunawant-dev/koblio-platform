@@ -21,7 +21,7 @@ export class ClassroomController {
     return this.classroomService.getStatus();
   }
 
-  @Post('teachers/me/classrooms')
+  @Post('classrooms')
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a classroom (teacher only)' })
   createClassroom(
@@ -31,7 +31,7 @@ export class ClassroomController {
     return this.classroomService.createClassroom(user.userId, dto);
   }
 
-  @Get('teachers/me/classrooms')
+  @Get('classrooms/mine')
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   @ApiOperation({ summary: 'List classrooms taught by me' })
   listMyClassrooms(@CurrentUser() user: AuthenticatedUser) {
@@ -50,8 +50,21 @@ export class ClassroomController {
 
   @Get('classrooms/:classroomId/students')
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
-  @ApiOperation({ summary: 'List students enrolled in a classroom' })
-  listStudents(@Param('classroomId', ParseUUIDPipe) classroomId: string) {
-    return this.classroomService.listClassroomStudents(classroomId);
+  @ApiOperation({ summary: 'List students enrolled in a classroom (with gamification data)' })
+  listStudents(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('classroomId', ParseUUIDPipe) classroomId: string,
+  ) {
+    return this.classroomService.listClassroomStudents(classroomId, user.userId);
+  }
+
+  @Get('classrooms/:classroomId/progress')
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Get per-student progress summary for a classroom' })
+  getClassroomProgress(
+    @CurrentUser() user: AuthenticatedUser,
+    @Param('classroomId', ParseUUIDPipe) classroomId: string,
+  ) {
+    return this.classroomService.getClassroomProgress(classroomId, user.userId);
   }
 }
