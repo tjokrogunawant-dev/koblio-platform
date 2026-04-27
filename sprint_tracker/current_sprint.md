@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 11  
-**Phase:** 2 — Growth & Retention (Section 7)  
+**Sprint:** 12  
+**Phase:** 2 — Growth & Retention (Section 7 continued)  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Section 7 — Android app shell (Flutter): GoRouter navigation, Riverpod state, Auth0 PKCE login, bottom nav, student dashboard skeleton.
+**Sprint Goal:** Section 7 continued — KaTeX math rendering in Flutter (flutter_math_forge) + Auth0 PKCE full implementation for Parent/Teacher login.
 
 ---
 
@@ -21,8 +21,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-- **P3-T01** (Dev1): Flutter Android app shell — project setup, GoRouter, Riverpod, Auth0 PKCE
-- **P3-T02** (Dev2): Flutter student dashboard — bottom nav, problem list screen, attempt flow
+- **P3-T03** (Dev1): flutter_math_forge integration — replace plain Text with math rendering in problem solver
+- **P3-T04** (Dev2): Auth0 PKCE full implementation for Parent/Teacher login
 
 ---
 
@@ -84,6 +84,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P2-T07 | Admin CMS — Problem Authoring UI + POST/PUT /content/problems | S09 | `0f4b9b1` |
 | P2-T04 | Weekly Email Digest (SendGrid, Monday 8am UTC cron) | S10 | `6b087e2` |
 | P2-T05 | Stripe Subscriptions (Checkout, webhook, subscriptionStatus on User) | S10 | `96605a1` |
+| P3-T01 | Flutter Android App Shell (GoRouter, Riverpod, Auth0 stub, login screen) | S11 | `4b76789` |
+| P3-T02 | Flutter Student Screens (home, problem list, problem solver, all 3 types) | S11 | `6d719cf` |
 
 ---
 
@@ -93,13 +95,14 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 12 — Section 7 continued)
+## Up Next (Sprint 13 — Section 7 wrap-up)
 
-- Flutter problem-solving flow (MCQ + fill-blank + true-false rendering with flutter_math_forge)
-- Flutter gamification UI (coins, XP bar, streak display)
+- Flutter gamification UI (coins, XP bar, streak, badge shelf in mobile)
+- Flutter parent dashboard (child progress cards)
 - TOP_OF_CLASS badge (needs leaderboard rank-1 signal)
+- Trial Gate 2 prep (closed beta deploy to Railway)
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 10 complete (P2-T04 email digest, P2-T05 Stripe). Sprint 11 launched: Flutter Android app shell.
+2026-04-27 by PM — Sprint 11 complete (P3-T01 app shell, P3-T02 student screens). Sprint 12 launched: math rendering + Auth0 PKCE.
