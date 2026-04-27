@@ -41,6 +41,7 @@ model User {
   schoolTeachers   SchoolTeacher[]
   classroomsOwned  Classroom[]
   enrollments      Enrollment[]
+  attempts         StudentProblemAttempt[]
 
   @@map("users")
 }
@@ -159,7 +160,27 @@ model Problem {
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")
 
+  attempts   StudentProblemAttempt[]
+
   @@index([grade, strand, topic])
   @@index([difficulty])
   @@map("problems")
+}
+
+model StudentProblemAttempt {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @map("student_id") @db.Uuid
+  problemId   String   @map("problem_id") @db.Uuid
+  answer      String
+  correct     Boolean
+  timeSpentMs Int      @map("time_spent_ms")
+  hintUsed    Boolean  @default(false) @map("hint_used")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  student User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, problemId])
+  @@index([studentId, createdAt])
+  @@map("student_problem_attempts")
 }
