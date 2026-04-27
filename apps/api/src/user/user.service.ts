@@ -11,6 +11,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
 import { JoinClassDto } from './dto/join-class.dto';
+import { AvatarSlug } from './dto/update-avatar.dto';
 
 @Injectable()
 export class UserService {
@@ -322,6 +323,42 @@ export class UserService {
       country: school.country,
       teacher_count: school._count.teachers,
       classroom_count: school._count.classrooms,
+    };
+  }
+
+  async updateAvatar(auth0Id: string, avatarSlug: AvatarSlug) {
+    const user = await this.prisma.user.findUnique({ where: { auth0Id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const updated = await this.prisma.user.update({
+      where: { id: user.id },
+      data: { avatarSlug },
+    });
+    return {
+      id: updated.id,
+      displayName: updated.displayName,
+      avatarSlug: updated.avatarSlug,
+    };
+  }
+
+  async getStudentProfileByAuth0Id(auth0Id: string) {
+    const user = await this.prisma.user.findUnique({ where: { auth0Id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    if (user.role !== PrismaUserRole.STUDENT) {
+      throw new ForbiddenException('Only students have a profile page');
+    }
+    return {
+      id: user.id,
+      displayName: user.displayName,
+      grade: user.grade,
+      avatarSlug: user.avatarSlug,
+      coins: user.coins,
+      xp: user.xp,
+      level: user.level,
+      streakCount: user.streakCount,
     };
   }
 

@@ -27,7 +27,12 @@
     "type": "MCQ",
     "content": {
       "question": "A dog has 4 bones and finds 3 more. How many bones does the dog have in all?",
-      "options": ["6", "7", "8", "9"],
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
       "answer": "7",
       "hints": [
         "Think about putting the two groups of bones together",
@@ -65,7 +70,12 @@
     "type": "MCQ",
     "content": {
       "question": "Which addition fact equals 12?",
-      "options": ["$5 + 6$", "$4 + 7$", "$6 + 6$", "$5 + 8$"],
+      "options": [
+        "$5 + 6$",
+        "$4 + 7$",
+        "$6 + 6$",
+        "$5 + 8$"
+      ],
       "answer": "$6 + 6$",
       "hints": [
         "Add each pair of numbers to see which equals 12",
@@ -103,7 +113,12 @@
     "type": "MCQ",
     "content": {
       "question": "There are 8 apples on a tree. 3 fall off. How many apples are still on the tree?",
-      "options": ["4", "5", "6", "11"],
+      "options": [
+        "4",
+        "5",
+        "6",
+        "11"
+      ],
       "answer": "5",
       "hints": [
         "Subtraction means taking away. Start with 8 and take away 3.",
@@ -141,7 +156,12 @@
     "type": "MCQ",
     "content": {
       "question": "Sam had 13 crayons. He gave some away and now has 7. How many did he give away?",
-      "options": ["4", "5", "6", "7"],
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
       "answer": "6",
       "hints": [
         "Think: 13 − ___ = 7. What number fills the blank?",
@@ -160,7 +180,12 @@
     "type": "MCQ",
     "content": {
       "question": "How many tens are in the number 34?",
-      "options": ["3", "4", "34", "7"],
+      "options": [
+        "3",
+        "4",
+        "34",
+        "7"
+      ],
       "answer": "3",
       "hints": [
         "The tens digit is the number on the left in a two-digit number",
@@ -179,7 +204,12 @@
     "type": "MCQ",
     "content": {
       "question": "Which number has 5 tens and 2 ones?",
-      "options": ["25", "52", "57", "502"],
+      "options": [
+        "25",
+        "52",
+        "57",
+        "502"
+      ],
       "answer": "52",
       "hints": [
         "Tens go in the left place, ones go in the right place",
@@ -198,7 +228,12 @@
     "type": "MCQ",
     "content": {
       "question": "Which number is greater than 47 but less than 53?",
-      "options": ["43", "45", "50", "55"],
+      "options": [
+        "43",
+        "45",
+        "50",
+        "55"
+      ],
       "answer": "50",
       "hints": [
         "Find a number that comes after 47 on the number line",
@@ -217,7 +252,12 @@
     "type": "MCQ",
     "content": {
       "question": "The short hand on a clock points to 3 and the long hand points to 12. What time is it?",
-      "options": ["12:03", "3:00", "3:12", "12:15"],
+      "options": [
+        "12:03",
+        "3:00",
+        "3:12",
+        "12:15"
+      ],
       "answer": "3:00",
       "hints": [
         "The short hand tells the hour. Where does it point?",
@@ -236,7 +276,12 @@
     "type": "MCQ",
     "content": {
       "question": "School starts at 8 o'clock in the morning. Which shows 8:00?",
-      "options": ["Short hand on 8, long hand on 12", "Short hand on 12, long hand on 8", "Both hands on 8", "Short hand on 6, long hand on 8"],
+      "options": [
+        "Short hand on 8, long hand on 12",
+        "Short hand on 12, long hand on 8",
+        "Both hands on 8",
+        "Short hand on 6, long hand on 8"
+      ],
       "answer": "Short hand on 8, long hand on 12",
       "hints": [
         "The short (hour) hand shows the hour number",
@@ -255,7 +300,12 @@
     "type": "MCQ",
     "content": {
       "question": "How many minutes are in 1 hour?",
-      "options": ["12", "24", "60", "100"],
+      "options": [
+        "12",
+        "24",
+        "60",
+        "100"
+      ],
       "answer": "60",
       "hints": [
         "Count the tick marks around a clock face",
@@ -274,7 +324,12 @@
     "type": "MCQ",
     "content": {
       "question": "A square has ___ sides.",
-      "options": ["3", "4", "5", "6"],
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
       "answer": "4",
       "hints": [
         "Count the straight edges of a square",
@@ -293,7 +348,10 @@
     "type": "TRUE_FALSE",
     "content": {
       "question": "A triangle always has exactly 3 sides.",
-      "options": ["True", "False"],
+      "options": [
+        "True",
+        "False"
+      ],
       "answer": "True",
       "hints": [
         "Think about the word 'tri' — what does it mean?",
@@ -331,7 +389,12 @@
     "type": "MCQ",
     "content": {
       "question": "The school store has 58 pencils on Monday. 27 more arrive Tuesday. How many pencils are there now?",
-      "options": ["75", "85", "86", "95"],
+      "options": [
+        "75",
+        "85",
+        "86",
+        "95"
+      ],
       "answer": "85",
       "hints": [
         "Add the ones: 8 + 7 = ?",
@@ -369,7 +432,12 @@
     "type": "MCQ",
     "content": {
       "question": "63 − 28 = ___",
-      "options": ["25", "35", "41", "45"],
+      "options": [
+        "25",
+        "35",
+        "41",
+        "45"
+      ],
       "answer": "35",
       "hints": [
         "Can you subtract 8 from 3? You may need to regroup (borrow).",
@@ -407,7 +475,12 @@
     "type": "MCQ",
     "content": {
       "question": "A library has 312 books. Students borrow 175. How many books remain?",
-      "options": ["127", "137", "143", "237"],
+      "options": [
+        "127",
+        "137",
+        "143",
+        "237"
+      ],
       "answer": "137",
       "hints": [
         "Set up the subtraction: 312 − 175. Start with the ones place.",
@@ -426,7 +499,12 @@
     "type": "MCQ",
     "content": {
       "question": "What is the value of the digit 4 in the number 347?",
-      "options": ["4", "40", "400", "4000"],
+      "options": [
+        "4",
+        "40",
+        "400",
+        "4000"
+      ],
       "answer": "40",
       "hints": [
         "Find where the digit 4 is: ones, tens, or hundreds place?",
@@ -445,7 +523,12 @@
     "type": "MCQ",
     "content": {
       "question": "Which number equals 5 hundreds + 3 tens + 8 ones?",
-      "options": ["538", "583", "835", "358"],
+      "options": [
+        "538",
+        "583",
+        "835",
+        "358"
+      ],
       "answer": "538",
       "hints": [
         "Hundreds go in the leftmost place, then tens, then ones",
@@ -464,7 +547,12 @@
     "type": "MCQ",
     "content": {
       "question": "Which correctly compares the two numbers? 429 ___ 492",
-      "options": ["429 > 492", "429 = 492", "429 < 492", "Cannot tell"],
+      "options": [
+        "429 > 492",
+        "429 = 492",
+        "429 < 492",
+        "Cannot tell"
+      ],
       "answer": "429 < 492",
       "hints": [
         "Compare the hundreds digits first. Are they the same?",
@@ -483,7 +571,12 @@
     "type": "MCQ",
     "content": {
       "question": "There are 3 bags with 4 apples in each bag. How many apples are there in all?",
-      "options": ["7", "10", "12", "16"],
+      "options": [
+        "7",
+        "10",
+        "12",
+        "16"
+      ],
       "answer": "12",
       "hints": [
         "Multiplication means equal groups. You have 3 equal groups of 4.",
@@ -521,7 +614,12 @@
     "type": "MCQ",
     "content": {
       "question": "Which multiplication fact does this array show? (5 rows, 3 columns of dots)",
-      "options": ["$5 + 3 = 8$", "$5 \\times 3 = 15$", "$5 \\times 3 = 16$", "$3 \\times 3 = 9$"],
+      "options": [
+        "$5 + 3 = 8$",
+        "$5 \\times 3 = 15$",
+        "$5 \\times 3 = 16$",
+        "$3 \\times 3 = 9$"
+      ],
       "answer": "$5 \\times 3 = 15$",
       "hints": [
         "An array shows rows and columns. Count the rows and columns.",
@@ -559,7 +657,12 @@
     "type": "MCQ",
     "content": {
       "question": "The clock shows the short hand between 2 and 3, and the long hand on 6. What time does the clock show?",
-      "options": ["2:06", "2:30", "3:30", "6:02"],
+      "options": [
+        "2:06",
+        "2:30",
+        "3:30",
+        "6:02"
+      ],
       "answer": "2:30",
       "hints": [
         "The long hand on 6 means 30 minutes past the hour",
@@ -578,7 +681,12 @@
     "type": "MCQ",
     "content": {
       "question": "Lunch starts at 11:15. Lunch is 45 minutes long. When does lunch end?",
-      "options": ["11:45", "11:60", "12:00", "12:15"],
+      "options": [
+        "11:45",
+        "11:60",
+        "12:00",
+        "12:15"
+      ],
       "answer": "12:00",
       "hints": [
         "Add 45 minutes to 11:15",
@@ -597,7 +705,12 @@
     "type": "MCQ",
     "content": {
       "question": "A bar graph shows: Cats = 5, Dogs = 8, Birds = 3. Which pet is most popular?",
-      "options": ["Cats", "Dogs", "Birds", "All are equal"],
+      "options": [
+        "Cats",
+        "Dogs",
+        "Birds",
+        "All are equal"
+      ],
       "answer": "Dogs",
       "hints": [
         "Look for the tallest bar or the largest number",
@@ -616,7 +729,12 @@
     "type": "MCQ",
     "content": {
       "question": "A picture graph shows students' favorite seasons: Spring = 6 students, Summer = 9 students, Fall = 4 students, Winter = 7 students. How many MORE students prefer Summer than Fall?",
-      "options": ["3", "4", "5", "6"],
+      "options": [
+        "3",
+        "4",
+        "5",
+        "6"
+      ],
       "answer": "5",
       "hints": [
         "Subtract to find the difference",
@@ -635,7 +753,12 @@
     "type": "MCQ",
     "content": {
       "question": "A pizza is cut into 4 equal slices. Maria eats 1 slice. What fraction of the pizza did she eat?",
-      "options": ["$\\frac{1}{2}$", "$\\frac{1}{3}$", "$\\frac{1}{4}$", "$\\frac{4}{1}$"],
+      "options": [
+        "$\\frac{1}{2}$",
+        "$\\frac{1}{3}$",
+        "$\\frac{1}{4}$",
+        "$\\frac{4}{1}$"
+      ],
       "answer": "$\\frac{1}{4}$",
       "hints": [
         "The bottom number (denominator) is how many equal parts in all",
@@ -673,7 +796,12 @@
     "type": "MCQ",
     "content": {
       "question": "Which fraction is equivalent to $\\frac{1}{2}$?",
-      "options": ["$\\frac{2}{6}$", "$\\frac{2}{4}$", "$\\frac{3}{4}$", "$\\frac{1}{4}$"],
+      "options": [
+        "$\\frac{2}{6}$",
+        "$\\frac{2}{4}$",
+        "$\\frac{3}{4}$",
+        "$\\frac{1}{4}$"
+      ],
       "answer": "$\\frac{2}{4}$",
       "hints": [
         "Multiply both numerator and denominator by the same number",
@@ -711,7 +839,12 @@
     "type": "MCQ",
     "content": {
       "question": "Jake has $\\frac{5}{6}$ of a foot of string. He uses $\\frac{2}{6}$ of a foot. How much string is left?",
-      "options": ["$\\frac{3}{6}$", "$\\frac{7}{6}$", "$\\frac{2}{5}$", "$\\frac{3}{12}$"],
+      "options": [
+        "$\\frac{3}{6}$",
+        "$\\frac{7}{6}$",
+        "$\\frac{2}{5}$",
+        "$\\frac{3}{12}$"
+      ],
       "answer": "$\\frac{3}{6}$",
       "hints": [
         "Subtract the numerators when the denominators are the same",
@@ -730,7 +863,12 @@
     "type": "MCQ",
     "content": {
       "question": "A carton holds 6 eggs. How many eggs are in 7 cartons?",
-      "options": ["36", "40", "42", "48"],
+      "options": [
+        "36",
+        "40",
+        "42",
+        "48"
+      ],
       "answer": "42",
       "hints": [
         "Write a multiplication sentence: 7 groups × 6 eggs = ?",
@@ -768,7 +906,12 @@
     "type": "MCQ",
     "content": {
       "question": "Using the distributive property, which expression equals $6 \\times 7$?",
-      "options": ["$(6 \\times 3) + (6 \\times 3)$", "$(6 \\times 4) + (6 \\times 3)$", "$(3 \\times 7) + (3 \\times 7)$", "$(6 + 4) \\times (6 + 3)$"],
+      "options": [
+        "$(6 \\times 3) + (6 \\times 3)$",
+        "$(6 \\times 4) + (6 \\times 3)$",
+        "$(3 \\times 7) + (3 \\times 7)$",
+        "$(6 + 4) \\times (6 + 3)$"
+      ],
       "answer": "$(6 \\times 4) + (6 \\times 3)$",
       "hints": [
         "The distributive property: $a \\times (b + c) = (a \\times b) + (a \\times c)$",
@@ -806,7 +949,12 @@
     "type": "MCQ",
     "content": {
       "question": "24 cookies are shared equally among 4 friends. How many cookies does each friend get?",
-      "options": ["4", "6", "8", "20"],
+      "options": [
+        "4",
+        "6",
+        "8",
+        "20"
+      ],
       "answer": "6",
       "hints": [
         "Division splits a total into equal groups",
@@ -844,7 +992,12 @@
     "type": "MCQ",
     "content": {
       "question": "A bookshelf has 45 books arranged equally on 5 shelves. How many books are on each shelf?",
-      "options": ["7", "8", "9", "10"],
+      "options": [
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
       "answer": "9",
       "hints": [
         "Write the division: $45 \\div 5 = ?$",
@@ -882,7 +1035,12 @@
     "type": "MCQ",
     "content": {
       "question": "What comes next in the pattern? 4, 8, 12, 16, ___",
-      "options": ["18", "19", "20", "22"],
+      "options": [
+        "18",
+        "19",
+        "20",
+        "22"
+      ],
       "answer": "20",
       "hints": [
         "Find the rule: how much is added each time?",
@@ -901,7 +1059,12 @@
     "type": "MCQ",
     "content": {
       "question": "The table shows a pattern: Input 1 → Output 5, Input 2 → Output 10, Input 3 → Output 15, Input 4 → Output ___. What is the output for Input 4?",
-      "options": ["16", "18", "20", "25"],
+      "options": [
+        "16",
+        "18",
+        "20",
+        "25"
+      ],
       "answer": "20",
       "hints": [
         "Find the rule between input and output",
@@ -920,7 +1083,12 @@
     "type": "MCQ",
     "content": {
       "question": "A rectangle has a length of 6 cm and a width of 4 cm. What is its perimeter?",
-      "options": ["10 cm", "20 cm", "24 cm", "48 cm"],
+      "options": [
+        "10 cm",
+        "20 cm",
+        "24 cm",
+        "48 cm"
+      ],
       "answer": "20 cm",
       "hints": [
         "Perimeter is the total distance around the shape",
@@ -946,6 +1114,3288 @@
         "A square has equal sides: 5 × 5 = ?"
       ],
       "solution": "Area = side × side = 5 × 5 = 25 cm².",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "What is 2 + 6?",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "answer": "8",
+      "hints": [
+        "Count on from 6",
+        "6, 7, 8 — that is 2 more than 6"
+      ],
+      "solution": "2 + 6 = 8. Start at 6 and count up 2: 7, 8.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "1 + 9 = ___",
+      "options": null,
+      "answer": "10",
+      "hints": [
+        "Count on from 9",
+        "9 and 1 more is 10"
+      ],
+      "solution": "1 + 9 = 10. Count on from 9: one more is 10.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "4 + 4 = 8",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Count 4 and then 4 more",
+        "Doubles: 4 + 4"
+      ],
+      "solution": "True. 4 + 4 = 8. This is a doubles fact.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "There are 3 red balls and 5 blue balls. How many balls in all?",
+      "options": [
+        "6",
+        "7",
+        "8",
+        "9"
+      ],
+      "answer": "8",
+      "hints": [
+        "Put both groups together",
+        "3 + 5 = ?"
+      ],
+      "solution": "3 + 5 = 8. Putting 3 red and 5 blue together gives 8 balls.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "Which two numbers add up to 10?",
+      "options": [
+        "3 and 8",
+        "4 and 7",
+        "6 and 4",
+        "5 and 6"
+      ],
+      "answer": "6 and 4",
+      "hints": [
+        "Try adding each pair",
+        "Which pair sums to exactly 10?"
+      ],
+      "solution": "3+8=11, 4+7=11, 6+4=10, 5+6=11. So 6 and 4 make 10.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "9 + 6 = ___",
+      "options": null,
+      "answer": "15",
+      "hints": [
+        "Make a ten first: 9 + 1 = 10",
+        "Then add the rest: 10 + 5 = ?"
+      ],
+      "solution": "9 + 1 = 10, and 6 = 1 + 5, so 9 + 6 = 10 + 5 = 15.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "Mom baked 8 muffins. She baked 9 more. How many muffins are there now?",
+      "options": [
+        "15",
+        "16",
+        "17",
+        "18"
+      ],
+      "answer": "17",
+      "hints": [
+        "8 + 9 — try making a ten",
+        "8 + 2 = 10, then 10 + 7 = ?"
+      ],
+      "solution": "8 + 9 = 17. Make a ten: 8 + 2 = 10, 9 − 2 = 7, 10 + 7 = 17.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "10 − 3 = ___",
+      "options": null,
+      "answer": "7",
+      "hints": [
+        "Start at 10 and count back 3",
+        "10, 9, 8, 7"
+      ],
+      "solution": "10 − 3 = 7. Count back from 10 three steps: 9, 8, 7.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "6 − 6 = 0",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "When you take away all of something, you have none left",
+        "Any number minus itself equals 0"
+      ],
+      "solution": "True. 6 − 6 = 0. Taking away all 6 leaves nothing.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "12 − 5 = ___",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "answer": "7",
+      "hints": [
+        "Count back 5 from 12",
+        "Or think: 5 + ? = 12"
+      ],
+      "solution": "12 − 5 = 7. Count back: 11, 10, 9, 8, 7. Or 5 + 7 = 12.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "HARD",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "16 − 9 = ___",
+      "options": null,
+      "answer": "7",
+      "hints": [
+        "Think of the related fact: 9 + ? = 16",
+        "Count up from 9 to 16"
+      ],
+      "solution": "16 − 9 = 7. Count up from 9: 10, 11, 12, 13, 14, 15, 16 — that is 7 steps.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "skip_counting",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Count by 2s. What comes next? 2, 4, 6, 8, ___",
+      "options": [
+        "9",
+        "10",
+        "11",
+        "12"
+      ],
+      "answer": "10",
+      "hints": [
+        "Each number is 2 more than the last",
+        "8 + 2 = ?"
+      ],
+      "solution": "Counting by 2s: 2, 4, 6, 8, 10. Add 2 to 8 to get 10.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "skip_counting",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "Count by 5s: 5, 10, 15, ___",
+      "options": null,
+      "answer": "20",
+      "hints": [
+        "Add 5 each time",
+        "15 + 5 = ?"
+      ],
+      "solution": "Counting by 5s: 5, 10, 15, 20. Add 5 to 15 to get 20.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "skip_counting",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "Count by 10s. What is the missing number? 10, 20, ___, 40, 50",
+      "options": [
+        "25",
+        "30",
+        "35",
+        "31"
+      ],
+      "answer": "30",
+      "hints": [
+        "Each number is 10 more than the last",
+        "20 + 10 = ?"
+      ],
+      "solution": "Counting by 10s: 10, 20, 30, 40, 50. The missing number is 30.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "comparing_numbers",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which number is greater: 27 or 19?",
+      "options": [
+        "19",
+        "27",
+        "They are equal",
+        "Cannot tell"
+      ],
+      "answer": "27",
+      "hints": [
+        "Compare the tens digits first",
+        "2 tens is more than 1 ten"
+      ],
+      "solution": "27 > 19 because 2 tens (20) is greater than 1 ten (10).",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "comparing_numbers",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "45 > 54 is a true statement.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "False",
+      "hints": [
+        "Compare the tens digits: 4 tens vs. 5 tens",
+        "Which has more tens?"
+      ],
+      "solution": "False. 45 < 54 because 4 tens < 5 tens. So 45 > 54 is false.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "comparing_numbers",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "Which symbol makes this true? 38 ___ 38",
+      "options": [
+        ">",
+        "<",
+        "=",
+        "≠"
+      ],
+      "answer": "=",
+      "hints": [
+        "Are the numbers the same?",
+        "Equal numbers use the = sign"
+      ],
+      "solution": "38 = 38. When two numbers are the same, use the equals sign.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which shape has 0 straight sides and 0 corners?",
+      "options": [
+        "Square",
+        "Triangle",
+        "Rectangle",
+        "Circle"
+      ],
+      "answer": "Circle",
+      "hints": [
+        "Look for a perfectly round shape",
+        "No corners, no straight edges"
+      ],
+      "solution": "A circle has no straight sides and no corners — it is completely round.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "A rectangle has 4 sides and 4 right-angle corners.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Count the sides of a rectangle",
+        "Check the corners — are they square corners?"
+      ],
+      "solution": "True. A rectangle has 4 sides and 4 right-angle (90°) corners.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "How many sides does a hexagon have?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "8"
+      ],
+      "answer": "6",
+      "hints": [
+        "'Hex' means six in Greek",
+        "Think of a honeycomb cell"
+      ],
+      "solution": "A hexagon has 6 sides. 'Hex' comes from the Greek word for six.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "A pencil is 7 cubes long and an eraser is 3 cubes long. How much longer is the pencil?",
+      "options": [
+        "3 cubes",
+        "4 cubes",
+        "10 cubes",
+        "5 cubes"
+      ],
+      "answer": "4 cubes",
+      "hints": [
+        "Subtract to find the difference in length",
+        "7 − 3 = ?"
+      ],
+      "solution": "7 − 3 = 4. The pencil is 4 cubes longer than the eraser.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "When measuring length, it matters where you start measuring from.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "You must line up the start of your ruler with the start of the object",
+        "Starting in the middle would give a wrong measurement"
+      ],
+      "solution": "True. You must start measuring from the very beginning (zero end) of your ruler.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "measurement",
+    "topic": "time",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "The long hand points to 6 and the short hand points to 7. What time is it?",
+      "options": [
+        "6:07",
+        "6:30",
+        "7:30",
+        "7:06"
+      ],
+      "answer": "7:30",
+      "hints": [
+        "Long hand on 6 means 30 minutes",
+        "Short hand on 7 means the hour is 7"
+      ],
+      "solution": "Short hand → hour 7. Long hand on 6 → 30 minutes. Time: 7:30.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "A tally chart shows: Red = 4 tallies, Blue = 7 tallies, Green = 2 tallies. Which color has the most votes?",
+      "options": [
+        "Red",
+        "Blue",
+        "Green",
+        "All the same"
+      ],
+      "answer": "Blue",
+      "hints": [
+        "Find the largest number of tallies",
+        "Compare 4, 7, and 2"
+      ],
+      "solution": "Blue has 7 tallies, which is the most. Blue wins.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "A tally chart shows: Apples = 5, Bananas = 3. How many fruits are counted in all?",
+      "options": [
+        "2",
+        "5",
+        "8",
+        "15"
+      ],
+      "answer": "8",
+      "hints": [
+        "Add the two totals together",
+        "5 + 3 = ?"
+      ],
+      "solution": "5 apples + 3 bananas = 8 fruits in all.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "algebraic_thinking",
+    "topic": "patterns",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "What comes next in the pattern? Circle, Square, Circle, Square, ___",
+      "options": [
+        "Triangle",
+        "Circle",
+        "Square",
+        "Pentagon"
+      ],
+      "answer": "Circle",
+      "hints": [
+        "What is the repeating pattern?",
+        "The shapes alternate: Circle, Square, Circle, Square, ..."
+      ],
+      "solution": "The pattern repeats: Circle, Square. After Square comes Circle.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "algebraic_thinking",
+    "topic": "patterns",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "What comes next? 1, 3, 5, 7, ___",
+      "options": null,
+      "answer": "9",
+      "hints": [
+        "Add 2 each time",
+        "7 + 2 = ?"
+      ],
+      "solution": "The rule is +2. 7 + 2 = 9.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "algebraic_thinking",
+    "topic": "patterns",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "What is the missing number? 10, 20, ___, 40",
+      "options": [
+        "25",
+        "30",
+        "35",
+        "15"
+      ],
+      "answer": "30",
+      "hints": [
+        "What is the rule? Each number grows by the same amount.",
+        "20 − 10 = 10, so the rule is +10"
+      ],
+      "solution": "The rule is +10. After 20 comes 20 + 10 = 30.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "place_value",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "Which number has 7 ones and 2 tens?",
+      "options": [
+        "72",
+        "27",
+        "207",
+        "720"
+      ],
+      "answer": "27",
+      "hints": [
+        "Tens come before ones in a number",
+        "2 tens = 20, 7 ones = 7; 20 + 7 = ?"
+      ],
+      "solution": "2 tens = 20 and 7 ones = 7. 20 + 7 = 27.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "number_and_operations",
+    "topic": "place_value",
+    "difficulty": "HARD",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "Write the number: 6 tens and 0 ones = ___",
+      "options": null,
+      "answer": "60",
+      "hints": [
+        "6 tens = 60",
+        "0 ones adds nothing"
+      ],
+      "solution": "6 tens = 60 and 0 ones = 0. So the number is 60.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "Which unit would you use to measure the length of a classroom?",
+      "options": [
+        "Inches",
+        "Feet",
+        "Miles",
+        "Yards"
+      ],
+      "answer": "Feet",
+      "hints": [
+        "Inches are very small — think thumbnail length",
+        "Feet are about the length of a foot"
+      ],
+      "solution": "Feet are the best unit for measuring a classroom. Inches are too small; miles and yards are for much larger distances.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "Which of these is NOT a flat (2D) shape?",
+      "options": [
+        "Circle",
+        "Triangle",
+        "Cube",
+        "Square"
+      ],
+      "answer": "Cube",
+      "hints": [
+        "Flat shapes are drawn on paper with length and width only",
+        "A cube has length, width, AND height"
+      ],
+      "solution": "A cube is a 3D (solid) shape with 6 faces. The others — circle, triangle, square — are all flat 2D shapes.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "___ + 5 = 11",
+      "options": null,
+      "answer": "6",
+      "hints": [
+        "Think: what number plus 5 equals 11?",
+        "Count up from 5 to 11"
+      ],
+      "solution": "6 + 5 = 11. Count up from 5: 6, 7, 8, 9, 10, 11 — that is 6 steps.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 1,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "If 8 + ___ = 15, what is the missing number?",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "answer": "7",
+      "hints": [
+        "Count up from 8 to 15",
+        "8 + ? = 15 → 15 − 8 = ?"
+      ],
+      "solution": "15 − 8 = 7. So 8 + 7 = 15.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "23 + 14 = ___",
+      "options": null,
+      "answer": "37",
+      "hints": [
+        "Add tens: 20 + 10 = 30",
+        "Add ones: 3 + 4 = 7; then 30 + 7 = ?"
+      ],
+      "solution": "Tens: 20 + 10 = 30. Ones: 3 + 4 = 7. Total: 37.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "31 + 45 = ___",
+      "options": [
+        "66",
+        "75",
+        "76",
+        "86"
+      ],
+      "answer": "76",
+      "hints": [
+        "Add tens first: 30 + 40 = ?",
+        "Then add ones: 1 + 5 = ?"
+      ],
+      "solution": "30 + 40 = 70, 1 + 5 = 6. Total: 76.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "MEDIUM",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "68 + 25 = 93",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Add ones: 8 + 5 = 13; write 3, carry 1",
+        "Tens: 6 + 2 + 1 = 9; so the answer is 93"
+      ],
+      "solution": "True. 68 + 25: ones 8+5=13 (write 3, carry 1), tens 6+2+1=9. Answer: 93.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "A store has 245 red pens and 378 blue pens. How many pens in total?",
+      "options": [
+        "513",
+        "523",
+        "613",
+        "623"
+      ],
+      "answer": "623",
+      "hints": [
+        "Add ones: 5 + 8 = 13; write 3, carry 1",
+        "Tens: 4 + 7 + 1 = 12; write 2, carry 1; Hundreds: 2 + 3 + 1 = 6"
+      ],
+      "solution": "245 + 378: ones 5+8=13 (write 3, carry 1); tens 4+7+1=12 (write 2, carry 1); hundreds 2+3+1=6. Answer: 623.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "59 − 23 = ___",
+      "options": null,
+      "answer": "36",
+      "hints": [
+        "Subtract ones: 9 − 3 = 6",
+        "Subtract tens: 5 − 2 = 3; answer is 36"
+      ],
+      "solution": "Ones: 9 − 3 = 6. Tens: 5 − 2 = 3. Answer: 36.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "76 − 32 = ___",
+      "options": [
+        "34",
+        "44",
+        "46",
+        "54"
+      ],
+      "answer": "44",
+      "hints": [
+        "Ones: 6 − 2 = ?",
+        "Tens: 7 − 3 = ?"
+      ],
+      "solution": "Ones: 6 − 2 = 4. Tens: 7 − 3 = 4. Answer: 44.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "72 − 38 = ___",
+      "options": null,
+      "answer": "34",
+      "hints": [
+        "2 − 8 needs regrouping. Borrow a ten.",
+        "12 − 8 = 4 (ones). 6 − 3 = 3 (tens)."
+      ],
+      "solution": "Borrow 1 ten: 12 − 8 = 4 (ones). 7 − 1 − 3 = 3 (tens). Answer: 34.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "500 − 263 = ___",
+      "options": [
+        "237",
+        "247",
+        "263",
+        "337"
+      ],
+      "answer": "237",
+      "hints": [
+        "0 − 3 needs regrouping. Borrow across zeros.",
+        "500 = 499 + 1; think of it as 499 − 262"
+      ],
+      "solution": "500 − 263: borrow through zeros. 10 − 3 = 7 (ones); 9 − 6 = 3 (tens); 4 − 2 = 2 (hundreds). Answer: 237.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "place_value",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "What is the value of the 6 in 632?",
+      "options": [
+        "6",
+        "60",
+        "600",
+        "6000"
+      ],
+      "answer": "600",
+      "hints": [
+        "Find where the 6 is: hundreds, tens, or ones?",
+        "6 is in the hundreds place"
+      ],
+      "solution": "In 632, the 6 is in the hundreds place. Its value is 600.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "place_value",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "The number 408 has 0 tens.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Write out the digits: hundreds-tens-ones",
+        "408: 4 hundreds, 0 tens, 8 ones"
+      ],
+      "solution": "True. 408 = 4 hundreds + 0 tens + 8 ones. The tens digit is 0.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "place_value",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "Which number has the same value as 4 hundreds + 17 tens + 3 ones?",
+      "options": [
+        "4173",
+        "573",
+        "583",
+        "417"
+      ],
+      "answer": "573",
+      "hints": [
+        "17 tens = 170",
+        "400 + 170 + 3 = ?"
+      ],
+      "solution": "4 hundreds = 400; 17 tens = 170; 3 ones = 3. 400 + 170 + 3 = 573.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "5 × 3 = ___",
+      "options": [
+        "8",
+        "12",
+        "15",
+        "20"
+      ],
+      "answer": "15",
+      "hints": [
+        "Skip-count by 5s three times",
+        "5, 10, 15"
+      ],
+      "solution": "5 × 3 = 15. Skip-count by 5: 5, 10, 15.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "3 × 4 = 4 × 3",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Multiplication is commutative",
+        "3 groups of 4 = 4 groups of 3"
+      ],
+      "solution": "True. 3 × 4 = 12 and 4 × 3 = 12. Changing the order does not change the product.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "6 × 8 = ___",
+      "options": null,
+      "answer": "48",
+      "hints": [
+        "Skip-count by 6 eight times",
+        "6, 12, 18, 24, 30, 36, 42, 48"
+      ],
+      "solution": "6 × 8 = 48. Or: 6 × 8 = 6 × 4 × 2 = 24 × 2 = 48.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "A sheet has 9 rows of stickers with 7 stickers per row. How many stickers in all?",
+      "options": [
+        "56",
+        "63",
+        "72",
+        "81"
+      ],
+      "answer": "63",
+      "hints": [
+        "Multiply: 9 × 7",
+        "9 × 7 = 9 × 5 + 9 × 2 = 45 + 18"
+      ],
+      "solution": "9 × 7 = 63. Partial products: 9 × 5 = 45, 9 × 2 = 18; 45 + 18 = 63.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "A desk is measured as 3 feet long. How many inches is that?",
+      "options": [
+        "12",
+        "24",
+        "36",
+        "48"
+      ],
+      "answer": "36",
+      "hints": [
+        "There are 12 inches in 1 foot",
+        "3 feet × 12 inches = ?"
+      ],
+      "solution": "1 foot = 12 inches. 3 feet × 12 = 36 inches.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "A centimeter is longer than a meter.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "False",
+      "hints": [
+        "100 centimeters = 1 meter",
+        "A centimeter is much smaller than a meter"
+      ],
+      "solution": "False. A meter is 100 centimeters. A centimeter is smaller than a meter.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A ribbon is 50 cm long. You cut off 18 cm. How many centimeters remain? ___",
+      "options": null,
+      "answer": "32",
+      "hints": [
+        "Subtract: 50 − 18",
+        "50 − 18: borrow if needed"
+      ],
+      "solution": "50 − 18 = 32. The remaining ribbon is 32 cm long.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "A rope is 1 meter 25 centimeters long. What is its length in centimeters?",
+      "options": [
+        "25",
+        "100",
+        "125",
+        "225"
+      ],
+      "answer": "125",
+      "hints": [
+        "1 meter = 100 centimeters",
+        "100 + 25 = ?"
+      ],
+      "solution": "1 meter = 100 cm. 100 + 25 = 125 cm.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "time",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "How many days are in a week?",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "8"
+      ],
+      "answer": "7",
+      "hints": [
+        "Name the days of the week",
+        "Monday, Tuesday, Wednesday, Thursday, Friday, Saturday, Sunday"
+      ],
+      "solution": "There are 7 days in a week.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "time",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "There are 24 hours in a day.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Count AM hours and PM hours",
+        "12 AM hours + 12 PM hours = 24"
+      ],
+      "solution": "True. There are 24 hours in a day — 12 during AM and 12 during PM.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "time",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "The movie starts at 3:45 PM and lasts 1 hour 30 minutes. When does it end?",
+      "options": [
+        "4:45 PM",
+        "5:00 PM",
+        "5:15 PM",
+        "5:30 PM"
+      ],
+      "answer": "5:15 PM",
+      "hints": [
+        "Add 1 hour: 3:45 + 1 hour = 4:45",
+        "Add 30 minutes: 4:45 + 30 min = ?"
+      ],
+      "solution": "3:45 + 1 hour = 4:45. 4:45 + 30 min = 5:15 PM.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "money",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "How many cents are in 1 dollar?",
+      "options": [
+        "10",
+        "50",
+        "100",
+        "1000"
+      ],
+      "answer": "100",
+      "hints": [
+        "Think about pennies",
+        "100 pennies = 1 dollar"
+      ],
+      "solution": "There are 100 cents in 1 dollar.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "money",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "You have 2 quarters and 1 dime. How many cents do you have in all?",
+      "options": [
+        "30",
+        "55",
+        "60",
+        "65"
+      ],
+      "answer": "60",
+      "hints": [
+        "1 quarter = 25 cents, 1 dime = 10 cents",
+        "25 + 25 + 10 = ?"
+      ],
+      "solution": "2 quarters = 50 cents. 1 dime = 10 cents. 50 + 10 = 60 cents.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "money",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A snack costs 75 cents. You pay with 1 dollar. How much change do you get? ___ cents",
+      "options": null,
+      "answer": "25",
+      "hints": [
+        "100 cents − 75 cents = ?",
+        "Count up from 75 to 100"
+      ],
+      "solution": "100 − 75 = 25 cents change.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "money",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "You have $1.35. You earn 65 more cents. How much do you have in total?",
+      "options": [
+        "$1.90",
+        "$2.00",
+        "$2.10",
+        "$2.35"
+      ],
+      "answer": "$2.00",
+      "hints": [
+        "Add cents: 35 + 65 = 100 cents = $1.00",
+        "Then: $1.00 + $1.00 = ?"
+      ],
+      "solution": "35 cents + 65 cents = 100 cents = $1.00. $1.00 + $1.00 = $2.00.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "A bar graph shows apples sold: Monday=4, Tuesday=7, Wednesday=3. On which day were the most apples sold?",
+      "options": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "All the same"
+      ],
+      "answer": "Tuesday",
+      "hints": [
+        "Find the tallest bar (highest number)",
+        "Compare 4, 7, and 3"
+      ],
+      "solution": "Tuesday has the most apples sold (7). 7 > 4 > 3.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A table shows: Red=12, Blue=8, Yellow=15. How many students voted in all? ___",
+      "options": null,
+      "answer": "35",
+      "hints": [
+        "Add all three values",
+        "12 + 8 + 15 = ?"
+      ],
+      "solution": "12 + 8 + 15 = 35 students voted in all.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "A line plot shows scores: 3 students scored 5, 5 students scored 6, 2 students scored 7. What is the most common score?",
+      "options": [
+        "5",
+        "6",
+        "7",
+        "All equal"
+      ],
+      "answer": "6",
+      "hints": [
+        "The most common value is the mode",
+        "Which score appears most often?"
+      ],
+      "solution": "Score 6 appears 5 times, which is the most. The mode is 6.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "How many faces does a cube have?",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "8"
+      ],
+      "answer": "6",
+      "hints": [
+        "Count the flat surfaces of a box",
+        "Top, bottom, front, back, left, right"
+      ],
+      "solution": "A cube has 6 square faces.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "A cylinder has 2 flat circular faces.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Think of a soup can",
+        "A can has a top circle and a bottom circle"
+      ],
+      "solution": "True. A cylinder has 2 circular flat faces (top and bottom) and 1 curved surface.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "A rectangle has a length of 8 cm and a width of 3 cm. What is its perimeter?",
+      "options": [
+        "11 cm",
+        "22 cm",
+        "24 cm",
+        "32 cm"
+      ],
+      "answer": "22 cm",
+      "hints": [
+        "Perimeter = sum of all sides",
+        "8 + 3 + 8 + 3 = ?"
+      ],
+      "solution": "Perimeter = 8 + 3 + 8 + 3 = 22 cm.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "HARD",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A square has a perimeter of 28 cm. What is the length of each side? ___ cm",
+      "options": null,
+      "answer": "7",
+      "hints": [
+        "A square has 4 equal sides",
+        "28 ÷ 4 = ?"
+      ],
+      "solution": "Perimeter = 4 × side. 28 = 4 × side. Side = 28 ÷ 4 = 7 cm.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "algebraic_thinking",
+    "topic": "patterns",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "What comes next? 3, 6, 9, 12, ___",
+      "options": [
+        "13",
+        "14",
+        "15",
+        "16"
+      ],
+      "answer": "15",
+      "hints": [
+        "The rule is +3",
+        "12 + 3 = ?"
+      ],
+      "solution": "The rule is +3. 12 + 3 = 15.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "algebraic_thinking",
+    "topic": "patterns",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "What is the rule? 100, 90, 80, 70, ___. Rule: subtract ___",
+      "options": null,
+      "answer": "10",
+      "hints": [
+        "How much does each number decrease?",
+        "100 − 90 = ?"
+      ],
+      "solution": "Each number decreases by 10. The rule is subtract 10. Next: 70 − 10 = 60.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "___ − 14 = 23",
+      "options": null,
+      "answer": "37",
+      "hints": [
+        "Add to find the missing number: 23 + 14 = ?",
+        "Addition undoes subtraction"
+      ],
+      "solution": "23 + 14 = 37. So 37 − 14 = 23.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "Which number makes this equation true? 6 × ___ = 30",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "answer": "5",
+      "hints": [
+        "Think: 6 times what equals 30?",
+        "Skip-count by 6 until you reach 30"
+      ],
+      "solution": "6 × 5 = 30. Skip-count by 6: 6, 12, 18, 24, 30 — that is 5 steps.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "skip_counting",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Count by 5s: 25, 30, 35, ___",
+      "options": [
+        "36",
+        "40",
+        "38",
+        "45"
+      ],
+      "answer": "40",
+      "hints": [
+        "Add 5 each time",
+        "35 + 5 = ?"
+      ],
+      "solution": "35 + 5 = 40. Counting by 5s: 25, 30, 35, 40.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "skip_counting",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "Count by 100s: 200, 300, 400, ___",
+      "options": null,
+      "answer": "500",
+      "hints": [
+        "Add 100 each time",
+        "400 + 100 = ?"
+      ],
+      "solution": "400 + 100 = 500. Counting by 100s: 200, 300, 400, 500.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "comparing_numbers",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which is correct? 357 ___ 375",
+      "options": [
+        "357 > 375",
+        "357 = 375",
+        "357 < 375",
+        "Cannot tell"
+      ],
+      "answer": "357 < 375",
+      "hints": [
+        "Compare hundreds: same. Compare tens: 5 vs. 7",
+        "5 tens < 7 tens"
+      ],
+      "solution": "Both have 3 hundreds. Tens: 5 < 7. So 357 < 375.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "comparing_numbers",
+    "difficulty": "MEDIUM",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "800 > 799 is a true statement.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Compare hundreds: 8 vs. 7",
+        "8 hundreds > 7 hundreds"
+      ],
+      "solution": "True. 800 has 8 hundreds and 799 has 7 hundreds. 800 > 799.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "even_and_odd",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which number is even?",
+      "options": [
+        "13",
+        "17",
+        "24",
+        "31"
+      ],
+      "answer": "24",
+      "hints": [
+        "Even numbers can be grouped into pairs with none left over",
+        "Even numbers end in 0, 2, 4, 6, or 8"
+      ],
+      "solution": "24 ends in 4, so it is even. 13, 17, and 31 are odd (they end in 3, 7, and 1).",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "even_and_odd",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "The number 39 is an even number.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "False",
+      "hints": [
+        "Look at the last digit",
+        "39 ends in 9, which is odd"
+      ],
+      "solution": "False. 39 ends in 9. Numbers ending in 1, 3, 5, 7, or 9 are odd.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "even_and_odd",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "What is the sum of any two even numbers?",
+      "options": [
+        "Always odd",
+        "Always even",
+        "Sometimes odd, sometimes even",
+        "Always zero"
+      ],
+      "answer": "Always even",
+      "hints": [
+        "Try some examples: 2 + 4, 6 + 8",
+        "Even + even = ?"
+      ],
+      "solution": "Even + even = even. Examples: 2 + 4 = 6 (even); 6 + 8 = 14 (even).",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "weight",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which unit would you use to weigh a bag of apples?",
+      "options": [
+        "Miles",
+        "Gallons",
+        "Pounds",
+        "Inches"
+      ],
+      "answer": "Pounds",
+      "hints": [
+        "Weight is measured in pounds or kilograms",
+        "Miles measure distance, gallons measure liquid"
+      ],
+      "solution": "Pounds (or kilograms) are used to measure weight. Miles and inches measure distance; gallons measure volume.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "weight",
+    "difficulty": "MEDIUM",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "A feather is heavier than a brick.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "False",
+      "hints": [
+        "Which would you struggle to lift?",
+        "A brick is much heavier than a feather"
+      ],
+      "solution": "False. A brick is much heavier than a feather.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "liquid_volume",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which container holds the most liquid?",
+      "options": [
+        "A teaspoon",
+        "A cup",
+        "A bathtub",
+        "A glass"
+      ],
+      "answer": "A bathtub",
+      "hints": [
+        "Which is the biggest?",
+        "Bigger containers hold more liquid"
+      ],
+      "solution": "A bathtub holds the most liquid. It is much larger than a teaspoon, cup, or glass.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "100 + 200 = ___",
+      "options": null,
+      "answer": "300",
+      "hints": [
+        "Add the hundreds: 1 + 2 = 3",
+        "So 100 + 200 = 300"
+      ],
+      "solution": "100 + 200 = 300. Add the hundreds: 1 hundred + 2 hundreds = 3 hundreds.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "There were 150 library books. Students borrowed 73. How many books remain?",
+      "options": [
+        "67",
+        "77",
+        "83",
+        "87"
+      ],
+      "answer": "77",
+      "hints": [
+        "150 − 73: start with the ones",
+        "0 − 3 needs regrouping"
+      ],
+      "solution": "Borrow 1 ten: 10 − 3 = 7 (ones). 4 tens − 7 tens needs borrowing from hundreds. 14 − 7 = 7 (tens). 0 hundreds. Answer: 77.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "If 4 × ___ = 36, what is the missing factor?",
+      "options": [
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "answer": "9",
+      "hints": [
+        "Think: 4 times what equals 36?",
+        "Skip-count by 4: 4, 8, 12, 16, 20, 24, 28, 32, 36"
+      ],
+      "solution": "4 × 9 = 36. Skip-count by 4 nine times to reach 36.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "3 × 7 = ___",
+      "options": null,
+      "answer": "21",
+      "hints": [
+        "Skip-count by 3 seven times",
+        "3, 6, 9, 12, 15, 18, 21"
+      ],
+      "solution": "3 × 7 = 21. Skip-count by 3: 3, 6, 9, 12, 15, 18, 21.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "5 × 6 = ___",
+      "options": [
+        "24",
+        "28",
+        "30",
+        "35"
+      ],
+      "answer": "30",
+      "hints": [
+        "Skip-count by 5 six times",
+        "5, 10, 15, 20, 25, 30"
+      ],
+      "solution": "5 × 6 = 30. Skip-count by 5: 5, 10, 15, 20, 25, 30.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "4 × 0 = 0",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Any number multiplied by 0 equals 0",
+        "Zero groups of 4 objects means no objects"
+      ],
+      "solution": "True. Any number × 0 = 0. This is the zero property of multiplication.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "There are 4 rows of seats with 8 seats in each row. How many seats in all?",
+      "options": [
+        "24",
+        "28",
+        "32",
+        "36"
+      ],
+      "answer": "32",
+      "hints": [
+        "Multiply rows × seats per row",
+        "4 × 8 = ?"
+      ],
+      "solution": "4 × 8 = 32. Four rows of 8: 8 + 8 + 8 + 8 = 32.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "division",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "18 ÷ 3 = ___",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "answer": "6",
+      "hints": [
+        "Think: 3 × ? = 18",
+        "Skip-count by 3 until you reach 18"
+      ],
+      "solution": "18 ÷ 3 = 6 because 3 × 6 = 18.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "division",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "40 ÷ 8 = ___",
+      "options": null,
+      "answer": "5",
+      "hints": [
+        "Think: 8 × ? = 40",
+        "Count by 8s: 8, 16, 24, 32, 40 — how many steps?"
+      ],
+      "solution": "40 ÷ 8 = 5 because 8 × 5 = 40.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "division",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "63 crayons are shared equally among 7 students. How many does each student get?",
+      "options": [
+        "7",
+        "8",
+        "9",
+        "10"
+      ],
+      "answer": "9",
+      "hints": [
+        "63 ÷ 7 = ?",
+        "7 × 9 = 63"
+      ],
+      "solution": "63 ÷ 7 = 9 because 7 × 9 = 63. Each student gets 9 crayons.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "division",
+    "difficulty": "HARD",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "72 ÷ 9 = ___",
+      "options": null,
+      "answer": "8",
+      "hints": [
+        "9 × 8 = 72",
+        "Skip-count by 9 eight times"
+      ],
+      "solution": "72 ÷ 9 = 8 because 9 × 8 = 72.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "fractions",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "1/2 is greater than 1/4",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Imagine a pizza: half a pizza vs. a quarter pizza",
+        "The larger the denominator, the smaller each piece"
+      ],
+      "solution": "True. 1/2 > 1/4 because halves are larger pieces than quarters.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "fractions",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which fraction shows 3 out of 8 equal parts?",
+      "options": [
+        "3/4",
+        "8/3",
+        "3/8",
+        "1/8"
+      ],
+      "answer": "3/8",
+      "hints": [
+        "The numerator tells how many parts are shaded",
+        "The denominator tells how many equal parts in all"
+      ],
+      "solution": "3 out of 8 equal parts is written as 3/8.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "fractions",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "Which fraction is equivalent to 2/3?",
+      "options": [
+        "3/6",
+        "4/6",
+        "2/6",
+        "3/4"
+      ],
+      "answer": "4/6",
+      "hints": [
+        "Multiply numerator and denominator by the same number",
+        "2/3 × 2/2 = ?/6"
+      ],
+      "solution": "2/3 = 4/6 (multiply top and bottom by 2). 3/6 = 1/2, not 2/3.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "fractions",
+    "difficulty": "HARD",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A number line from 0 to 1 is divided into 6 equal parts. What fraction is at the 4th mark? ___",
+      "options": null,
+      "answer": "4/6",
+      "hints": [
+        "Each part = 1/6",
+        "The 4th mark is 4 × (1/6)"
+      ],
+      "solution": "Each of the 6 equal parts = 1/6. The 4th mark = 4/6.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "geometry",
+    "topic": "area_and_perimeter",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "A rectangle is 5 units long and 3 units wide. What is its area?",
+      "options": [
+        "8 sq units",
+        "15 sq units",
+        "16 sq units",
+        "25 sq units"
+      ],
+      "answer": "15 sq units",
+      "hints": [
+        "Area = length × width",
+        "5 × 3 = ?"
+      ],
+      "solution": "Area = 5 × 3 = 15 square units.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "geometry",
+    "topic": "area_and_perimeter",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A rectangle has length 7 cm and width 4 cm. Perimeter = ___ cm",
+      "options": null,
+      "answer": "22",
+      "hints": [
+        "Perimeter = 2 × (length + width)",
+        "2 × (7 + 4) = 2 × 11 = ?"
+      ],
+      "solution": "Perimeter = 2 × (7 + 4) = 2 × 11 = 22 cm.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "geometry",
+    "topic": "area_and_perimeter",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "A square has a perimeter of 36 cm. What is its area?",
+      "options": [
+        "36 cm²",
+        "81 cm²",
+        "72 cm²",
+        "9 cm²"
+      ],
+      "answer": "81 cm²",
+      "hints": [
+        "Find the side length first: 36 ÷ 4 = ?",
+        "Then area = side × side"
+      ],
+      "solution": "Side = 36 ÷ 4 = 9 cm. Area = 9 × 9 = 81 cm².",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "geometry",
+    "topic": "area_and_perimeter",
+    "difficulty": "HARD",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "An L-shaped room can be split into a 6×4 rectangle and a 3×2 rectangle. Total area = ___ sq units",
+      "options": null,
+      "answer": "30",
+      "hints": [
+        "Find each rectangle's area and add",
+        "6×4 = 24; 3×2 = 6; 24 + 6 = ?"
+      ],
+      "solution": "6 × 4 = 24; 3 × 2 = 6. Total area = 24 + 6 = 30 sq units.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which quadrilateral has 4 right angles and all sides equal?",
+      "options": [
+        "Rectangle",
+        "Rhombus",
+        "Square",
+        "Trapezoid"
+      ],
+      "answer": "Square",
+      "hints": [
+        "A square has 4 equal sides AND 4 right angles",
+        "A rhombus has equal sides but not necessarily right angles"
+      ],
+      "solution": "A square has 4 equal sides and 4 right angles.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "MEDIUM",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "All squares are rectangles.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "A rectangle needs 4 right angles and opposite sides equal",
+        "A square has all those properties plus equal sides"
+      ],
+      "solution": "True. A square is a special rectangle where all sides are equal. Every square satisfies the definition of a rectangle.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "A shape has 5 sides and 5 angles. What is it called?",
+      "options": [
+        "Hexagon",
+        "Octagon",
+        "Pentagon",
+        "Quadrilateral"
+      ],
+      "answer": "Pentagon",
+      "hints": [
+        "'Penta' means five",
+        "Think of the Pentagon building in the US"
+      ],
+      "solution": "A pentagon has 5 sides and 5 angles. 'Penta' is Greek for five.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "A bar graph shows books read: Jan=8, Feb=5, Mar=10, Apr=7. Which month had the fewest books read?",
+      "options": [
+        "January",
+        "February",
+        "March",
+        "April"
+      ],
+      "answer": "February",
+      "hints": [
+        "Find the smallest value",
+        "Compare 8, 5, 10, 7 — which is smallest?"
+      ],
+      "solution": "February has the fewest books read (5). 5 < 7 < 8 < 10.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A bar graph shows: Soccer=12, Basketball=9, Baseball=15, Swimming=6. How many more students play Baseball than Basketball? ___",
+      "options": null,
+      "answer": "6",
+      "hints": [
+        "Subtract: Baseball − Basketball",
+        "15 − 9 = ?"
+      ],
+      "solution": "15 − 9 = 6. Six more students play Baseball than Basketball.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "A pictograph shows: Each symbol = 4 students. Stars: 🌟🌟🌟 (3 symbols), Stripes: 🌟🌟🌟🌟🌟 (5 symbols). How many students chose Stars?",
+      "options": [
+        "3",
+        "8",
+        "12",
+        "20"
+      ],
+      "answer": "12",
+      "hints": [
+        "Multiply the number of symbols by the value of each symbol",
+        "3 symbols × 4 students each = ?"
+      ],
+      "solution": "3 symbols × 4 students = 12 students chose Stars.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "A line plot shows test scores from 10 students: 70, 75, 75, 80, 80, 80, 85, 85, 90, 95. What is the mode?",
+      "options": [
+        "75",
+        "80",
+        "85",
+        "90"
+      ],
+      "answer": "80",
+      "hints": [
+        "The mode is the value that appears most often",
+        "Count how many times each score appears"
+      ],
+      "solution": "80 appears 3 times, which is the most frequent score. The mode is 80.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "time",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "How many seconds are in 1 minute?",
+      "options": [
+        "12",
+        "24",
+        "60",
+        "100"
+      ],
+      "answer": "60",
+      "hints": [
+        "Count the tick marks on a clock",
+        "There are 60 seconds in 60 seconds — that is 1 minute"
+      ],
+      "solution": "There are 60 seconds in 1 minute.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "time",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A TV show starts at 6:20 PM and ends at 7:05 PM. How many minutes long is the show? ___ minutes",
+      "options": null,
+      "answer": "45",
+      "hints": [
+        "From 6:20 to 7:00 is 40 minutes",
+        "From 7:00 to 7:05 is 5 more minutes"
+      ],
+      "solution": "6:20 → 7:00 = 40 minutes. 7:00 → 7:05 = 5 minutes. Total: 45 minutes.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "time",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "How many minutes are in 3 hours?",
+      "options": [
+        "120",
+        "150",
+        "180",
+        "240"
+      ],
+      "answer": "180",
+      "hints": [
+        "1 hour = 60 minutes",
+        "3 × 60 = ?"
+      ],
+      "solution": "3 hours × 60 minutes per hour = 180 minutes.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which is longer: 1 kilometer or 1 meter?",
+      "options": [
+        "1 meter",
+        "1 kilometer",
+        "They are equal",
+        "Cannot tell"
+      ],
+      "answer": "1 kilometer",
+      "hints": [
+        "1 kilometer = 1000 meters",
+        "Kilo means 1000"
+      ],
+      "solution": "1 kilometer = 1000 meters, so 1 kilometer is longer than 1 meter.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "length",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A hallway is 24 meters long. A classroom is 6 meters long. How many classrooms fit end-to-end in the hallway? ___",
+      "options": null,
+      "answer": "4",
+      "hints": [
+        "Divide total length by classroom length",
+        "24 ÷ 6 = ?"
+      ],
+      "solution": "24 ÷ 6 = 4. Four classrooms fit end-to-end.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "mass",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which unit measures the mass of a pencil?",
+      "options": [
+        "Kilometers",
+        "Liters",
+        "Grams",
+        "Square meters"
+      ],
+      "answer": "Grams",
+      "hints": [
+        "Small, light objects are measured in grams",
+        "Heavy objects might use kilograms"
+      ],
+      "solution": "Grams measure the mass of small, light objects like a pencil.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "mass",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "A bag weighs 2 kilograms. How many grams is that?",
+      "options": [
+        "20",
+        "200",
+        "1000",
+        "2000"
+      ],
+      "answer": "2000",
+      "hints": [
+        "1 kilogram = 1000 grams",
+        "2 × 1000 = ?"
+      ],
+      "solution": "1 kg = 1000 g. 2 kg = 2 × 1000 = 2000 grams.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "algebraic_thinking",
+    "topic": "patterns",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "What is the next number in the pattern? 3, 6, 9, 12, ___",
+      "options": [
+        "13",
+        "14",
+        "15",
+        "18"
+      ],
+      "answer": "15",
+      "hints": [
+        "The rule is multiply by 3 or add 3 each time",
+        "12 + 3 = ?"
+      ],
+      "solution": "The rule is +3. 12 + 3 = 15.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "algebraic_thinking",
+    "topic": "patterns",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "A function table shows: In 1→Out 7, In 2→Out 14, In 3→Out 21. What is the rule?",
+      "options": [
+        "Add 6",
+        "Multiply by 7",
+        "Add 7",
+        "Multiply by 6"
+      ],
+      "answer": "Multiply by 7",
+      "hints": [
+        "Look at how Out relates to In",
+        "1 × 7 = 7, 2 × 7 = 14, 3 × 7 = 21"
+      ],
+      "solution": "Each output is the input multiplied by 7. Rule: × 7.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "9 × ___ = 54",
+      "options": null,
+      "answer": "6",
+      "hints": [
+        "Think: 9 times what equals 54?",
+        "54 ÷ 9 = ?"
+      ],
+      "solution": "54 ÷ 9 = 6. So 9 × 6 = 54.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "What value of n makes this true? 48 ÷ n = 8",
+      "options": [
+        "4",
+        "5",
+        "6",
+        "7"
+      ],
+      "answer": "6",
+      "hints": [
+        "Think of the multiplication fact: 8 × n = 48",
+        "8 × 6 = 48"
+      ],
+      "solution": "8 × 6 = 48, so 48 ÷ 6 = 8. The value of n is 6.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "A farmer plants 7 rows of 8 sunflowers and removes 12 sunflowers. How many sunflowers are left?",
+      "options": [
+        "40",
+        "44",
+        "56",
+        "68"
+      ],
+      "answer": "44",
+      "hints": [
+        "First find total: 7 × 8 = ?",
+        "Then subtract: 56 − 12 = ?"
+      ],
+      "solution": "7 × 8 = 56 sunflowers. 56 − 12 = 44 sunflowers left.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "rounding",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Round 47 to the nearest ten.",
+      "options": [
+        "40",
+        "45",
+        "50",
+        "54"
+      ],
+      "answer": "50",
+      "hints": [
+        "Look at the ones digit: 7",
+        "7 ≥ 5, so round up"
+      ],
+      "solution": "47 rounded to the nearest ten: ones digit is 7 (≥5), so round up to 50.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "rounding",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "Round 83 to the nearest ten: ___",
+      "options": null,
+      "answer": "80",
+      "hints": [
+        "Look at the ones digit: 3",
+        "3 < 5, so round down"
+      ],
+      "solution": "83 rounded to nearest ten: ones digit is 3 (<5), round down to 80.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "rounding",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "Round 254 to the nearest hundred.",
+      "options": [
+        "200",
+        "250",
+        "300",
+        "254"
+      ],
+      "answer": "300",
+      "hints": [
+        "Look at the tens digit of 254: it is 5",
+        "5 >= 5, so round up the hundreds from 2 to 3"
+      ],
+      "solution": "254: tens digit is 5 (>=5), so round up the hundreds. 200 rounds up to 300.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "rounding",
+    "difficulty": "HARD",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "Round 678 to the nearest hundred: ___",
+      "options": null,
+      "answer": "700",
+      "hints": [
+        "Look at the tens digit: 7",
+        "7 ≥ 5, so round the hundreds up from 6 to 7"
+      ],
+      "solution": "678: tens digit is 7 (≥5), so round up. 600 → 700. Answer: 700.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "456 + 287 = ___",
+      "options": null,
+      "answer": "743",
+      "hints": [
+        "Ones: 6 + 7 = 13; write 3, carry 1",
+        "Tens: 5 + 8 + 1 = 14; write 4, carry 1; Hundreds: 4 + 2 + 1 = 7"
+      ],
+      "solution": "Ones: 6+7=13 (write 3, carry 1). Tens: 5+8+1=14 (write 4, carry 1). Hundreds: 4+2+1=7. Answer: 743.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "600 − 348 = ___",
+      "options": [
+        "248",
+        "252",
+        "262",
+        "352"
+      ],
+      "answer": "252",
+      "hints": [
+        "Borrow across zeros in 600",
+        "600 = 599 + 1; think of 599 − 347"
+      ],
+      "solution": "600 − 348: borrow through zeros. 10−8=2 (ones); 9−4=5 (tens but after borrowing: 9−1 borrowed −4=4, wait — 9 tens − 1 borrowed = 8, but 8 < 4 doesn't need borrowing: 9−4=5 after adjustment for the initial borrow from hundreds → 5 (tens); 5−3=2 (hundreds, since hundreds become 5 after two borrows). Answer: 252.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "HARD",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "7 × 8 = ___",
+      "options": null,
+      "answer": "56",
+      "hints": [
+        "Try 7 × 8 = 7 × (4 + 4) = 7×4 + 7×4",
+        "7×4=28; 28+28=?"
+      ],
+      "solution": "7 × 8 = 56. Distributive: 7×4=28, 28+28=56. Or: 56 is a multiplication fact to memorize.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "division",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "84 ÷ 7 = ___",
+      "options": [
+        "11",
+        "12",
+        "13",
+        "14"
+      ],
+      "answer": "12",
+      "hints": [
+        "Think: 7 × 12 = ?",
+        "7 × 10 = 70; 7 × 2 = 14; 70 + 14 = 84"
+      ],
+      "solution": "84 ÷ 7 = 12. Check: 7 × 12 = 7 × 10 + 7 × 2 = 70 + 14 = 84.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "algebraic_thinking",
+    "topic": "properties",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which property is shown? 5 × (2 × 3) = (5 × 2) × 3",
+      "options": [
+        "Commutative property",
+        "Associative property",
+        "Distributive property",
+        "Identity property"
+      ],
+      "answer": "Associative property",
+      "hints": [
+        "The grouping (parentheses) changed but the numbers stayed in the same order",
+        "Associative means you can regroup the factors"
+      ],
+      "solution": "The associative property of multiplication: (a × b) × c = a × (b × c). Grouping changed, not order.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "algebraic_thinking",
+    "topic": "properties",
+    "difficulty": "MEDIUM",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "7 × 1 = 7. This shows the identity property of multiplication.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "The identity element for multiplication is 1",
+        "Multiplying by 1 does not change the number"
+      ],
+      "solution": "True. Any number × 1 = that number. This is the identity property of multiplication.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "place_value",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "What is 500 + 60 + 3?",
+      "options": [
+        "536",
+        "563",
+        "635",
+        "653"
+      ],
+      "answer": "563",
+      "hints": [
+        "Hundreds + tens + ones",
+        "5 hundreds, 6 tens, 3 ones"
+      ],
+      "solution": "500 + 60 + 3 = 563.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "place_value",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "In 3,482, the digit 4 is in the ___ place.",
+      "options": null,
+      "answer": "hundreds",
+      "hints": [
+        "Count the places from right: ones, tens, hundreds, thousands",
+        "3,482: 3=thousands, 4=hundreds, 8=tens, 2=ones"
+      ],
+      "solution": "In 3,482: 3 is in the thousands place, 4 is in the hundreds place, 8 is in the tens place, 2 is in the ones place.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "fractions",
+    "difficulty": "MEDIUM",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "3/4 > 3/8 because the denominator 4 is smaller, meaning each part is larger.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Same numerator — compare the denominators",
+        "Smaller denominator means bigger pieces"
+      ],
+      "solution": "True. With the same numerator (3), the fraction with the smaller denominator (4) has bigger pieces, so 3/4 > 3/8.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "fractions",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "Order from least to greatest: 1/2, 1/3, 1/6",
+      "options": [
+        "1/2, 1/3, 1/6",
+        "1/6, 1/2, 1/3",
+        "1/6, 1/3, 1/2",
+        "1/3, 1/6, 1/2"
+      ],
+      "answer": "1/6, 1/3, 1/2",
+      "hints": [
+        "Same numerator (1) — larger denominator means smaller piece",
+        "1/6 < 1/3 < 1/2"
+      ],
+      "solution": "With numerator 1: larger denominator = smaller fraction. So 1/6 < 1/3 < 1/2.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "In a bar graph, the taller bar represents a larger value.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Bar graphs show data using rectangular bars",
+        "A taller bar means a higher count or value"
+      ],
+      "solution": "True. In a bar graph, bar height represents the data value — taller bars = larger values.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "liquid_volume",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "Which unit measures liquid volume in the metric system?",
+      "options": [
+        "Grams",
+        "Meters",
+        "Liters",
+        "Centimeters"
+      ],
+      "answer": "Liters",
+      "hints": [
+        "Grams measure mass, meters measure length",
+        "Liquid volume uses liters or milliliters"
+      ],
+      "solution": "Liters (and milliliters) measure liquid volume in the metric system.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "measurement",
+    "topic": "liquid_volume",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "A pitcher holds 3 liters. A glass holds 250 milliliters. How many milliliters are in the pitcher? ___",
+      "options": null,
+      "answer": "3000",
+      "hints": [
+        "1 liter = 1000 milliliters",
+        "3 × 1000 = ?"
+      ],
+      "solution": "1 liter = 1000 mL. 3 liters = 3 × 1000 = 3000 mL.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "algebraic_thinking",
+    "topic": "patterns",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "A pattern: 2, 6, 18, 54, ___. What is the rule?",
+      "options": [
+        "Add 4",
+        "Add 12",
+        "Multiply by 3",
+        "Multiply by 4"
+      ],
+      "answer": "Multiply by 3",
+      "hints": [
+        "6 ÷ 2 = 3; 18 ÷ 6 = 3; 54 ÷ 18 = 3",
+        "Each term is multiplied by 3"
+      ],
+      "solution": "Each term is multiplied by 3. 2×3=6, 6×3=18, 18×3=54. Rule: ×3.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "MEDIUM",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "6 × 7 = 7 × 6. This is the commutative property.",
+      "options": [
+        "True",
+        "False"
+      ],
+      "answer": "True",
+      "hints": [
+        "Changing the order of factors does not change the product",
+        "Commutative means order doesn't matter"
+      ],
+      "solution": "True. 6 × 7 = 42 and 7 × 6 = 42. This is the commutative property of multiplication.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "addition",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "50 + 50 = ___",
+      "options": ["10", "100", "150", "200"],
+      "answer": "100",
+      "hints": ["5 tens + 5 tens = 10 tens", "10 tens = 100"],
+      "solution": "50 + 50 = 100. 5 tens + 5 tens = 10 tens = 100.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "subtraction",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "90 − 40 = ___",
+      "options": ["40", "50", "60", "130"],
+      "answer": "50",
+      "hints": ["Subtract the tens: 9 tens − 4 tens", "9 − 4 = 5, so 50"],
+      "solution": "90 − 40 = 50. 9 tens − 4 tens = 5 tens = 50.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "time",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "How many months are in 1 year?",
+      "options": ["10", "11", "12", "13"],
+      "answer": "12",
+      "hints": ["Name the months starting from January", "January through December"],
+      "solution": "There are 12 months in 1 year: January through December.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "measurement",
+    "topic": "money",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "You have 3 nickels. How many cents do you have?",
+      "options": ["3", "10", "15", "30"],
+      "answer": "15",
+      "hints": ["1 nickel = 5 cents", "3 × 5 = ?"],
+      "solution": "1 nickel = 5 cents. 3 nickels = 3 × 5 = 15 cents.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "place_value",
+    "difficulty": "EASY",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "Write 300 + 70 + 2 as a single number: ___",
+      "options": null,
+      "answer": "372",
+      "hints": ["3 hundreds, 7 tens, 2 ones", "Put the digits together"],
+      "solution": "300 + 70 + 2 = 372.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "geometry",
+    "topic": "shapes",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "How many edges does a cube have?",
+      "options": ["6", "8", "10", "12"],
+      "answer": "12",
+      "hints": ["A cube has edges where two faces meet", "Count all the straight edges on a box"],
+      "solution": "A cube has 12 edges — 4 on top, 4 on bottom, and 4 vertical edges.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "algebraic_thinking",
+    "topic": "equations",
+    "difficulty": "MEDIUM",
+    "type": "FILL_BLANK",
+    "content": {
+      "question": "24 + ___ = 50",
+      "options": null,
+      "answer": "26",
+      "hints": ["Count up from 24 to 50", "Or subtract: 50 − 24 = ?"],
+      "solution": "50 − 24 = 26. So 24 + 26 = 50.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 2,
+    "strand": "number_and_operations",
+    "topic": "comparing_numbers",
+    "difficulty": "HARD",
+    "type": "MCQ",
+    "content": {
+      "question": "Which list is in order from least to greatest?",
+      "options": ["512, 521, 251", "251, 512, 521", "521, 512, 251", "512, 251, 521"],
+      "answer": "251, 512, 521",
+      "hints": ["Compare hundreds digits first", "251 has fewest hundreds; compare 512 and 521 by tens"],
+      "solution": "251 < 512 < 521. Correct order: 251, 512, 521.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "multiplication",
+    "difficulty": "EASY",
+    "type": "MCQ",
+    "content": {
+      "question": "2 × 9 = ___",
+      "options": ["11", "16", "18", "20"],
+      "answer": "18",
+      "hints": ["Think of 2 groups of 9", "9 + 9 = ?"],
+      "solution": "2 × 9 = 18. Two groups of 9: 9 + 9 = 18.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "number_and_operations",
+    "topic": "division",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "50 ÷ 5 = ___",
+      "options": ["8", "9", "10", "11"],
+      "answer": "10",
+      "hints": ["Think: 5 × ? = 50", "Skip-count by 5 to reach 50"],
+      "solution": "50 ÷ 5 = 10 because 5 × 10 = 50.",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "geometry",
+    "topic": "area_and_perimeter",
+    "difficulty": "EASY",
+    "type": "TRUE_FALSE",
+    "content": {
+      "question": "Area is measured in square units.",
+      "options": ["True", "False"],
+      "answer": "True",
+      "hints": ["Area covers a flat surface", "We count how many square units fit inside a shape"],
+      "solution": "True. Area measures the space inside a shape and is expressed in square units (e.g., cm², m²).",
+      "image_url": null
+    }
+  },
+  {
+    "curriculum": "US_COMMON_CORE",
+    "grade": 3,
+    "strand": "data_and_statistics",
+    "topic": "graphs",
+    "difficulty": "MEDIUM",
+    "type": "MCQ",
+    "content": {
+      "question": "A tally chart shows: Vanilla=12, Chocolate=18, Strawberry=9. How many students were surveyed in all?",
+      "options": ["27", "30", "39", "42"],
+      "answer": "39",
+      "hints": ["Add all three flavors", "12 + 18 + 9 = ?"],
+      "solution": "12 + 18 + 9 = 39 students were surveyed.",
       "image_url": null
     }
   }

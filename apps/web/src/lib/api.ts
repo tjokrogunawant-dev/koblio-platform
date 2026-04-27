@@ -6,6 +6,7 @@ export interface AuthUser {
   name: string;
   username?: string;
   grade?: number;
+  avatarSlug?: string | null;
 }
 
 export interface AuthResponse {
@@ -457,4 +458,47 @@ export async function getMyChildren(token: string): Promise<ChildRef[]> {
     headers: { Authorization: `Bearer ${token}` },
   });
   return handleResponse<ChildRef[]>(res);
+}
+
+// ─── Avatar / Profile ─────────────────────────────────────────────────────────
+
+export interface StudentProfile {
+  id: string;
+  displayName: string;
+  grade: number | null;
+  avatarSlug: string | null;
+  coins: number;
+  xp: number;
+  level: number;
+  streakCount: number;
+}
+
+export interface UpdateAvatarResponse {
+  id: string;
+  displayName: string;
+  avatarSlug: string | null;
+}
+
+export async function getMyStudentProfile(
+  token: string,
+): Promise<StudentProfile> {
+  const res = await fetch(`${API_BASE}/me/profile`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<StudentProfile>(res);
+}
+
+export async function updateAvatar(
+  avatarSlug: string,
+  token: string,
+): Promise<UpdateAvatarResponse> {
+  const res = await fetch(`${API_BASE}/me/avatar`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify({ avatarSlug }),
+  });
+  return handleResponse<UpdateAvatarResponse>(res);
 }

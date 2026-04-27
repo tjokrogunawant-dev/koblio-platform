@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/providers/auth-provider';
+import { Avatar } from '@/components/avatar';
 import { CoinCounter } from '@/components/gamification/coin-counter';
 import { XPBar } from '@/components/gamification/xp-bar';
 import { StreakBadge } from '@/components/gamification/streak-badge';
@@ -77,11 +78,26 @@ export default function StudentDashboardPage() {
 
       <main className="mx-auto max-w-4xl space-y-6 p-8">
         {/* Welcome row */}
-        <div>
-          <h1 className="text-3xl font-bold text-slate-800">
-            Welcome back, {displayName}!
-          </h1>
-          <p className="mt-1 text-slate-500">Grade {grade}</p>
+        <div className="flex items-center gap-4">
+          <Avatar
+            slug={user?.avatarSlug}
+            size="lg"
+            name={displayName}
+          />
+          <div>
+            <h1 className="text-3xl font-bold text-slate-800">
+              Welcome back, {displayName}!
+            </h1>
+            <p className="mt-1 text-slate-500">Grade {grade}</p>
+            {!user?.avatarSlug && (
+              <Link
+                href="/profile/setup"
+                className="mt-1 inline-block text-sm font-medium text-indigo-600 hover:text-indigo-700"
+              >
+                Pick your avatar →
+              </Link>
+            )}
+          </div>
         </div>
 
         {/* Stats row */}

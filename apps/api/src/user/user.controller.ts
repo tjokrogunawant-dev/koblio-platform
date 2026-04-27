@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Ip, Param, ParseUUIDPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Ip, Param, ParseUUIDPipe, Post, Put } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@koblio/shared';
 import { UserService } from './user.service';
@@ -9,6 +9,7 @@ import { AuthenticatedUser } from '../auth/interfaces/jwt-payload.interface';
 import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
 import { JoinClassDto } from './dto/join-class.dto';
+import { UpdateAvatarDto } from './dto/update-avatar.dto';
 
 @ApiTags('Users')
 @Controller()
@@ -20,6 +21,23 @@ export class UserController {
   @ApiOperation({ summary: 'Check user service status' })
   getStatus() {
     return this.userService.getStatus();
+  }
+
+  @Get('me/profile')
+  @Roles(UserRole.STUDENT)
+  @ApiOperation({ summary: 'Get student profile (avatar, coins, xp, level, streak)' })
+  getProfile(@CurrentUser() user: AuthenticatedUser) {
+    return this.userService.getStudentProfileByAuth0Id(user.userId);
+  }
+
+  @Put('me/avatar')
+  @Roles(UserRole.STUDENT)
+  @ApiOperation({ summary: 'Set avatar slug for the current student' })
+  updateAvatar(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateAvatarDto,
+  ) {
+    return this.userService.updateAvatar(user.userId, dto.avatarSlug);
   }
 
   @Post('parents/me/children')
