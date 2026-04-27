@@ -1,66 +1,169 @@
-# Koblio Deployment Runbook
+# Deploying Koblio for Testing
 
-## Prerequisites
-- Railway account + CLI (`npm i -g @railway/cli`)
-- PostgreSQL 16 database provisioned (Railway PostgreSQL plugin or Neon)
-- Auth0 tenant configured (see Auth0 setup section)
-- SendGrid account (optional — email digest disabled if absent)
-- Stripe account (optional — payments disabled if absent)
+No external accounts needed. Runs on any VPS with Docker.
 
-## Environment Variables
+---
 
-### API Service (`apps/api`)
+## Requirements
+
+- A VPS (Ubuntu 22.04+ recommended, 1 GB RAM minimum)
+- Docker + Docker Compose installed
+- Ports 3000 and 3001 open (or a reverse proxy like nginx/Caddy in front)
+
+---
+
+## 1. Install Docker on the VPS
+
+```bash
+curl -fsSL https://get.docker.com | sh
+sudo usermod -aG docker $USER
+# Log out and back in for the group change to take effect
+```
+
+---
+
+## 2. Clone the repo
+
+```bash
+git clone https://github.com/tjokrogunawant-dev/koblio-platform.git
+cd koblio-platform
+```
+
+---
+
+## 3. Create a `.env` file
+
+```bash
+cp .env.example .env
+```
+
+Edit `.env` with these values:
+
+```env
+# Generate with: openssl rand -hex 32
+JWT_SECRET=replace_with_64_char_random_string
+
+# Generate with: openssl rand -hex 16
+POSTGRES_PASSWORD=replace_with_random_password
+
+# The public URL of your API (no trailing slash)
+# If running locally: http://localhost:3001
+# If on a VPS with a domain: https://api.yourdomain.com
+API_URL=http://YOUR_VPS_IP:3001
+
+# The public URL of the web app (used for CORS on the API)
+# If running locally: http://localhost:3000
+# If on a VPS with a domain: https://app.yourdomain.com
+WEB_URL=http://YOUR_VPS_IP:3000
+```
+
+To generate secrets:
+```bash
+openssl rand -hex 32   # for JWT_SECRET
+openssl rand -hex 16   # for POSTGRES_PASSWORD
+```
+
+---
+
+## 4. Deploy
+
+```bash
+docker compose up -d --build
+```
+
+This builds both images and starts postgres, redis, api, and web. The API runs `prisma migrate deploy` automatically on startup.
+
+Check logs:
+```bash
+docker compose logs -f api
+docker compose logs -f web
+```
+
+---
+
+## 5. Seed the problems (first deploy only)
+
+```bash
+docker compose exec api npx prisma db seed
+```
+
+This loads 200 math problems (Grades 1–3).
+
+---
+
+## 6. Verify
+
+```bash
+curl http://YOUR_VPS_IP:3001/api/health
+# → {"status":"ok","db":"ok"}
+```
+
+Open `http://YOUR_VPS_IP:3000` in a browser — you should see the Koblio homepage.
+
+---
+
+## Testing the full flow
+
+1. Go to `/register` → click **I'm a Teacher** → fill in the form
+2. In the teacher dashboard, click **Create Class** → note the **class code** shown
+3. Open an incognito tab → go to `/register` → click **I'm a Student**
+4. Enter the class code → create a username and password → pick an avatar
+5. Start solving problems
+
+---
+
+## Updating
+
+```bash
+git pull
+docker compose up -d --build
+```
+
+Migrations run automatically on API startup.
+
+---
+
+## Optional: Nginx reverse proxy with HTTPS
+
+If you have a domain, install Caddy (easiest) or Nginx + Certbot.
+
+**Caddy** (auto HTTPS):
+```bash
+sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
+curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/debian.deb.txt' | sudo tee /etc/apt/sources.list.d/caddy-stable.list
+sudo apt update && sudo apt install caddy
+```
+
+`/etc/caddy/Caddyfile`:
+```
+app.yourdomain.com {
+    reverse_proxy localhost:3000
+}
+
+api.yourdomain.com {
+    reverse_proxy localhost:3001
+}
+```
+
+Then set in `.env`:
+```
+API_URL=https://api.yourdomain.com
+WEB_URL=https://app.yourdomain.com
+```
+
+And redeploy: `docker compose up -d --build`
+
+---
+
+## Environment variable reference
+
 | Variable | Required | Description |
 |---|---|---|
-| DATABASE_URL | Yes | PostgreSQL connection string |
-| JWT_SECRET | Yes | ≥32 char secret for student JWT |
-| AUTH0_ISSUER_URL | Yes | https://YOUR_TENANT.auth0.com/ |
-| AUTH0_AUDIENCE | Yes | https://api.koblio.com |
-| AUTH0_CLIENT_ID | Yes | Auth0 API client ID |
-| AUTH0_ROLES_NAMESPACE | Yes | https://koblio.com/roles |
-| PORT | No | Default: 3001 (Railway sets this) |
-| SENTRY_DSN | No | Error tracking |
-| SENDGRID_API_KEY | No | Disables email digest if absent |
-| SENDGRID_FROM_EMAIL | No | Default: noreply@koblio.com |
-| STRIPE_SECRET_KEY | No | Disables Stripe if absent |
-| STRIPE_WEBHOOK_SECRET | No | Required when Stripe is active |
-| STRIPE_PRICE_ID | No | Monthly subscription price ID |
-| WEB_URL | No | Default: http://localhost:3000 |
-
-### Web Service (`apps/web`)
-| Variable | Required | Description |
-|---|---|---|
-| NEXT_PUBLIC_API_URL | Yes | API base URL (e.g. https://api.koblio.com/api) |
-| AUTH0_SECRET | Yes | NextAuth session secret |
-| AUTH0_BASE_URL | Yes | Web app URL (e.g. https://app.koblio.com) |
-| AUTH0_ISSUER_BASE_URL | Yes | https://YOUR_TENANT.auth0.com |
-| AUTH0_CLIENT_ID | Yes | Auth0 web client ID |
-| AUTH0_CLIENT_SECRET | Yes | Auth0 web client secret |
-
-## First Deploy Steps
-1. `railway login`
-2. `railway init` — link to project
-3. Set all required env vars via Railway dashboard or `railway variables set KEY=VALUE`
-4. Deploy API service first (runs `prisma migrate deploy` via Procfile `release` step)
-5. Seed the database: `railway run --service koblio-api npx prisma db seed`
-6. Deploy web service
-
-## Database Migrations
-- New migrations run automatically via `prisma migrate deploy` in the Procfile `release` step
-- To add a new migration: create SQL file in `apps/api/prisma/migrations/` following the existing naming convention
-
-## Auth0 Setup
-- Create a "Regular Web Application" for the Next.js frontend
-- Create a "Machine-to-Machine" or "API" application for the NestJS backend
-- Add `https://app.koblio.com/api/auth/callback` to Allowed Callback URLs
-- Add `https://app.koblio.com` to Allowed Logout URLs
-- Create a custom claim action: namespace `https://koblio.com/roles`, claim `roles` from user metadata
-
-## Pre-Beta Checklist
-- [ ] DATABASE_URL points to production PostgreSQL
-- [ ] JWT_SECRET is a cryptographically random 64-char string
-- [ ] Auth0 callback URLs match production domain
-- [ ] `GET /api/health` returns `{ status: 'ok', db: 'ok' }`
-- [ ] Seed data loaded (200 problems across Grades 1-3)
-- [ ] Sentry DSN configured and receiving test events
-- [ ] CORS origin set to production web URL (not wildcard)
+| `JWT_SECRET` | Yes | Signs all JWTs. Min 32 chars. |
+| `POSTGRES_PASSWORD` | Yes | PostgreSQL password. |
+| `API_URL` | Yes | Public URL of the API (used by the web app). |
+| `WEB_URL` | Yes | Public URL of the web app (used for CORS). |
+| `SENTRY_DSN` | No | Error tracking. Leave blank to disable. |
+| `SENDGRID_API_KEY` | No | Weekly email digest. Leave blank to disable. |
+| `STRIPE_SECRET_KEY` | No | Subscription payments. Leave blank to disable. |
