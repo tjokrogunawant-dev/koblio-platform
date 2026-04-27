@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 14  
-**Phase:** 3 — Trial Gate 2 / Closed Beta Prep  
+**Sprint:** 15  
+**Phase:** 3 — Adaptive Engine (Section 8)  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Deploy-ready infrastructure — Dockerize API + web, Railway config, migration runbook, health checks. Targets Trial Gate 2 (closed beta invite).
+**Sprint Goal:** Section 8 — FSRS-4.5 spaced repetition scheduler + BKT per-skill mastery tracking. Core adaptive loop that drives personalised problem selection.
 
 ---
 
@@ -21,8 +21,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-- **P4-T01** (Dev1): Dockerize API + Railway TOML config for API and web
-- **P4-T02** (Dev2): Deployment runbook + pre-beta checklist, health check endpoint
+- **P5-T01** (Dev1): FSRS-4.5 scheduler — card state model, stability/difficulty update, next-review interval
+- **P5-T02** (Dev2): BKT mastery tracking — per-skill mastery model, problem selection weighted by BKT state
 
 ---
 
@@ -90,6 +90,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P3-T04 | Auth0 PKCE Login (flutter_appauth, Parent/Teacher, logout confirmation) | S12 | `da6c675` |
 | P3-T05 | Flutter Gamification UI (XP bar, streak counter, badge shelf, home integration) | S13 | `85fefcc` |
 | P3-T06 | Flutter Parent Dashboard (children list, child progress detail, role-based nav) | S13 | `85fefcc` |
+| P4-T01 | Docker + Railway Config (multi-stage pnpm builds, railway.toml, Procfile) | S14 | `a2fac62` |
+| P4-T02 | Health Check + DEPLOY.md + CORS hardening | S14 | `b06b571` |
 
 ---
 
@@ -99,14 +101,14 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 15 — Adaptive Engine / Section 8)
+## Up Next (Sprint 16 — Adaptive Engine Part 2)
 
-- FSRS-4.5 spaced repetition scheduler
-- BKT (Bayesian Knowledge Tracing) per-skill mastery
-- Mood-gated weight shifts (FLOW/FRUSTRATED/CONFUSED/BORED)
+- Mood-gated weight shifts (FLOW/FRUSTRATED/CONFUSED/BORED state machine)
+- Blended scheduler: combine FSRS urgency + BKT urgency + novelty bonus
 - TOP_OF_CLASS badge (leaderboard rank-1 detection)
+- Redis leaderboard caching (Section 9 — at 5K+ MAU)
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 13 complete (P3-T05 gamification UI, P3-T06 parent dashboard). Sprint 14 launched: Docker + Railway deployment prep.
+2026-04-27 by PM — Sprint 14 complete (Docker, Railway, health check, DEPLOY.md). Sprint 15 launched: FSRS-4.5 + BKT adaptive engine.
