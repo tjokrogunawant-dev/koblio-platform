@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:koblio_mobile/core/widgets/math_text.dart';
 import 'package:koblio_mobile/features/student/models/attempt_result.dart';
 import 'package:koblio_mobile/features/student/models/problem.dart';
 import 'package:koblio_mobile/providers/providers.dart';
@@ -180,8 +181,8 @@ class _ProblemSolverScreenState extends ConsumerState<ProblemSolverScreen> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.problem.questionText,
+                        MathText(
+                          text: widget.problem.questionText,
                           style: Theme.of(context)
                               .textTheme
                               .bodyLarge
@@ -338,8 +339,8 @@ class _McqOptions extends StatelessWidget {
                   ),
                   const SizedBox(width: 12),
                   Expanded(
-                    child: Text(
-                      text,
+                    child: MathText(
+                      text: text,
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
                             fontWeight: isSelected
                                 ? FontWeight.w600
@@ -570,8 +571,8 @@ class _ResultOverlay extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 4),
-              Text(
-                result.solution,
+              MathText(
+                text: result.solution,
                 style: const TextStyle(color: Colors.white, fontSize: 14),
               ),
             ],
