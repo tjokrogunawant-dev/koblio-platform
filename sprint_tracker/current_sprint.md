@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 16  
-**Phase:** 3 — Adaptive Engine Part 2 (Section 8)  
+**Sprint:** 17  
+**Phase:** 4 — Scale Infrastructure (Section 9)  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Section 8 continued — Mood-gated weight shifts + blended scheduler combining FSRS urgency, BKT mastery, and novelty bonus into a single problem-selection score.
+**Sprint Goal:** Section 9 — Redis leaderboard caching + TOP_OF_CLASS badge. Replace PostgreSQL RANK() with Redis sorted sets for sub-millisecond leaderboard reads at scale.
 
 ---
 
@@ -21,8 +21,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-- **P5-T03** (Dev1): Mood detection + weight-shift state machine (FLOW/FRUSTRATED/CONFUSED/BORED)
-- **P5-T04** (Dev2): Blended scheduler — combine FSRS urgency + BKT urgency + novelty bonus into selection score
+- **P6-T01** (Dev1): Redis sorted-set leaderboard (zadd/zrank/zrevrange) with write-through cache
+- **P6-T02** (Dev2): TOP_OF_CLASS badge + leaderboard API endpoints
 
 ---
 
@@ -94,6 +94,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P4-T02 | Health Check + DEPLOY.md + CORS hardening | S14 | `b06b571` |
 | P5-T01 | FSRS-4.5 Scheduler (CardState model, review recording, adaptive endpoint) | S15 | `65df6c7` |
 | P5-T02 | BKT Mastery Tracking (SkillMastery model, per-attempt update, GET /mastery/me) | S15 | `96720e6` |
+| P5-T03 | Mood Detection (FLOW/FRUSTRATED/CONFUSED/BORED, weight-shift table, GET /mood/me) | S16 | `fc1c381` |
+| P5-T04 | Blended Scheduler (FSRS urgency + BKT novelty + mood weights, O(1) batch scoring) | S16 | `bb0d22a` |
 
 ---
 
@@ -103,13 +105,13 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 17 — Section 9: Redis + Scale)
+## Up Next (Sprint 18 — Section 9: AWS Migration)
 
-- Redis leaderboard caching (replace PostgreSQL RANK() at 5K+ MAU)
-- TOP_OF_CLASS badge (leaderboard rank-1 detection)
-- AWS ECS Fargate migration (Section 9 — at 5K+ MAU)
+- AWS ECS Fargate Terraform config (Section 9 — production scale)
+- Terraform state backend (S3 + DynamoDB lock)
+- RDS PostgreSQL migration from Railway
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 15 complete (FSRS + BKT). Sprint 16 launched: mood detection + blended scheduler.
+2026-04-27 by PM — Sprint 16 complete (mood detection + blended scheduler). Sprint 17 launched: Redis leaderboard + TOP_OF_CLASS badge.
