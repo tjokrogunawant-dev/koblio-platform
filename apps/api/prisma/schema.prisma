@@ -31,17 +31,25 @@ model User {
   country     String?
   locale      String?
   avatarId    String?  @map("avatar_id")
+  xp            Int      @default(0)
+  level         Int      @default(1)
+  streakCount   Int      @default(0) @map("streak_count")
+  lastActiveDate DateTime? @map("last_active_date")
+  coins         Int      @default(0)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  parentLinks      ParentChildLink[] @relation("ParentUser")
-  childLinks       ParentChildLink[] @relation("ChildUser")
-  consentsGiven    ParentalConsent[] @relation("ConsentParent")
-  consentsReceived ParentalConsent[] @relation("ConsentChild")
-  schoolTeachers   SchoolTeacher[]
-  classroomsOwned  Classroom[]
-  enrollments      Enrollment[]
-  attempts         StudentProblemAttempt[]
+  parentLinks           ParentChildLink[]      @relation("ParentUser")
+  childLinks            ParentChildLink[]      @relation("ChildUser")
+  consentsGiven         ParentalConsent[]      @relation("ConsentParent")
+  consentsReceived      ParentalConsent[]      @relation("ConsentChild")
+  schoolTeachers        SchoolTeacher[]
+  classroomsOwned       Classroom[]
+  enrollments           Enrollment[]
+  attempts              StudentProblemAttempt[]
+  pointsLedger          PointsLedger[]
+  assignmentsCreated    Assignment[]           @relation("TeacherAssignments")
+  assignmentSubmissions AssignmentSubmission[] @relation("StudentSubmissions")
 
   @@map("users")
 }
@@ -86,6 +94,7 @@ model Classroom {
   teacher     User         @relation(fields: [teacherId], references: [id], onDelete: Cascade)
   school      School?      @relation(fields: [schoolId], references: [id], onDelete: SetNull)
   enrollments Enrollment[]
+  assignments Assignment[]
 
   @@map("classrooms")
 }
@@ -160,7 +169,8 @@ model Problem {
   createdAt  DateTime    @default(now()) @map("created_at")
   updatedAt  DateTime    @updatedAt @map("updated_at")
 
-  attempts   StudentProblemAttempt[]
+  attempts              StudentProblemAttempt[]
+  assignmentSubmissions AssignmentSubmission[]
 
   @@index([grade, strand, topic])
   @@index([difficulty])
@@ -177,10 +187,67 @@ model StudentProblemAttempt {
   hintUsed    Boolean  @default(false) @map("hint_used")
   createdAt   DateTime @default(now()) @map("created_at")
 
-  student User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
-  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  student               User                   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  problem               Problem                @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  assignmentSubmissions AssignmentSubmission[]
 
   @@index([studentId, problemId])
   @@index([studentId, createdAt])
   @@map("student_problem_attempts")
+}
+
+model PointsLedger {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @map("student_id") @db.Uuid
+  amount      Int
+  reason      String
+  attemptId   String?  @map("attempt_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, createdAt])
+  @@map("points_ledger")
+}
+
+model Assignment {
+  id          String     @id @default(uuid()) @db.Uuid
+  classroomId String     @map("classroom_id") @db.Uuid
+  teacherId   String     @map("teacher_id") @db.Uuid
+  title       String
+  topic       String
+  strand      String
+  grade       Int
+  difficulty  Difficulty
+  problemIds  String[]   @map("problem_ids") @db.Uuid
+  dueDate     DateTime?  @map("due_date")
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+
+  classroom   Classroom            @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  teacher     User                 @relation("TeacherAssignments", fields: [teacherId], references: [id], onDelete: Cascade)
+  submissions AssignmentSubmission[]
+
+  @@index([classroomId])
+  @@index([teacherId])
+  @@map("assignments")
+}
+
+model AssignmentSubmission {
+  id           String    @id @default(uuid()) @db.Uuid
+  assignmentId String    @map("assignment_id") @db.Uuid
+  studentId    String    @map("student_id") @db.Uuid
+  problemId    String    @map("problem_id") @db.Uuid
+  attemptId    String?   @map("attempt_id") @db.Uuid
+  submittedAt  DateTime? @map("submitted_at")
+  correct      Boolean?
+
+  assignment Assignment             @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    User                   @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+  problem    Problem                @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  attempt    StudentProblemAttempt? @relation(fields: [attemptId], references: [id], onDelete: SetNull)
+
+  @@unique([assignmentId, studentId, problemId])
+  @@index([studentId])
+  @@map("assignment_submissions")
 }

@@ -157,13 +157,22 @@ export class ClassroomService {
     };
   }
 
-  async listClassroomStudents(classroomId: string) {
+  async listClassroomStudents(classroomId: string, teacherAuth0Id?: string) {
     const classroom = await this.prisma.classroom.findUnique({
       where: { id: classroomId },
     });
 
     if (!classroom) {
       throw new NotFoundException('Classroom not found');
+    }
+
+    if (teacherAuth0Id) {
+      const teacher = await this.prisma.user.findUnique({
+        where: { auth0Id: teacherAuth0Id },
+      });
+      if (!teacher || classroom.teacherId !== teacher.id) {
+        throw new ForbiddenException('You do not own this classroom');
+      }
     }
 
     const enrollments = await this.prisma.enrollment.findMany({
@@ -173,13 +182,83 @@ export class ClassroomService {
 
     return enrollments.map((e) => ({
       id: e.student.id,
-      role: 'student',
       name: e.student.displayName,
-      username: e.student.username,
       grade: e.student.grade,
-      country: e.student.country,
+      streakCount: e.student.streakCount,
+      coins: e.student.coins,
+      xp: e.student.xp,
       enrolled_at: e.enrolledAt.toISOString(),
     }));
+  }
+
+  async getClassroomProgress(classroomId: string, teacherAuth0Id: string) {
+    const classroom = await this.prisma.classroom.findUnique({
+      where: { id: classroomId },
+    });
+
+    if (!classroom) {
+      throw new NotFoundException('Classroom not found');
+    }
+
+    const teacher = await this.prisma.user.findUnique({
+      where: { auth0Id: teacherAuth0Id },
+    });
+
+    if (!teacher || classroom.teacherId !== teacher.id) {
+      throw new ForbiddenException('You do not own this classroom');
+    }
+
+    const enrollments = await this.prisma.enrollment.findMany({
+      where: { classroomId },
+      include: { student: true },
+    });
+
+    const studentProgressList = await Promise.all(
+      enrollments.map(async (enrollment) => {
+        const student = enrollment.student;
+
+        const attempts = await this.prisma.studentProblemAttempt.findMany({
+          where: { studentId: student.id },
+          include: { problem: { select: { topic: true } } },
+        });
+
+        const totalAttempts = attempts.length;
+        const correctAttempts = attempts.filter((a) => a.correct).length;
+        const accuracyPercent =
+          totalAttempts === 0
+            ? 0
+            : Math.round((correctAttempts / totalAttempts) * 100);
+
+        const topicMap = new Map<string, { attempted: number; correct: number }>();
+        for (const attempt of attempts) {
+          const topic = attempt.problem.topic;
+          const entry = topicMap.get(topic) ?? { attempted: 0, correct: 0 };
+          entry.attempted += 1;
+          if (attempt.correct) entry.correct += 1;
+          topicMap.set(topic, entry);
+        }
+
+        const topicBreakdown = Array.from(topicMap.entries()).map(
+          ([topic, stats]) => ({
+            topic,
+            attempted: stats.attempted,
+            correct: stats.correct,
+          }),
+        );
+
+        return {
+          studentId: student.id,
+          name: student.displayName,
+          totalAttempts,
+          correctAttempts,
+          accuracyPercent,
+          streakCount: student.streakCount,
+          topicBreakdown,
+        };
+      }),
+    );
+
+    return { students: studentProgressList };
   }
 
   private generateClassCode(): string {

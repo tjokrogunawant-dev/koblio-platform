@@ -217,11 +217,11 @@ describe('ClassroomService', () => {
   });
 
   describe('listClassroomStudents', () => {
-    it('should return enrolled students', async () => {
+    it('should return enrolled students with gamification data', async () => {
       prisma.classroom.findUnique.mockResolvedValue(mockClassroom);
       prisma.enrollment.findMany.mockResolvedValue([
         {
-          student: mockStudent,
+          student: { ...mockStudent, streakCount: 3, coins: 50, xp: 120 },
           enrolledAt: new Date('2026-05-10'),
         },
       ]);
@@ -230,7 +230,8 @@ describe('ClassroomService', () => {
 
       expect(result).toHaveLength(1);
       expect(result[0].name).toBe('Bobby Zhang');
-      expect(result[0].role).toBe('student');
+      expect(result[0].streakCount).toBe(3);
+      expect(result[0].coins).toBe(50);
     });
 
     it('should throw NotFoundException if classroom not found', async () => {
