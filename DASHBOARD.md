@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-27 | **By:** DEV | **Sprint:** 19 (TG1-T01 implemented)
+**Last updated:** 2026-04-27 | **By:** QA | **Sprint:** 19
 
 ---
 
@@ -35,7 +35,7 @@
 
 | Task ID | Title | Status | Last Actor |
 |---|---|---|---|
-| TG1-T01 | Student profile setup page | done | DEV |
+| TG1-T01 | Student profile setup page | done | QA |
 | TG1-T02 | Student home dashboard | pending | — |
 | TG1-T03 | Forgot password / reset flow | pending | — |
 | TG1-T04 | Playwright e2e smoke tests | pending | — |
@@ -46,8 +46,8 @@
 
 | Field | Value |
 |---|---|
-| Next role | QA |
-| Current task | TG1-T01 |
+| Next role | PM |
+| Current task | (none) |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
 ---
@@ -79,6 +79,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-27 | QA | TG1-T01 QC: PASS WITH NBI — all 8 ACs pass; 2 minor NBIs (cold-load flash, no skip flag) |
 | 2026-04-27 | DEV | TG1-T01 Student profile setup: UpdateProfileDto, PUT /me/profile, updateUser, /profile/setup rewrite (4c23f8a) |
 | 2026-04-27 | PM | Brief written for TG1-T01: Student profile setup page |
 | 2026-04-27 | PM | Sprint 19 launched — Trial Gate 1 polish tasks |
