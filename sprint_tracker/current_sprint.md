@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 08  
-**Phase:** 1 — Foundation & MVP  
+**Sprint:** 10  
+**Phase:** 2 — Growth & Retention  
 **Start:** 2026-04-27  
-**End:** 2026-05-09  
-**Sprint Goal:** Section 6 Part 1 — Badge system (10 badge types, synchronous award after each attempt) and avatar selection (8 pre-made avatars, student picks on profile setup). This starts the growth/retention loop.
+**End:** 2026-05-10  
+**Sprint Goal:** Section 6 Part 3 — Weekly email digest to parents (SendGrid) + Stripe subscription paywall. Completes the monetisation layer needed before closed beta.
 
 ---
 
@@ -21,7 +21,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-QC Agent reviewing Sprint 08 deliverables (P2-T01, P2-T02, P2-T08). Pending QA pass before Sprint 09 launches.
+- **P2-T04** (Dev1): Weekly email digest — SendGrid integration, parent weekly summary cron job
+- **P2-T05** (Dev2): Stripe subscription setup — Checkout session, webhook, subscription status on User
 
 ---
 
@@ -79,6 +80,8 @@ QC Agent reviewing Sprint 08 deliverables (P2-T01, P2-T02, P2-T08). Pending QA p
 | P2-T01 | Badge System (10 types, synchronous award, idempotent) | S08 | `9261cb0` |
 | P2-T02 | Avatar Selection (8 slugs, PUT /me/avatar, avatar component) | S08 | `44bfbe6` |
 | P2-T08 | Problem Seed Expansion (50 → 200 problems, Grades 1-3) | S08 | `44bfbe6` |
+| P2-T03 | Badge Shelf UI (responsive grid, tooltips, student dashboard) | S09 | `33c7420` |
+| P2-T07 | Admin CMS — Problem Authoring UI + POST/PUT /content/problems | S09 | `0f4b9b1` |
 
 ---
 
@@ -88,16 +91,13 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 09 — Section 6, Part 2)
+## Up Next (Sprint 11 — Section 7, Android App)
 
-Tasks from `koblio_mvp_roadmap.md` Section 6 (pending Sprint 08 QA pass):
-
-- **P2-T03**: Badge shelf UI — student dashboard badge grid, tooltip with name/description/earned date
-- **P2-T04**: Weekly email digest (SendGrid/Resend) — parent gets child weekly summary (attempts, XP, badges earned)
-- **P2-T07**: Admin CMS — basic problem authoring UI at `/admin/problems` (teacher/admin only); create/edit JSONB problems
-- **TOP_OF_CLASS badge**: Wire into BadgeService once leaderboard rank-1 detection is in place
+- Flutter Android app (Section 7 begins after Trial Gate 2 — closed beta)
+- TOP_OF_CLASS badge (needs leaderboard rank-1 signal)
+- Redis leaderboard caching (Section 9)
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 08 implementation complete (P2-T01 badge system, P2-T02 avatar, P2-T08 seed expansion). QA in progress before Sprint 09 launch.
+2026-04-27 by PM — Sprint 09 complete (P2-T03 badge shelf, P2-T07 admin CMS). Sprint 10 launched: P2-T04 email digest + P2-T05 Stripe.
