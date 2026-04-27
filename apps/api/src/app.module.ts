@@ -21,6 +21,8 @@ import { AssignmentModule } from './assignment/assignment.module';
 import { ParentModule } from './parent/parent.module';
 import { BadgeModule } from './badge/badge.module';
 import { StripeModule } from './stripe/stripe.module';
+import { MasteryModule } from './mastery/mastery.module';
+import { SchedulerModule } from './scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { StripeModule } from './stripe/stripe.module';
     ParentModule,
     BadgeModule,
     StripeModule,
+    MasteryModule,
+    SchedulerModule,
   ],
   controllers: [AppController],
   providers: [

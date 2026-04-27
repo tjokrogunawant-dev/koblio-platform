@@ -3,6 +3,8 @@ import { StudentProblemAttempt } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
 import { BadgeService } from '../badge/badge.service';
+import { MasteryService } from '../mastery/mastery.service';
+import { SchedulerService } from '../scheduler/scheduler.service';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Injectable()
@@ -13,6 +15,8 @@ export class AttemptService {
     private readonly prisma: PrismaService,
     private readonly gamificationService: GamificationService,
     private readonly badgeService: BadgeService,
+    private readonly masteryService: MasteryService,
+    private readonly schedulerService: SchedulerService,
   ) {}
 
   async submitAnswer(
@@ -27,6 +31,7 @@ export class AttemptService {
     xpEarned: number;
     leveledUp: boolean;
     badgesEarned: string[];
+    justMastered: boolean;
   }> {
     const problem = await this.prisma.problem.findUnique({
       where: { id: dto.problemId },
@@ -110,7 +115,29 @@ export class AttemptService {
       );
     }
 
-    return { correct, correctAnswer, solution, attemptId: attempt.id, coinsEarned, xpEarned, leveledUp, badgesEarned };
+    // Update BKT mastery — failures never block the attempt response
+    let justMastered = false;
+    try {
+      const skill = `grade${problem.grade}:${problem.strand}:${problem.topic}`;
+      const masteryResult = await this.masteryService.recordAttempt(studentId, skill, correct);
+      justMastered = masteryResult.justMastered;
+    } catch (err) {
+      this.logger.error(
+        `Mastery side-effects failed for attempt ${attempt.id}: ${err}`,
+      );
+    }
+
+    // Update FSRS card state — failures never block the attempt response
+    try {
+      const rating = correct ? 3 : 1; // Good on correct, Again on incorrect
+      await this.schedulerService.recordReview(studentId, dto.problemId, rating as 1 | 3);
+    } catch (err) {
+      this.logger.error(
+        `FSRS scheduler side-effects failed for attempt ${attempt.id}: ${err}`,
+      );
+    }
+
+    return { correct, correctAnswer, solution, attemptId: attempt.id, coinsEarned, xpEarned, leveledUp, badgesEarned, justMastered };
   }
 
   async getStudentAttempts(

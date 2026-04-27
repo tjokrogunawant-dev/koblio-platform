@@ -55,6 +55,8 @@ model User {
   assignmentsCreated    Assignment[]            @relation("TeacherAssignments")
   assignmentSubmissions AssignmentSubmission[]  @relation("StudentSubmissions")
   badges                Badge[]
+  cardStates            CardState[]
+  skillMasteries        SkillMastery[]
 
   @@map("users")
 }
@@ -176,6 +178,7 @@ model Problem {
 
   attempts             StudentProblemAttempt[]
   assignmentSubmissions AssignmentSubmission[]
+  cardStates           CardState[]
 
   @@index([grade, strand, topic])
   @@index([difficulty])
@@ -281,4 +284,41 @@ model Badge {
   @@unique([studentId, type])
   @@index([studentId])
   @@map("badges")
+}
+
+model CardState {
+  id          String    @id @default(uuid()) @db.Uuid
+  studentId   String    @map("student_id") @db.Uuid
+  problemId   String    @map("problem_id") @db.Uuid
+  stability   Float     @default(2.5) @map("stability")
+  difficulty  Float     @default(5.0) @map("difficulty")
+  dueDate     DateTime  @default(now()) @map("due_date")
+  lastReview  DateTime? @map("last_review")
+  reviewCount Int       @default(0) @map("review_count")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+
+  student User    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  problem Problem @relation(fields: [problemId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, problemId])
+  @@index([studentId, dueDate])
+  @@map("card_states")
+}
+
+model SkillMastery {
+  id           String   @id @default(uuid()) @db.Uuid
+  studentId    String   @map("student_id") @db.Uuid
+  skill        String   // e.g. "grade2:fractions:addition" — "grade:strand:topic"
+  masteryProb  Float    @default(0.1) @map("mastery_prob")
+  attemptCount Int      @default(0) @map("attempt_count")
+  mastered     Boolean  @default(false)
+  lastUpdated  DateTime @default(now()) @map("last_updated")
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, skill])
+  @@index([studentId, mastered])
+  @@map("skill_masteries")
 }
