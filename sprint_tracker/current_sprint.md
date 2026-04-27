@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 03  
+**Sprint:** 07  
 **Phase:** 1 — Foundation & MVP  
-**Start:** 2026-04-22  
-**End:** 2026-05-02  
-**Sprint Goal:** Complete auth for all user types and wire up the auth frontend. This closes Section 1 of the revised MVP roadmap (`koblio_mvp_roadmap.md`) and unblocks the content pipeline in Sprint 04.
+**Start:** 2026-04-27  
+**End:** 2026-05-09  
+**Sprint Goal:** Build the Teacher Dashboard (Section 5 of MVP roadmap) — class management, assignment creation, assignment tracking, student progress view, and parent read-only view. This closes Section 5 and puts us one sprint away from Trial Gate 1.
 
 ---
 
@@ -22,7 +22,7 @@ The project is now following `koblio_mvp_roadmap.md` (revised 2026-04-23). Key c
 
 ## Active Tasks
 
-None — all Sprint 03 tasks complete. Section 1 closed.
+None yet — Sprint 07 just started.
 
 ---
 
@@ -30,7 +30,6 @@ None — all Sprint 03 tasks complete. Section 1 closed.
 
 | Task ID | Title | Deferred To | Reason |
 |---|---|---|---|
-| P1-T14 (MongoDB) | MongoDB Problem Document Schema | Sprint 04 (as JSONB) | Replaced by PostgreSQL JSONB approach — no Atlas credentials needed for MVP |
 | P1-T15 | Admin CMS for Problem Authoring | Section 6 (Sprint 10) | Seed problems via JSON files for MVP; CMS needed only when non-devs author content |
 | P1-T04 | Docker Compose Local Dev Environment | Nice-to-have | Use Neon + Docker Desktop on Windows; not blocking any work |
 | P1-T05 (AWS Terraform) | Provision AWS Staging Environment | Section 9 (Sprint 19+) | Deploy to Railway at Trial Gate 1; AWS needed only at 5K+ MAU |
@@ -62,6 +61,12 @@ None — all Sprint 03 tasks complete. Section 1 closed.
 | P1-T18 | Topic Browser UI (grade→strand→topic) | S05 | `593043f` |
 | P1-T19 | Problem Display (MCQ/fill-blank/true-false + KaTeX) | S05 | `593043f` |
 | P1-T20 | Answer Submission + Feedback + Solution Reveal | S05 | `593043f` |
+| P1-T23 | Points Ledger (coins per correct answer, scaled by difficulty) | S06 | `f34aa65` |
+| P1-T24 | XP + Levels (accumulate from attempts, level thresholds) | S06 | `f34aa65` |
+| P1-T25 | Daily Streak (last_active_date, streak_count, 7-day bonus) | S06 | `f34aa65` |
+| P1-T26 | Class Leaderboard (SQL RANK() OVER, weekly window) | S06 | `f34aa65` |
+| P1-T27 | Daily Challenge (deterministic per-grade per-day selection) | S06 | `f34aa65` |
+| P1-T28 | Gamification UI (CoinCounter, XPBar, StreakBadge, LeaderboardWidget, DailyChallengeCard) | S06 | `a85bc16` |
 
 ---
 
@@ -71,18 +76,19 @@ None. All active tasks are unblocked. Work continues regardless of external cred
 
 ---
 
-## Up Next (Sprint 04 — May 5–16)
+## Up Next (Sprint 07 — Teacher Dashboard)
 
-Section 2 of `koblio_mvp_roadmap.md`:
+Section 5 of `koblio_mvp_roadmap.md`:
 
-- Problem schema in Prisma (`problems` table with `content JSONB`)
-- Seed 50 math problems (grades 1–3, US Common Core, MCQ + fill-in-blank)
-- Problem API endpoints (`GET /problems`, `GET /problems/:id`)
-- KaTeX rendering confirmed working end-to-end
+- **P1-T29**: Class management — teacher creates class, students join by class code; API: `POST /classrooms`, `GET /classrooms/mine`, `GET /classrooms/:id/students`
+- **P1-T30**: Assignment creation — teacher assigns topic + difficulty + optional deadline; API: `POST /assignments`, `GET /assignments/mine`
+- **P1-T31**: Assignment tracking — students see assigned work; submissions auto-graded; API: `GET /assignments/student`, `POST /assignments/:id/submit`
+- **P1-T32**: Student progress view — teacher sees % correct by topic, streak status per student; API: `GET /classrooms/:id/progress`
+- **P1-T33**: Parent view — read-only child progress dashboard; `GET /parent/children/:childId/progress`
 
 No new external services required.
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 05 complete. Section 3 done. Moving to Sprint 06 (Section 4 — Gamification) immediately.
+2026-04-27 by PM — Sprint 06 complete. Section 4 (Gamification) closed. Moving to Sprint 07 (Section 5 — Teacher Dashboard) immediately.
