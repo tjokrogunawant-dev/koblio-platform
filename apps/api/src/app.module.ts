@@ -24,6 +24,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { MasteryModule } from './mastery/mastery.module';
 import { SchedulerModule } from './scheduler/scheduler.module';
 import { MoodModule } from './mood/mood.module';
+import { LeaderboardModule } from './leaderboard/leaderboard.module';
 
 @Module({
   imports: [
@@ -47,6 +48,7 @@ import { MoodModule } from './mood/mood.module';
     MasteryModule,
     SchedulerModule,
     MoodModule,
+    LeaderboardModule,
   ],
   controllers: [AppController],
   providers: [

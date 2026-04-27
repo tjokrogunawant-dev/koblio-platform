@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { mapProblem, ProblemDto } from '../content/content.service';
+import { LeaderboardService } from '../leaderboard/leaderboard.service';
 
 // Cumulative XP required to reach each level index (1-indexed, level 1 = index 0)
 const LEVEL_THRESHOLDS = [0, 100, 250, 500, 900, 1400, 2000, 2800, 3800, 5000];
@@ -54,7 +55,10 @@ interface WeeklyScoreRow {
 export class GamificationService {
   private readonly logger = new Logger(GamificationService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly leaderboardService: LeaderboardService,
+  ) {}
 
   // ─── P1-T24: Level info ───────────────────────────────────────────────────
 
@@ -90,6 +94,7 @@ export class GamificationService {
     problemDifficulty: string,
     correct: boolean,
     attemptId?: string,
+    classroomId?: string | null,
   ): Promise<AwardResult> {
     let coinsEarned = 0;
     let xpEarned = 0;
@@ -155,6 +160,11 @@ export class GamificationService {
 
       return { newLevel: newLevelInfo.level, leveledUp: didLevelUp };
     });
+
+    // Write-through to Redis leaderboard (fire-and-forget; never throws)
+    if (xpEarned > 0) {
+      void this.leaderboardService.addScore(classroomId, studentId, xpEarned);
+    }
 
     return {
       coinsEarned,
@@ -225,12 +235,44 @@ export class GamificationService {
     return { streakCount: newStreakCount, streakBonusMultiplier };
   }
 
-  // ─── P1-T26: Class leaderboard ────────────────────────────────────────────
+  // ─── P1-T26: Class leaderboard (Redis-first, SQL fallback) ──────────────────
 
   async getClassLeaderboard(
     classroomId: string,
     studentId: string,
   ): Promise<LeaderboardResult> {
+    // --- Try Redis sorted set first ---
+    const redisEntries = await this.leaderboardService.getClassroomLeaderboard(classroomId);
+
+    if (redisEntries.length > 0) {
+      // Map Redis entries (score = XP) to the existing LeaderboardEntry shape.
+      // weeklyCoins field carries the XP score for backward API compatibility.
+      const leaderboard: LeaderboardEntry[] = redisEntries.map((e) => ({
+        rank: e.rank,
+        studentId: e.studentId,
+        displayName: e.displayName ?? e.studentId,
+        weeklyCoins: e.score,
+      }));
+
+      // Determine calling student's rank
+      let myRank = 0;
+      const myEntry = leaderboard.find((e) => e.studentId === studentId);
+      if (myEntry) {
+        myRank = myEntry.rank;
+      } else {
+        // Student outside top 10 — look up their 0-indexed ZREVRANK
+        const zeroIndexedRank = await this.leaderboardService.getStudentRank(classroomId, studentId);
+        myRank = zeroIndexedRank !== null ? zeroIndexedRank + 1 : 0;
+      }
+
+      return { rank: myRank, leaderboard };
+    }
+
+    // --- Cold-start fallback: PostgreSQL RANK() query ---
+    this.logger.warn(
+      `Leaderboard for classroom ${classroomId} not in Redis — falling back to SQL`,
+    );
+
     const rows = await this.prisma.$queryRaw<WeeklyScoreRow[]>`
       WITH weekly_scores AS (
         SELECT pl.student_id, u.display_name,
