@@ -40,15 +40,16 @@ export class AttemptController {
     @Query('limit', new ParseIntPipe({ optional: true })) limit?: number,
     @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
   ) {
+    const cappedLimit = Math.min(limit ?? 20, 100);
     const result = await this.attemptService.getStudentAttempts(
       user.userId,
-      limit,
+      cappedLimit,
       offset,
     );
     return {
       data: result.data,
       total: result.total,
-      limit: limit ?? 20,
+      limit: cappedLimit,
       offset: offset ?? 0,
     };
   }

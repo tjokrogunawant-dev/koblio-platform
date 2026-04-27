@@ -185,12 +185,11 @@ export async function submitAnswer(
   data: SubmitAnswerData,
   token: string,
 ): Promise<SubmitAnswerResponse> {
+  const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+  if (token) headers['Authorization'] = `Bearer ${token}`;
   const res = await fetch(`${API_BASE}/attempts`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${token}`,
-    },
+    headers,
     body: JSON.stringify(data),
   });
   return handleResponse<SubmitAnswerResponse>(res);

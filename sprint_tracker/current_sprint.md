@@ -58,6 +58,10 @@ None — all Sprint 03 tasks complete. Section 1 closed.
 | P1-T14r | Problem Schema (JSONB) in Prisma | S04 | `7b3a063` |
 | P1-T14a | Problem API (GET /problems, filters, pagination) | S04 | `7b3a063` |
 | P1-T14s | Seed 50 Math Problems (Grades 1-3) | S04 | `ff736f2` |
+| P1-T21 | Student Attempt Recording + Stats API | S05 | `0b076e2` |
+| P1-T18 | Topic Browser UI (grade→strand→topic) | S05 | `593043f` |
+| P1-T19 | Problem Display (MCQ/fill-blank/true-false + KaTeX) | S05 | `593043f` |
+| P1-T20 | Answer Submission + Feedback + Solution Reveal | S05 | `593043f` |
 
 ---
 
@@ -81,4 +85,4 @@ No new external services required.
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 04 complete. All Section 2 tasks done. Moving to Sprint 05 (Section 3) immediately.
+2026-04-27 by PM — Sprint 05 complete. Section 3 done. Moving to Sprint 06 (Section 4 — Gamification) immediately.
