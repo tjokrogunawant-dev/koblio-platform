@@ -22,10 +22,7 @@ The project is now following `koblio_mvp_roadmap.md` (revised 2026-04-23). Key c
 
 ## Active Tasks
 
-| Task ID | Title | Owner Role | Priority | Status | Notes |
-|---|---|---|---|---|---|
-| P1-T12 | User Module — Parent-Child Linking & School Association | Backend | P0 | pending | Unblocked — T11 done. Top priority. |
-| P1-T13 | Auth Frontend — Login & Registration Pages | Frontend | P0 | pending | Unblocked — T10 + T11 done. |
+None — all Sprint 03 tasks complete. Section 1 closed.
 
 ---
 
@@ -56,6 +53,8 @@ The project is now following `koblio_mvp_roadmap.md` (revised 2026-04-23). Key c
 | P1-T11 | Auth Module — Student Login & RBAC enforcement | S03 | `d864978` |
 | P1-T09 | Sentry Error Tracking Setup (web + API) | S03 | `9ce700e` |
 | P1-T17 | KaTeX Integration — Web Math Rendering | S03 | `9ce700e` |
+| P1-T12 | Parent-Child Linking & School Association | S03 | `4b2767d` |
+| P1-T13 | Auth Frontend — Login & Registration Pages | S03 | `96bd921` |
 
 ---
 
@@ -79,4 +78,4 @@ No new external services required.
 ---
 
 ## Last Updated
-2026-04-27 by PM — T11, T09, T17 merged and marked done. T12 + T13 now active.
+2026-04-27 by PM — Sprint 03 complete. All Section 1 tasks done. Sprint 04 starts May 5.

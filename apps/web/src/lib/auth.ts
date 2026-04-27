@@ -8,7 +8,7 @@ export function getStoredToken(): string | null {
 
 export function setStoredToken(token: string, expiresIn: number): void {
   if (typeof window === 'undefined') return;
-  const expiry = Date.now() + expiresIn * 1000;
+  const expiry = Date.now() + (expiresIn || 3600) * 1000;
   localStorage.setItem(TOKEN_KEY, token);
   localStorage.setItem(TOKEN_EXPIRY_KEY, String(expiry));
 }

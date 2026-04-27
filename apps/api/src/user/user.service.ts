@@ -268,25 +268,15 @@ export class UserService {
       throw new NotFoundException(`Classroom with code "${dto.class_code}" not found`);
     }
 
-    const existing = await this.prisma.enrollment.findUnique({
-      where: {
-        studentId_classroomId: {
-          studentId: childId,
-          classroomId: classroom.id,
-        },
-      },
-    });
-
-    if (existing) {
-      throw new ConflictException('Child is already enrolled in this classroom');
-    }
-
     const enrollment = await this.prisma.$transaction(async (tx) => {
+      const existing = await tx.enrollment.findUnique({
+        where: { studentId_classroomId: { studentId: childId, classroomId: classroom.id } },
+      });
+      if (existing) {
+        throw new ConflictException('Child is already enrolled in this classroom');
+      }
       return tx.enrollment.create({
-        data: {
-          studentId: childId,
-          classroomId: classroom.id,
-        },
+        data: { studentId: childId, classroomId: classroom.id },
       });
     });
 
