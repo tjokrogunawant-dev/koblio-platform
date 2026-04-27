@@ -107,4 +107,53 @@ export class ContentService {
     });
     return rows.map(mapProblem);
   }
+
+  async createProblem(dto: {
+    grade: number;
+    strand: string;
+    topic: string;
+    difficulty: string;
+    type: string;
+    content: Record<string, unknown>;
+  }): Promise<ProblemDto> {
+    const row = await this.prisma.problem.create({
+      data: {
+        grade: dto.grade,
+        strand: dto.strand,
+        topic: dto.topic,
+        difficulty: dto.difficulty as import('@prisma/client').Difficulty,
+        type: dto.type as import('@prisma/client').ProblemType,
+        content: dto.content,
+      },
+    });
+    return mapProblem(row);
+  }
+
+  async updateProblem(
+    id: string,
+    dto: {
+      grade?: number;
+      strand?: string;
+      topic?: string;
+      difficulty?: string;
+      type?: string;
+      content?: Record<string, unknown>;
+    },
+  ): Promise<ProblemDto> {
+    const existing = await this.prisma.problem.findUnique({ where: { id } });
+    if (!existing) {
+      throw new NotFoundException(`Problem with id "${id}" not found`);
+    }
+
+    const data: Record<string, unknown> = {};
+    if (dto.grade !== undefined) data['grade'] = dto.grade;
+    if (dto.strand !== undefined) data['strand'] = dto.strand;
+    if (dto.topic !== undefined) data['topic'] = dto.topic;
+    if (dto.difficulty !== undefined) data['difficulty'] = dto.difficulty;
+    if (dto.type !== undefined) data['type'] = dto.type;
+    if (dto.content !== undefined) data['content'] = dto.content;
+
+    const row = await this.prisma.problem.update({ where: { id }, data });
+    return mapProblem(row);
+  }
 }

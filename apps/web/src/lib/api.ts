@@ -126,7 +126,7 @@ export interface ProblemsFilters {
 export async function getProblems(
   filters: ProblemsFilters,
   token?: string,
-): Promise<Problem[]> {
+): Promise<ProblemsResponse> {
   const params = new URLSearchParams();
   if (filters.grade !== undefined) params.set('grade', String(filters.grade));
   if (filters.strand) params.set('strand', filters.strand);
@@ -142,7 +142,56 @@ export async function getProblems(
     `${API_BASE}/content/problems?${params.toString()}`,
     { headers },
   );
-  return handleResponse<Problem[]>(res);
+  return handleResponse<ProblemsResponse>(res);
+}
+
+export interface ProblemsResponse {
+  data: Problem[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+export interface CreateProblemData {
+  grade: number;
+  strand: string;
+  topic: string;
+  difficulty: Difficulty;
+  type: ProblemType;
+  content: Record<string, unknown>;
+}
+
+export type UpdateProblemData = Partial<CreateProblemData>;
+
+export async function createProblem(
+  data: CreateProblemData,
+  token: string,
+): Promise<Problem> {
+  const res = await fetch(`${API_BASE}/content/problems`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<Problem>(res);
+}
+
+export async function updateProblem(
+  id: string,
+  data: UpdateProblemData,
+  token: string,
+): Promise<Problem> {
+  const res = await fetch(`${API_BASE}/content/problems/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<Problem>(res);
 }
 
 export async function getProblemsByGrade(

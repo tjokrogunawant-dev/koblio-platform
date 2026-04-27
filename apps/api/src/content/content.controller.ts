@@ -1,15 +1,22 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
   ParseIntPipe,
   ParseUUIDPipe,
+  Post,
+  Put,
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { UserRole } from '@koblio/shared';
 import { Public } from '../auth/decorators/public.decorator';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { ContentService } from './content.service';
 import { ProblemQueryDto } from './dto/problem-query.dto';
+import { CreateProblemDto } from './dto/create-problem.dto';
+import { UpdateProblemDto } from './dto/update-problem.dto';
 
 @ApiTags('Content')
 @Controller('content')
@@ -59,5 +66,23 @@ export class ContentController {
   @ApiParam({ name: 'id', type: String, description: 'Problem UUID' })
   async getProblemById(@Param('id', ParseUUIDPipe) id: string) {
     return this.contentService.findOne(id);
+  }
+
+  @Post('problems')
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Create a new problem (teacher/admin only)' })
+  async createProblem(@Body() dto: CreateProblemDto) {
+    return this.contentService.createProblem(dto);
+  }
+
+  @Put('problems/:id')
+  @Roles(UserRole.TEACHER, UserRole.ADMIN)
+  @ApiOperation({ summary: 'Update an existing problem (teacher/admin only)' })
+  @ApiParam({ name: 'id', type: String, description: 'Problem UUID' })
+  async updateProblem(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() dto: UpdateProblemDto,
+  ) {
+    return this.contentService.updateProblem(id, dto);
   }
 }

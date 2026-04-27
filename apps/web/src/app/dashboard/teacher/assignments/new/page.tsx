@@ -88,7 +88,7 @@ export default function NewAssignmentPage() {
       },
       token ?? undefined,
     )
-      .then((data) => setProblems(data))
+      .then((res) => setProblems(res.data))
       .catch(() => setProblemsError('Could not load problems. Please try again.'))
       .finally(() => setLoadingProblems(false));
   }
