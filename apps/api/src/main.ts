@@ -19,8 +19,11 @@ async function bootstrap() {
 
   app.use(helmet());
   app.use(cookieParser());
-  app.enableCors({ credentials: true, origin: true });
-  app.setGlobalPrefix('api', { exclude: ['health'] });
+  app.enableCors({
+    credentials: true,
+    origin: process.env.WEB_URL ?? 'http://localhost:3000',
+  });
+  app.setGlobalPrefix('api');
   app.useGlobalPipes(
     new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
   );
