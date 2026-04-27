@@ -24,6 +24,7 @@ import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
 import { RegisterParentDto } from './dto/register-parent.dto';
 import { RegisterTeacherDto } from './dto/register-teacher.dto';
 import { EmailLoginDto } from './dto/login.dto';
+import { StudentLoginDto } from './dto/student-login.dto';
 
 const REFRESH_COOKIE_NAME = 'koblio_refresh';
 const REFRESH_COOKIE_MAX_AGE_MS = 7 * 24 * 60 * 60 * 1000; // 7 days
@@ -171,6 +172,26 @@ export class AuthController {
       email: user.email,
       roles: user.roles,
     };
+  }
+
+  @Post('login/student')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Student login via username and password' })
+  @ApiResponse({ status: 200, description: 'Login successful' })
+  @ApiResponse({ status: 401, description: 'Invalid credentials' })
+  async loginStudent(@Body() dto: StudentLoginDto) {
+    return this.authService.loginStudent(dto);
+  }
+
+  @Get('student/check')
+  @ApiBearerAuth()
+  @Roles(UserRole.STUDENT)
+  @ApiOperation({ summary: 'Verify student role access' })
+  @ApiResponse({ status: 200, description: 'Student access confirmed' })
+  @ApiResponse({ status: 403, description: 'Insufficient permissions' })
+  studentCheck(@CurrentUser() user: AuthenticatedUser) {
+    return { student: true, userId: user.userId };
   }
 
   @Get('admin/check')
