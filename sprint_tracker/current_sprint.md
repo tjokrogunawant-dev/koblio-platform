@@ -4,35 +4,43 @@
 **Phase:** 1 — Foundation & MVP  
 **Start:** 2026-04-22  
 **End:** 2026-05-02  
-**Sprint Goal:** Unblock auth endpoint chain via testcontainers CI mitigation, deliver KaTeX web rendering, initiate MongoDB problem content pipeline via Atlas, and clear Sprint 02 carry-over P0 items.
+**Sprint Goal:** Complete auth for all user types and wire up the auth frontend. This closes Section 1 of the revised MVP roadmap (`koblio_mvp_roadmap.md`) and unblocks the content pipeline in Sprint 04.
+
+---
+
+## Roadmap Context
+
+The project is now following `koblio_mvp_roadmap.md` (revised 2026-04-23). Key changes from the original plan:
+
+- **Web-only until Trial Gate 2** — Flutter/Android resumes in Sprint 11+
+- **PostgreSQL JSONB replaces MongoDB** for Sprint 04 content pipeline — no Atlas credentials needed
+- **No Redis until Section 9** — streaks and leaderboards run on PostgreSQL for MVP
+- **No AWS/Terraform until Section 9** — deploy to Railway at Trial Gate 1 (~Jun 27)
+- **Credentials are never blockers** — see the credential map in `koblio_mvp_roadmap.md`
 
 ---
 
 ## Active Tasks
 
-| Task ID | Title | Owner Role | Priority | Status | Progress / Blocker |
+| Task ID | Title | Owner Role | Priority | Status | Notes |
 |---|---|---|---|---|---|
-| P1-T09 | Sentry Error Tracking Setup (web + API) | DevOps | P2 | pending | No blocker — deps P1-T06 (done), P1-T07 (done). Start Day 1. |
-| P1-T17 | KaTeX Integration — Web Math Rendering | Frontend | P1 | pending | No blocker — only dep P1-T02 (done). Run parallel with auth backend. |
-| P1-T10 | Auth Module — Parent & Teacher Registration endpoints | Backend | P0 | done | All AC met. Commit `acabf47`. 62 unit tests passing. |
-| P1-T11 | Auth Module — Student Login & RBAC enforcement | Backend | P0 | pending | Depends: P1-T10 |
-| P1-T14 | MongoDB Problem Document Schema & API | Backend | P0 | pending | Mitigation: connect to MongoDB Atlas directly. No local Docker required. |
-| P1-T12 | User Module — Parent-Child Linking & School Association | Backend | P0 | pending | Depends: P1-T10 (done), P1-T11 (done) |
-| P1-T13 | Auth Frontend — Login & Registration Pages | Frontend | P0 | pending | Depends: P1-T08 (done), P1-T10, P1-T11 |
-| P1-T15 | Admin CMS for Problem Authoring | Frontend | P1 | pending | Depends: P1-T14, P1-T08 (done). Stretch goal — start only if P1-T14 is merged by Day 6. |
+| P1-T12 | User Module — Parent-Child Linking & School Association | Backend | P0 | pending | Unblocked — T11 done. Top priority. |
+| P1-T13 | Auth Frontend — Login & Registration Pages | Frontend | P0 | pending | Unblocked — T10 + T11 done. |
 
 ---
 
-## On Hold (Blocked — not in active sprint work)
+## On Hold (Intentionally deferred — not blockers)
 
-| Task ID | Title | Status | Note |
+| Task ID | Title | Deferred To | Reason |
 |---|---|---|---|
-| P1-T04 | Docker Compose Local Dev Environment (PostgreSQL, MongoDB, Redis) | blocked | Docker runtime unavailable. Auth tasks unblocked via testcontainers mitigation. Await Docker-capable environment provisioning. |
-| P1-T03 (S01) | Configure Terraform + AWS ECS Fargate | blocked | AWS credentials not provisioned. Hard deadline 2026-05-01 — see PHASE_GATE_RISK.md. Escalate to project sponsor immediately. |
+| P1-T14 (MongoDB) | MongoDB Problem Document Schema | Sprint 04 (as JSONB) | Replaced by PostgreSQL JSONB approach — no Atlas credentials needed for MVP |
+| P1-T15 | Admin CMS for Problem Authoring | Section 6 (Sprint 10) | Seed problems via JSON files for MVP; CMS needed only when non-devs author content |
+| P1-T04 | Docker Compose Local Dev Environment | Nice-to-have | Use Neon + Docker Desktop on Windows; not blocking any work |
+| P1-T05 (AWS Terraform) | Provision AWS Staging Environment | Section 9 (Sprint 19+) | Deploy to Railway at Trial Gate 1; AWS needed only at 5K+ MAU |
 
 ---
 
-## Completed (Sprint 01 + Sprint 02)
+## Completed (All Sprints)
 
 | Task ID | Title | Sprint | Commit |
 |---|---|---|---|
@@ -44,21 +52,31 @@
 | P1-T07* | Next.js 15 Web App + Teacher Dashboard Shell | S01 | `e164ac6` |
 | P1-T08 | Design System Foundations (10 components, @koblio/ui) | S02 | `b32e2bf` |
 | P1-T08† | Flutter App Shell (GoRouter, Riverpod, Dio) | S02 | `a85d6fd` |
-| P1-T10 | Auth Module — Parent & Teacher Registration endpoints | S03 | `acabf47` |
-
-> *Task IDs in git commits differ from canonical `koobits_scheduled_task_plan.md` numbering due to implementation agent mapping. Canonical S1 task completions: Monorepo (T01), CI (T02), Auth0/COPPA (T07), Prisma schema (canonical T03 NestJS + T05 Prisma), NestJS bootstrap (T03), Next.js shell (T02 web scaffold). Reconciliation needed in next QC pass.
-> †Flutter app shell not assigned a canonical task ID in current sprint plan; treated as Sprint 02 bonus deliverable.
+| P1-T10 | Auth Module — Parent & Teacher Registration | S03 | `acabf47` |
+| P1-T11 | Auth Module — Student Login & RBAC enforcement | S03 | `d864978` |
+| P1-T09 | Sentry Error Tracking Setup (web + API) | S03 | `9ce700e` |
+| P1-T17 | KaTeX Integration — Web Math Rendering | S03 | `9ce700e` |
 
 ---
 
 ## Sprint Blockers
 
-| Task ID | Blocker | Deadline | Owner |
-|---|---|---|---|
-| P1-T04 | Docker runtime not available in implementation environment | — (pending environment provisioning) | Ops/PM |
-| P1-T03 (S01) | AWS IAM credentials not provisioned | **2026-05-01 (HARD)** — see PHASE_GATE_RISK.md | Project Sponsor |
+None. All active tasks are unblocked. Work continues regardless of external credentials.
+
+---
+
+## Up Next (Sprint 04 — May 5–16)
+
+Section 2 of `koblio_mvp_roadmap.md`:
+
+- Problem schema in Prisma (`problems` table with `content JSONB`)
+- Seed 50 math problems (grades 1–3, US Common Core, MCQ + fill-in-blank)
+- Problem API endpoints (`GET /problems`, `GET /problems/:id`)
+- KaTeX rendering confirmed working end-to-end
+
+No new external services required.
 
 ---
 
 ## Last Updated
-2026-04-22 by Implementation Agent (P1-T10 completed)
+2026-04-27 by PM — T11, T09, T17 merged and marked done. T12 + T13 now active.
