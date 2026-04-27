@@ -1,9 +1,9 @@
 openapi: 3.1.0
 info:
-  title: KooBits-Clone Platform API
+  title: Koblio-Clone Platform API
   version: 0.1.0-skeleton
   description: |
-    Skeleton OpenAPI 3.1 specification for the KooBits-style gamified math
+    Skeleton OpenAPI 3.1 specification for the Koblio-style gamified math
     learning platform. This is a SKELETON — core flows are specified with
     representative schemas and examples, but edge cases and less-critical
     endpoints are intentionally left to be fleshed out during implementation.
@@ -25,11 +25,11 @@ info:
     - Pagination: `?limit=<n>&cursor=<opaque>` with `next_cursor` in response
 
   contact:
-    name: KooBits Platform Team
+    name: Koblio Platform Team
 servers:
-  - url: https://api.koobits-clone.example/v1
+  - url: https://api.koblio-clone.example/v1
     description: Production
-  - url: https://api-staging.koobits-clone.example/v1
+  - url: https://api-staging.koblio-clone.example/v1
     description: Staging
   - url: http://localhost:3001/v1
     description: Local dev
@@ -820,7 +820,7 @@ components:
       type: object
       required: [type, title, status]
       properties:
-        type: { type: string, format: uri, example: "https://api.koobits-clone.example/errors/validation" }
+        type: { type: string, format: uri, example: "https://api.koblio-clone.example/errors/validation" }
         title: { type: string, example: "Validation failed" }
         status: { type: integer, example: 422 }
         detail: { type: string, example: "Password must be at least 8 characters" }

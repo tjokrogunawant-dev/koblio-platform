@@ -1,4 +1,4 @@
-# KooBits Platform — Procurement & Credentials Checklist
+# Koblio Platform — Procurement & Credentials Checklist
 
 **Version:** 1.0
 **Date:** 2026-04-17
@@ -155,7 +155,7 @@ Do NOT share credentials via Slack, email, or chat. Use the password manager. Ge
 | COPPA/kidSAFE amortized | $300/mo |
 | **Month 1 total** | **~$903/mo** |
 
-This is the **true** monthly burn including SaaS overhead, not just the server costs specced in `koobits_budget_estimation.md` (which was $576/mo, infrastructure-only). Budget accordingly.
+This is the **true** monthly burn including SaaS overhead, not just the server costs specced in `koblio_budget_estimation.md` (which was $576/mo, infrastructure-only). Budget accordingly.
 
 ---
 

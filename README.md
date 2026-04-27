@@ -1,4 +1,4 @@
-# KooBits Platform Handoff Package
+# Koblio Platform Handoff Package
 
 **Target reader:** The external development team receiving this package.
 **Package date:** 2026-04-17
@@ -8,11 +8,11 @@
 
 ## 1. What You're Building
 
-A **gamified, adaptive math learning platform for primary/elementary students (Grades K-6, ages 6-12)**, modeled on the proven approach of KooBits Learning (the Singapore-based incumbent). The platform combines curriculum-aligned math content with deep gamification mechanics — points, badges, streaks, leaderboards, avatar customization, brain-training mini-games, and daily challenges — to make practice feel like play.
+A **gamified, adaptive math learning platform for primary/elementary students (Grades K-6, ages 6-12)**, modeled on the proven approach of Koblio Learning (the Singapore-based incumbent). The platform combines curriculum-aligned math content with deep gamification mechanics — points, badges, streaks, leaderboards, avatar customization, brain-training mini-games, and daily challenges — to make practice feel like play.
 
 It serves **three user types**: students (via Flutter mobile app and Next.js web), teachers (class management, assignment creation, analytics dashboards), and parents (child progress tracking, subscription management). The backend is a NestJS modular monolith backed by PostgreSQL, MongoDB, and Redis, hosted on AWS.
 
-**MVP scope:** Grades 1-3 on **US Common Core (CCSS-M)** — chosen over Singapore MOE because the US K-6 TAM is ~60× larger, open content licensing (Illustrative Mathematics, OpenStax) collapses the content cold-start problem, and direct confrontation with KooBits in their home market is avoidable (see `koobits_curriculum_package.md`). Singapore MOE + Grades 4-6 is the **Phase 3-4 expansion**. Target: **10,000 MAU by month 12**, architecture to support 100K+.
+**MVP scope:** Grades 1-3 on **US Common Core (CCSS-M)** — chosen over Singapore MOE because the US K-6 TAM is ~60× larger, open content licensing (Illustrative Mathematics, OpenStax) collapses the content cold-start problem, and direct confrontation with Koblio in their home market is avoidable (see `koblio_curriculum_package.md`). Singapore MOE + Grades 4-6 is the **Phase 3-4 expansion**. Target: **10,000 MAU by month 12**, architecture to support 100K+.
 
 **Key architectural decisions already locked** (see §6 for references): Flutter mobile (not React Native), modular monolith (not microservices), PostgreSQL + MongoDB (not single-DB), FSRS-4.5 for spaced repetition (not SM-2), BKT with session-scoped mood modifiers, blended priority scheduler composing FSRS + BKT. These are documented in the Key Decisions Log of the development plan — **do not re-litigate them** unless you have new information the decisions didn't consider.
 
@@ -41,9 +41,9 @@ Files are in the same directory as this README.
 
 ### 3.1 Product & Business Context
 
-#### 📘 `koobits_product_analysis.md` (~15K, ~300 lines)
+#### 📘 `koblio_product_analysis.md` (~15K, ~300 lines)
 
-**What it is:** Research report on KooBits Learning (the reference platform we're modeled on). Covers company background (founded 2007 Singapore), user base (250K+ MAU, 2/3 of Singapore primary schools), product features, curriculum coverage, business model, competitors (Geniebook, Matholia, IXL, Khan Academy, Prodigy), and differentiation strategy.
+**What it is:** Research report on Koblio Learning (the reference platform we're modeled on). Covers company background (founded 2007 Singapore), user base (250K+ MAU, 2/3 of Singapore primary schools), product features, curriculum coverage, business model, competitors (Geniebook, Matholia, IXL, Khan Academy, Prodigy), and differentiation strategy.
 
 **Key sections:** Company Background; Product Features; Business Model; Competitors & Differentiation.
 
@@ -55,7 +55,7 @@ Files are in the same directory as this README.
 
 ### 3.2 Technical Architecture & Plan
 
-#### 📗 `koobits_tech_stack_and_timeline.md` (~48K, ~780 lines)
+#### 📗 `koblio_tech_stack_and_timeline.md` (~48K, ~780 lines)
 
 **What it is:** Full technical architecture reference. Technology choices for every layer with justifications; module boundaries; database schemas; auth strategy; deployment topology; CI/CD; monitoring. Includes **Appendix A: Flutter vs React Native Analysis** (why Flutter was chosen).
 
@@ -67,7 +67,7 @@ Files are in the same directory as this README.
 
 ---
 
-#### 📙 `koobits_development_plan.md` (~50K, ~710 lines)
+#### 📙 `koblio_development_plan.md` (~50K, ~710 lines)
 
 **What it is:** The 18-month, 5-phase execution plan with milestones, risks, phase gates, and a Key Decisions Log. This is the **master plan** — every other doc supports or refines it.
 
@@ -79,7 +79,7 @@ Files are in the same directory as this README.
 
 ---
 
-#### 📕 `koobits_scheduled_task_plan.md` (~82K, ~1350 lines)
+#### 📕 `koblio_scheduled_task_plan.md` (~82K, ~1350 lines)
 
 **What it is:** 108 tasks broken out of the development plan into ticket-ready detail — prerequisites, durations, priorities, roles, sprint mapping, acceptance criteria, and automation hooks. Designed to be directly importable into Jira / Linear.
 
@@ -103,7 +103,7 @@ Files are in the same directory as this README.
 
 ### 3.3 API & Integration
 
-#### 📒 `koobits_openapi.yaml` (~45K, ~1000 lines)
+#### 📒 `koblio_openapi.yaml` (~45K, ~1000 lines)
 
 **What it is:** OpenAPI 3.1 skeleton spec covering Phase 1 + Phase 2 + key Phase 3 endpoints. Defines the canonical contract between frontend/mobile/backend. Includes: request/response schemas, auth requirements, RFC 7807 error envelope, Bearer JWT security, examples.
 
@@ -117,7 +117,7 @@ Files are in the same directory as this README.
 
 ### 3.4 Cost, Operations, Risk
 
-#### 📓 `koobits_budget_estimation.md` (~23K, ~360 lines)
+#### 📓 `koblio_budget_estimation.md` (~23K, ~360 lines)
 
 **What it is:** Operational server/SaaS cost estimation by MAU scale. Does NOT include salaries, content creation labor, or marketing — infrastructure and SaaS operating costs only. Broken into 1K / 10K / 100K MAU tiers across 5 phases. Includes LOW/MEDIUM/HIGH estimate ranges.
 
@@ -131,7 +131,7 @@ Files are in the same directory as this README.
 
 ---
 
-#### 📕 `koobits_procurement_checklist.md` (~17K, ~360 lines)
+#### 📕 `koblio_procurement_checklist.md` (~17K, ~360 lines)
 
 **What it is:** Every account, service, credential, and procurement item the dev team needs BEFORE Day 1 coding. Organized into 4 priority tiers by lead time and Day-1-blocker status.
 
@@ -143,7 +143,7 @@ Files are in the same directory as this README.
 
 ---
 
-#### 📘 `koobits_handoff_readiness_audit.md` (~17K, ~340 lines) — *optional but recommended Day 1 read*
+#### 📘 `koblio_handoff_readiness_audit.md` (~17K, ~340 lines) — *optional but recommended Day 1 read*
 
 **What it is:** A critical self-audit of this entire handoff package assessing whether a new dev team could execute it. Dimension-by-dimension scoring (Green/Yellow/Red) with top-5 gaps to address. Verdict was **YELLOW** at time of writing; the curriculum_package, legal_compliance_package, design_brief, openapi.yaml, and procurement_checklist were produced specifically to close 4 of the 5 identified blockers.
 
@@ -155,7 +155,7 @@ Files are in the same directory as this README.
 
 ### 3.5 Content, Design, Legal (the pre-handoff unblockers)
 
-#### 📗 `koobits_curriculum_package.md` (~57K, ~900 lines)
+#### 📗 `koblio_curriculum_package.md` (~57K, ~900 lines)
 
 **What it is:** Resolves the "which curriculum market?" blocker from the handoff audit. Argues for and commits to **US Common Core (CCSS-M)** for MVP, with Singapore MOE as Phase 3-4 expansion. Provides the **Grade 1-3 skill taxonomy (78 skills)** in CMS-ready format, sample problems, quality guidelines, and a scaling sourcing plan.
 
@@ -167,7 +167,7 @@ Files are in the same directory as this README.
 
 ---
 
-#### 📙 `koobits_design_brief.md` (~51K, ~850 lines)
+#### 📙 `koblio_design_brief.md` (~51K, ~850 lines)
 
 **What it is:** Brand direction + 6 low-fidelity wireframes of the core screens. Communicates layout, hierarchy, and copy intent — not final visual design. Designer is expected to translate these into high-fidelity Figma comps.
 
@@ -179,7 +179,7 @@ Files are in the same directory as this README.
 
 ---
 
-#### 📔 `koobits_legal_compliance_package.md` (~34K, ~570 lines)
+#### 📔 `koblio_legal_compliance_package.md` (~34K, ~570 lines)
 
 **What it is:** **Specification** for what legal artifacts must contain — **NOT drafted legal documents**. This is a dev-facing spec that tells engineering what to build and tells counsel what to draft. **Counsel engagement is still required.**
 
@@ -195,9 +195,9 @@ Files are in the same directory as this README.
 
 ### 4.1 Before Day 1 (Week -4 to Week -1)
 
-**Do not start coding until these are complete.** All from `koobits_procurement_checklist.md`.
+**Do not start coding until these are complete.** All from `koblio_procurement_checklist.md`.
 
-- [ ] **Week -4:** File business entity; apply for D-U-N-S number; engage legal counsel (they start drafting from `koobits_legal_compliance_package.md`); apply for Apple Developer Program (2-4 week lead time); start kidSAFE application.
+- [ ] **Week -4:** File business entity; apply for D-U-N-S number; engage legal counsel (they start drafting from `koblio_legal_compliance_package.md`); apply for Apple Developer Program (2-4 week lead time); start kidSAFE application.
 - [ ] **Week -2:** Open AWS, GitHub org, Auth0 tenant, Stripe account, SendGrid, Sentry, Figma team; register domain; configure DNS.
 - [ ] **Week -1:** Grant credentials via team password manager (1Password/Bitwarden); dry-run Terraform provisioning; receive first draft of privacy policy and ToS from counsel.
 
@@ -249,7 +249,7 @@ The package is a **spec**, not a running system. These items require stakeholder
 | **Mobile framework** | Flutter (Dart) | Superior animation performance (Impeller), Flame game engine for mini-games, Rive interactive animations — critical for gamified kids' UX | `tech_stack_and_timeline.md` Appendix A; `development_plan.md` Key Decisions Log |
 | **Backend architecture** | Modular monolith (NestJS) | 8-person team can't efficiently manage 8+ microservices from day 1; NestJS modules enforce boundaries with clean extraction paths | `tech_stack_and_timeline.md` §2.2; Key Decisions Log |
 | **Databases** | PostgreSQL + MongoDB + Redis | PostgreSQL for relational (users/payments/progress); MongoDB for flexible problem schemas; Redis for leaderboards/sessions/streaks | `tech_stack_and_timeline.md` §3; Key Decisions Log |
-| **MVP curriculum market** | US Common Core (CCSS-M), Grades 1-3 | 60× larger TAM than Singapore, open content licensing, avoids direct KooBits confrontation in SG | `curriculum_package.md` §1 |
+| **MVP curriculum market** | US Common Core (CCSS-M), Grades 1-3 | 60× larger TAM than Singapore, open content licensing, avoids direct Koblio confrontation in SG | `curriculum_package.md` §1 |
 | **Spaced repetition algorithm** | FSRS-4.5 (not SM-2) | 20-30% fewer reviews than SM-2 at 90% retention; RMSE 0.04-0.05 vs 0.10+; MIT/BSD licensed | `development_plan.md` §P2-T03; Key Decisions Log |
 | **Adaptive engine approach** | Rules-based → BKT → IRT (staged) | IRT requires ~10K responses per problem for calibration; rules-based for MVP collects training data | Key Decisions Log |
 | **BKT mood modifier model** | Session-scoped modifiers on P(T), P(G), P(S) — not P(L0); clamp [0.01, 0.99] in BKT service; 60-min inactivity lifecycle | Prevents frustrated-session slip-rate inflation from corrupting per-skill population baseline | Key Decisions Log; `scheduler_composition_design.md` §Strategy D |
@@ -259,7 +259,7 @@ The package is a **spec**, not a running system. These items require stakeholder
 | **Payment provider** | Stripe + Stripe Billing | Subscription billing, SCA/3DS, dunning for failed payments; Paddle considered for Phase 5 international | `tech_stack_and_timeline.md` §9.1 |
 | **Cloud provider** | AWS | Broadest service catalog, best EdTech compliance track, strong education sector presence | `tech_stack_and_timeline.md` §7.1 |
 | **API style** | REST (primary) + GraphQL (dashboards) | REST for simple CRUD and mobile; GraphQL for complex teacher/parent dashboard queries | `tech_stack_and_timeline.md` §2.1 |
-| **Launch subjects** | Math only | KooBits built 7 years of math before expanding to 4 subjects; depth > breadth for initial market credibility | Key Decisions Log |
+| **Launch subjects** | Math only | Koblio built 7 years of math before expanding to 4 subjects; depth > breadth for initial market credibility | Key Decisions Log |
 
 ---
 
@@ -286,10 +286,10 @@ The package is a **spec**, not a running system. These items require stakeholder
 
 ### Platform-specific
 
-- **KoKo Credits** — KooBits' in-app currency. Our platform uses "coins" as the equivalent.
-- **KooClasses** — KooBits' structured lesson progression. Our platform may implement an equivalent in Phase 5.
-- **Brain Games** — KooBits' mini-game area (memory, reflexes, cognitive). Our Flame-based mini-games follow the same pattern.
-- **Daily Challenge** — One curated problem per grade per day. Pattern from KooBits; implemented in Phase 1 (P1-T27).
+- **KoKo Credits** — Koblio' in-app currency. Our platform uses "coins" as the equivalent.
+- **KooClasses** — Koblio' structured lesson progression. Our platform may implement an equivalent in Phase 5.
+- **Brain Games** — Koblio' mini-game area (memory, reflexes, cognitive). Our Flame-based mini-games follow the same pattern.
+- **Daily Challenge** — One curated problem per grade per day. Pattern from Koblio; implemented in Phase 1 (P1-T27).
 - **Decision trace** — Per-problem-selection telemetry emitted by the scheduler. Includes fsrs_urgency, bkt_urgency, novelty_bonus, mood_applied, weights used, safety-net state, top-N candidates. Enables Phase 4 weight tuning via counterfactual replay.
 
 ### Compliance & business
@@ -307,7 +307,7 @@ The package is a **spec**, not a running system. These items require stakeholder
 ### Technical
 
 - **SSO / SAML** — Single Sign-On / Security Assertion Markup Language. Used for school district login (Clever, Google Classroom integrations, Phase 3).
-- **OpenAPI 3.1** — API specification standard. Our contract is in `koobits_openapi.yaml`.
+- **OpenAPI 3.1** — API specification standard. Our contract is in `koblio_openapi.yaml`.
 - **RFC 7807** — "Problem Details for HTTP APIs." Our error response format.
 - **JWT** — JSON Web Token. Used for access tokens (15 min TTL) with refresh tokens (httpOnly cookie, 7d TTL) stored in Redis for revocation.
 - **RBAC** — Role-Based Access Control. Student, Parent, Teacher, School Admin, Content Admin, System Admin roles.
@@ -339,7 +339,7 @@ The package is a **spec**, not a running system. These items require stakeholder
 
 If you find a gap in the specs during implementation (missing field, unclear behavior, ambiguous acceptance criterion):
 
-1. **Check if the gap is already flagged** in `koobits_handoff_readiness_audit.md` §Known Gaps by Dimension.
+1. **Check if the gap is already flagged** in `koblio_handoff_readiness_audit.md` §Known Gaps by Dimension.
 2. **If yes:** confirm the owner listed in §5 of this README and escalate to them.
 3. **If no:** post in the team comms channel (Slack/Discord) with: (a) which doc the gap is in, (b) what's unclear, (c) your proposed interpretation, (d) a proposed decision deadline. Default owner = Tech Lead.
 4. **Do not block on gaps.** Implement your best interpretation, flag it with a `TODO(spec-gap):` comment citing the doc+section, and ship. Decisions can be retroactive.
@@ -352,7 +352,7 @@ If you find a gap in the specs during implementation (missing field, unclear beh
 
 ### Phase gate review protocol
 
-Each phase ends with a formal review (M1.6, M2.5, M3.4, M4.4, M5.5). Reviewed by Tech Lead + PM + one external stakeholder (client-side). Phase cannot close unless all Definition of Done criteria (in `koobits_development_plan.md` §7) are met. Exceptions require Founder sign-off and documented risk acceptance.
+Each phase ends with a formal review (M1.6, M2.5, M3.4, M4.4, M5.5). Reviewed by Tech Lead + PM + one external stakeholder (client-side). Phase cannot close unless all Definition of Done criteria (in `koblio_development_plan.md` §7) are met. Exceptions require Founder sign-off and documented risk acceptance.
 
 ---
 
@@ -361,17 +361,17 @@ Each phase ends with a formal review (M1.6, M2.5, M3.4, M4.4, M5.5). Reviewed by
 | File | Size | Lines | Required? |
 |------|------|-------|-----------|
 | `README.md` (this file) | ~25K | ~400 | Yes |
-| `koobits_product_analysis.md` | 15K | ~305 | Yes |
-| `koobits_tech_stack_and_timeline.md` | 48K | ~800 | Yes |
-| `koobits_development_plan.md` | 50K | ~710 | Yes |
-| `koobits_scheduled_task_plan.md` | 82K | ~1350 | Yes |
-| `koobits_budget_estimation.md` | 23K | ~360 | Yes |
-| `koobits_openapi.yaml` | 45K | ~1000 | Yes |
-| `koobits_procurement_checklist.md` | 17K | ~360 | Yes |
-| `koobits_curriculum_package.md` | 57K | ~900 | Yes |
-| `koobits_legal_compliance_package.md` | 34K | ~570 | Yes |
-| `koobits_design_brief.md` | 51K | ~850 | Yes |
-| `koobits_handoff_readiness_audit.md` | 17K | ~340 | Optional |
+| `koblio_product_analysis.md` | 15K | ~305 | Yes |
+| `koblio_tech_stack_and_timeline.md` | 48K | ~800 | Yes |
+| `koblio_development_plan.md` | 50K | ~710 | Yes |
+| `koblio_scheduled_task_plan.md` | 82K | ~1350 | Yes |
+| `koblio_budget_estimation.md` | 23K | ~360 | Yes |
+| `koblio_openapi.yaml` | 45K | ~1000 | Yes |
+| `koblio_procurement_checklist.md` | 17K | ~360 | Yes |
+| `koblio_curriculum_package.md` | 57K | ~900 | Yes |
+| `koblio_legal_compliance_package.md` | 34K | ~570 | Yes |
+| `koblio_design_brief.md` | 51K | ~850 | Yes |
+| `koblio_handoff_readiness_audit.md` | 17K | ~340 | Optional |
 | `scheduler_composition_design.md` | 22K | ~370 | Optional |
 | **Total package** | **~484K** | **~8,300 lines** | |
 

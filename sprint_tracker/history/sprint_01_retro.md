@@ -16,8 +16,8 @@ Velocity is not measurable for this cycle. Sprint 01 implementation begins 2026-
 
 ## What Went Well
 
-- **Full spec suite committed before first line of code.** The repo contains the complete architectural reference: `koobits_tech_stack_and_timeline.md`, `scheduler_composition_design.md`, `koobits_openapi.yaml`, `koobits_legal_compliance_package.md`, `koobits_curriculum_package.md`, and 8 additional supporting documents. QC and Implementation agents have stable, versioned acceptance criteria from day one.
-- **Multi-agent operating model fully initialized.** PM, QC, and Implementation agent manifests are committed in `agents/`. The 108-task execution plan is in `koobits_scheduled_task_plan.md`. The agent system is operational before the sprint clock starts — correct ordering.
+- **Full spec suite committed before first line of code.** The repo contains the complete architectural reference: `koblio_tech_stack_and_timeline.md`, `scheduler_composition_design.md`, `koblio_openapi.yaml`, `koblio_legal_compliance_package.md`, `koblio_curriculum_package.md`, and 8 additional supporting documents. QC and Implementation agents have stable, versioned acceptance criteria from day one.
+- **Multi-agent operating model fully initialized.** PM, QC, and Implementation agent manifests are committed in `agents/`. The 108-task execution plan is in `koblio_scheduled_task_plan.md`. The agent system is operational before the sprint clock starts — correct ordering.
 - **COPPA compliance front-loaded as P0.** P1-T04 (Auth0 COPPA-compliant auth) is a Sprint 01 P0 deliverable, not a phase-end afterthought. This prevents expensive compliance retrofitting in a child-facing product.
 - **Sprint 01 acceptance criteria are binary and testable.** Every task has a concrete pass/fail criterion (`turbo build` succeeds, migration runs cleanly, JWT issued and validated, etc.). Next Friday's QC review is mechanical, not judgment-based.
 - **Procurement risks identified and documented in the sprint plan.** Three pre-coding blockers (Auth0 business entity verification, AWS account, App Store accounts) are named explicitly in `sprint_01_plan.md`. They will not be mid-sprint surprises if actioned now.
@@ -109,4 +109,4 @@ No priority changes to Sprint 01 task list. The execution order in `sprint_01_pl
 - **P1-T03 in parallel** with P1-T04 and P1-T05 — infra is independent of auth and schema.
 - **P1-T08 (Flutter) independent** once monorepo scaffold exists.
 
-The three procurement items should be tracked as **P0 prerequisites** with a hard deadline of 2026-05-01. They are not coded tasks in `koobits_scheduled_task_plan.md` but will block P0 sprint tasks if unresolved.
+The three procurement items should be tracked as **P0 prerequisites** with a hard deadline of 2026-05-01. They are not coded tasks in `koblio_scheduled_task_plan.md` but will block P0 sprint tasks if unresolved.

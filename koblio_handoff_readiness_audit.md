@@ -1,4 +1,4 @@
-# Handoff-Readiness Audit: KooBits Development Plan
+# Handoff-Readiness Audit: Koblio Development Plan
 
 **Date:** 2026-04-17
 **Auditor:** worker_1 (self-audit of docs I helped produce)
@@ -86,7 +86,7 @@ Imagine Day 1: DevOps sits down, opens the plan, needs to create an AWS account.
 
 | Gap | Impact | What's needed |
 |-----|--------|---------------|
-| No brand identity | Slowdown | Product name (is it "KooBits-clone" or something else?), logo, tagline |
+| No brand identity | Slowdown | Product name (is it "Koblio-clone" or something else?), logo, tagline |
 | Color palette not documented | Slowdown | Hex values for the child-friendly palette; accessibility contrast verified |
 | Typography not picked | Slowdown | Display + body font choices, weights, size scale |
 | Illustration style / character art not defined | Major slowdown | What do the avatars look like? Who draws them? 6-8 avatars for MVP need ~2 weeks of illustration work that's not in the plan |

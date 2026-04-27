@@ -96,7 +96,7 @@ None. The two WARNING-severity findings on P1-T01 are important but not blocking
 
 No drift detected. The implementation follows the spec:
 
-- **Monorepo:** Turborepo + pnpm workspaces as specified in `koobits_tech_stack_and_timeline.md`
+- **Monorepo:** Turborepo + pnpm workspaces as specified in `koblio_tech_stack_and_timeline.md`
 - **Backend:** NestJS 11 with modular monolith pattern (6 domain modules)
 - **Frontend:** Next.js 15 + React 19 with App Router
 - **TypeScript:** Strict mode enabled across all packages

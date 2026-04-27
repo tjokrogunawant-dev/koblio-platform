@@ -1,10 +1,10 @@
-# Operational Cost Estimation: EdTech Platform (KooBits-Style)
+# Operational Cost Estimation: EdTech Platform (Koblio-Style)
 ## Server & Platform Running Costs — No Manpower/Salary Costs
 
 **Prepared:** 2026-04-16
 **Currency:** USD
 **Scope:** Recurring operational expenses to keep the platform running. Excludes all human salaries, team costs, content creation labor, and marketing spend.
-**Reference Platform:** KooBits Learning — gamified adaptive math for K-6, with leaderboards, teacher/parent dashboards, progress tracking, and curriculum-aligned content.
+**Reference Platform:** Koblio Learning — gamified adaptive math for K-6, with leaderboards, teacher/parent dashboards, progress tracking, and curriculum-aligned content.
 
 ---
 

@@ -1,5 +1,5 @@
 # EdTech Platform Technical Architecture & Development Timeline
-## KooBits-Style Math Learning Platform (K-6, Gamified, Adaptive)
+## Koblio-Style Math Learning Platform (K-6, Gamified, Adaptive)
 
 **Date:** 2026-04-16  
 **Scope:** Full-stack architecture for an online math learning platform with gamification, adaptive learning, curriculum-aligned content, leaderboards, and parent/teacher dashboards.
@@ -331,7 +331,7 @@ Dashboard API (GraphQL) → Teacher/Parent/Admin Dashboards
 
 | Component | Recommendation | Rationale |
 |-----------|---------------|-----------|
-| **Primary Cloud** | **AWS** | Broadest service catalog; best for EdTech compliance (COPPA, PDPA); well-supported in Asia (KooBits is SG-based); strong education sector presence |
+| **Primary Cloud** | **AWS** | Broadest service catalog; best for EdTech compliance (COPPA, PDPA); well-supported in Asia (Koblio is SG-based); strong education sector presence |
 | **Alternative** | **GCP** if team prefers Firebase integration; Azure if targeting school districts using Microsoft ecosystem |
 
 ### 7.2 Compute & Orchestration
@@ -663,7 +663,7 @@ Plus part-time: DevOps contractor, content creator(s), product manager.
 
 ---
 
-*This document provides the technical foundation for building a KooBits-style EdTech platform. Architecture decisions favor pragmatism (modular monolith, managed services) to maximize velocity for a small team, with clear migration paths to more complex architectures as the platform scales.*
+*This document provides the technical foundation for building a Koblio-style EdTech platform. Architecture decisions favor pragmatism (modular monolith, managed services) to maximize velocity for a small team, with clear migration paths to more complex architectures as the platform scales.*
 
 ---
 
@@ -671,7 +671,7 @@ Plus part-time: DevOps contractor, content creator(s), product manager.
 
 ### Why This Decision Matters
 
-The mobile app is the primary student interaction surface for a KooBits-style platform. Children ages 6-12 interact through touch-heavy, animation-rich, game-like experiences. The mobile framework choice directly impacts: animation smoothness (gamification feel), interactive math manipulative quality, mini-game capability, and the overall "fun factor" that drives daily engagement.
+The mobile app is the primary student interaction surface for a Koblio-style platform. Children ages 6-12 interact through touch-heavy, animation-rich, game-like experiences. The mobile framework choice directly impacts: animation smoothness (gamification feel), interactive math manipulative quality, mini-game capability, and the overall "fun factor" that drives daily engagement.
 
 ### Head-to-Head Comparison for This Use Case
 

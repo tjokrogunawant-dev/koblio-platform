@@ -1,28 +1,35 @@
 # Current Sprint State
 
-**Sprint:** 18  
-**Phase:** 4 — Scale Infrastructure (Section 9)  
+**Sprint:** 19  
+**Phase:** Trial Gate 1 — Polish & Validation  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Section 9 — AWS ECS Fargate Terraform config + CI/CD ECS deploy pipeline. Write production-ready IaC for VPC, ECS, RDS, ElastiCache, S3/CloudFront, IAM, and Secrets Manager. Replace Railway deploy in CI with ECR push + ECS rolling deploy.
+**Sprint Goal:** Complete the remaining gaps for Trial Gate 1 — profile setup, student dashboard, password reset, and smoke tests so the platform is ready for real-user testing on VPS.
 
 ---
 
 ## Roadmap Context
 
-The project is now following `koblio_mvp_roadmap.md`. Key reminders:
+The project follows `koblio_mvp_roadmap.md`. Key state as of Sprint 19:
 
-- **Redis leaderboard done (S17)** — ZINCRBY sorted sets with 8-day TTL, classroom + global keys, TOP_OF_CLASS badge wired
-- **Web-only until Trial Gate 2** — Flutter/Android parked until Section 7
-- **AWS/Terraform = Section 9** — write IaC now; actual deploy requires AWS IAM credentials (not yet provisioned)
-- **Railway remains live** — do not remove Railway config; AWS deploy is additive until credentials arrive
+- **Trial Gate 1 deployment is ready** — docker-compose VPS deploy works, no external accounts required
+- **Auth0 removed** — all auth uses internal bcrypt + HS256 JWT (`iss: koblio-internal`)
+- **Student self-registration via class code** — `POST /auth/register/student` + `/register/student` page live
+- **AWS/Terraform written** (S18, commits f17cb46 + cce1cd5) — reference IaC only, not deployed; Railway stays live
+- **Web-only until Trial Gate 2** — Flutter/Android stays parked
+- **Redis leaderboard done** — ZINCRBY sorted sets, TOP_OF_CLASS badge wired
 
 ---
 
 ## Active Tasks
 
-- **P7-T01** (Dev1): Terraform modules — VPC, ECS Fargate, RDS PostgreSQL, ElastiCache Redis, S3+CloudFront, IAM, Secrets Manager, S3 state backend + DynamoDB lock
-- **P7-T02** (Dev2): GitHub Actions ECS CD pipeline — ECR build+push, task definition update, ECS rolling deploy
+- **TG1-T01** (next): Student profile setup page — `/profile/setup` route; avatar picker (8 slugs), display name confirm, redirect to `/student/dashboard` on save. Students are redirected here after registration but the page is missing.
+
+- **TG1-T02**: Student home dashboard — `/student/dashboard` with XP bar, coin counter, streak widget, "Today's Challenge" card, and "Practice" button linking to topic browser. Currently no home screen after login.
+
+- **TG1-T03**: Forgot password / reset flow — `POST /auth/forgot-password` (generate 1h token, send SendGrid email if key set, else log token), `POST /auth/reset-password` (validate token, bcrypt new hash, invalidate token), plus `/forgot-password` and `/reset-password?token=...` pages.
+
+- **TG1-T04**: Playwright e2e smoke tests — golden path: register teacher → create class → register student with class code → solve one problem → verify XP awarded. Run in CI via `pnpm test:e2e`.
 
 ---
 
@@ -30,8 +37,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 | Task ID | Title | Deferred To | Reason |
 |---|---|---|---|
-| P1-T15 | Admin CMS for Problem Authoring | Section 6 Sprint 10 | Seed problems via JSON files; CMS needed only when non-devs author content |
-| P1-T04 | Docker Compose Local Dev Environment | Nice-to-have | Use Neon + Docker Desktop on Windows |
+| P1-T15 | Admin CMS for Problem Authoring | Section 6 Sprint 10 | Seed problems via JSON files |
+| AWS deploy | AWS ECS Fargate deploy | Section 9 (5K+ MAU) | IaC written; credentials not provisioned |
 
 ---
 
@@ -46,7 +53,7 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P1-T06* | NestJS API Bootstrap (helmet, rate limiting) | S01 | `a94b3e9` |
 | P1-T07* | Next.js 15 Web App + Teacher Dashboard Shell | S01 | `e164ac6` |
 | P1-T08 | Design System Foundations (10 components, @koblio/ui) | S02 | `b32e2bf` |
-| P1-T08† | Flutter App Shell (GoRouter, Riverpod, Dio) | S02 | `a85d6fd` |
+| P1-T08† | Flutter App Shell (GoRouter, Riverpod, Auth0 stub, login screen) | S02 | `a85d6fd` |
 | P1-T10 | Auth Module — Parent & Teacher Registration | S03 | `acabf47` |
 | P1-T11 | Auth Module — Student Login & RBAC enforcement | S03 | `d864978` |
 | P1-T09 | Sentry Error Tracking Setup (web + API) | S03 | `9ce700e` |
@@ -92,25 +99,22 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P5-T01 | FSRS-4.5 Scheduler (CardState model, review recording, adaptive endpoint) | S15 | `65df6c7` |
 | P5-T02 | BKT Mastery Tracking (SkillMastery model, per-attempt update, GET /mastery/me) | S15 | `96720e6` |
 | P5-T03 | Mood Detection (FLOW/FRUSTRATED/CONFUSED/BORED, weight-shift table, GET /mood/me) | S16 | `fc1c381` |
-| P5-T04 | Blended Scheduler (FSRS urgency + BKT novelty + mood weights, O(1) batch scoring) | S16 | `bb0d22a` |
+| P5-T04 | Blended Scheduler (FSRS urgency + BKT novelty + mood-gated weights, O(1) batch scoring) | S16 | `bb0d22a` |
 | P6-T01 | Redis Leaderboard (ZINCRBY/ZREVRANGE, classroom + global keys, 8-day TTL, SQL fallback) | S17 | `2ccabf8` |
 | P6-T02 | TOP_OF_CLASS Badge (ZREVRANK === 0 trigger, classroomId wired from Enrollment) | S17 | `2f6880d` |
+| Auth-NBI | Remove Auth0 — internal bcrypt + HS256 JWT for all roles | S18 | `b16ec63` |
+| TG1-REG | Student self-registration via class code (POST /auth/register/student) | S18 | `c7e5af1` |
+| P7-T01 | Terraform AWS infrastructure (VPC, ECS, RDS, Redis, S3, IAM) — reference IaC | S18 | `f17cb46` |
+| P7-T02 | GitHub Actions ECS CD pipeline — ECR push + rolling deploy | S18 | `cce1cd5` |
+| TG1-OPS | Docker Compose VPS deployment — localhost port binding, DEPLOY.md, .env.example | S18 | `87bed8e` |
 
 ---
 
 ## Sprint Blockers
 
-None. AWS IAM credentials not yet provisioned — Terraform modules can be written without them (plan-only mode).
-
----
-
-## Up Next (Sprint 19 — Section 9: Production Hardening)
-
-- CloudWatch alarms + Datadog integration
-- PostgreSQL read replica for analytics queries
-- Load testing (k6 scripts targeting 10K MAU)
+None. VPS deployment is live and ready for user testing.
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 17 complete (Redis leaderboard + TOP_OF_CLASS badge, QA PASS WITH NBI). Sprint 18 launched: AWS Terraform + ECS CI/CD.
+2026-04-27 by PM — Trial Gate 1 deployment complete. Sprint 19 launched: student profile setup, home dashboard, password reset, e2e smoke tests.

@@ -1,14 +1,14 @@
-# KooBits Learning — Comprehensive Product Analysis
+# Koblio Learning — Comprehensive Product Analysis
 
 **Date:** April 16, 2026
-**Source:** Web research across official KooBits site, press coverage, parent reviews, competitor analyses
+**Source:** Web research across official Koblio site, press coverage, parent reviews, competitor analyses
 
 ---
 
 ## 1. Company Background
 
 ### Overview
-KooBits is a Singapore-based EdTech company that provides a gamified digital learning platform primarily focused on primary/elementary school education. The platform's tagline is "Love Learning," and its mission is "to reimagine education — making it joyful, accessible and transformational."
+Koblio is a Singapore-based EdTech company that provides a gamified digital learning platform primarily focused on primary/elementary school education. The platform's tagline is "Love Learning," and its mission is "to reimagine education — making it joyful, accessible and transformational."
 
 ### Founding & History
 - **Founded:** 2007
@@ -24,7 +24,7 @@ KooBits is a Singapore-based EdTech company that provides a gamified digital lea
 ### User Base & Reach
 - **250,000+ active monthly users**
 - **200,000+ registered members** from **150+ countries**
-- **2/3 of Singapore primary schools** use KooBits
+- **2/3 of Singapore primary schools** use Koblio
 - **400+ schools** across **13+ countries** (primarily Southeast Asia)
 - ~30,000 daily active student users (as reported in press coverage)
 - Offices/teams in: Singapore (HQ at 50 MacPherson Rd), Hong Kong, Taiwan, Indonesia
@@ -47,7 +47,7 @@ KooBits is a Singapore-based EdTech company that provides a gamified digital lea
 ## 2. Product Features
 
 ### Subjects Offered
-KooBits covers **four subjects**:
+Koblio covers **four subjects**:
 1. **Mathematics** (flagship product, most mature)
 2. **Science**
 3. **English**
@@ -55,7 +55,7 @@ KooBits covers **four subjects**:
 
 ### Core Learning Features
 
-#### Math Platform (Flagship — "KooBits Math")
+#### Math Platform (Flagship — "Koblio Math")
 - **100,000+ auto-marked practice questions** (Primary 1–6)
 - **1,000+ animated tutorial videos** explaining concepts step-by-step
 - **500+ essential skills worksheets**
@@ -78,7 +78,7 @@ KooBits covers **four subjects**:
 | **Daily Challenges** | Customized daily math challenges to build consistent practice habits |
 | **KoKo Credits** | In-platform currency earned by completing activities; used to unlock lessons and advance (like XP in RPGs) |
 | **Challenge Points (CP)** | Earned through challenges, exchangeable for prizes |
-| **KooBits Brain Games** | Digital playground ("KooBits Island") with math games and brain-training games targeting memory, reflexes, cognitive skills |
+| **Koblio Brain Games** | Digital playground ("Koblio Island") with math games and brain-training games targeting memory, reflexes, cognitive skills |
 | **Badges & Certificates** | Achievement milestones with unlockable badges and certificates |
 | **KooClasses** | Structured lesson progressions where students earn credits to advance to next class |
 | **Characters** | Well-designed, lovable animated characters throughout the platform |
@@ -113,7 +113,7 @@ These social features are most effective when the school subscribes, enabling cl
 - **Grouping of Mistakes** — Identify common error patterns across students
 - **Instructional Objective Selection** — Choose specific learning objectives when creating assignments
 - **Cross-Teacher Visibility** — Teachers can browse and reference homework assignments created by colleagues
-- **KooBits Teacher App** — Dedicated mobile app for teachers (iOS/Android)
+- **Koblio Teacher App** — Dedicated mobile app for teachers (iOS/Android)
 
 #### School Leader Dashboards
 - Actionable insights across the entire institution
@@ -127,7 +127,7 @@ These social features are most effective when the school subscribes, enabling cl
 - Multi-language support
 
 ### Parent Features
-- **KooBits Parent App** (iOS/Android) for tracking child's learning
+- **Koblio Parent App** (iOS/Android) for tracking child's learning
 - Progress reports showing skills acquisition
 - Performance tracking and analytics
 - Articles and tips on encouraging learning and making it fun
@@ -161,7 +161,7 @@ The platform maps to official textbooks and syllabi in:
 - And additional countries across Southeast Asia
 
 ### International Version
-For countries without specific localization, KooBits offers an international version based on the Singapore Math methodology, accessible globally.
+For countries without specific localization, Koblio offers an international version based on the Singapore Math methodology, accessible globally.
 
 ---
 
@@ -173,7 +173,7 @@ For countries without specific localization, KooBits offers an international ver
 3. **Complete challenges** in bite-sized sessions (~20 minutes recommended)
 4. **Earn rewards** — KoKo Credits, Challenge Points, badges
 5. **Check leaderboards** — see ranking among classmates and schoolmates
-6. **Play Brain Games** on KooBits Island using earned points
+6. **Play Brain Games** on Koblio Island using earned points
 7. **Watch tutorials** when stuck — animated video explanations
 8. **Receive instant feedback** with full worked solutions
 9. **Track progress** through skill mastery maps
@@ -183,7 +183,7 @@ For countries without specific localization, KooBits offers an international ver
 - **Currency economy:** KoKo Credits serve as in-platform currency motivating continued engagement
 - **Competition:** Peer Challenges and leaderboards create healthy competition, especially within schools
 - **Rewards store:** Challenge Points exchangeable for real prizes
-- **Exploration:** KooBits Island provides a digital playground for brain-training games
+- **Exploration:** Koblio Island provides a digital playground for brain-training games
 
 ### Motivation Design
 - Incentive-based challenges with tangible rewards
@@ -263,7 +263,7 @@ For countries without specific localization, KooBits offers an international ver
 | **IXL** | Global (US-based) | Comprehensive analytics, wider grade/subject coverage |
 | **Prodigy Math** | Global (Canada-based) | Full RPG game experience integrated with math curriculum |
 
-### How KooBits Differentiates
+### How Koblio Differentiates
 
 1. **Singapore Math Methodology:** Deep commitment to the globally-respected Singapore Math (CPA) approach, which is increasingly sought after internationally
 2. **Gamification Depth:** More comprehensive gamification than most competitors — currency systems, leaderboards, brain games, peer challenges, character narratives
@@ -283,7 +283,7 @@ For countries without specific localization, KooBits offers an international ver
 
 ## 7. Summary
 
-KooBits is a well-established Singapore EdTech company (founded 2007) that has built a strong market position through deep gamification, Singapore Math methodology, and a school-first distribution strategy. With 250,000+ monthly active users, presence in 150+ countries, and penetration into 2/3 of Singapore's primary schools, it has achieved significant scale in its target market.
+Koblio is a well-established Singapore EdTech company (founded 2007) that has built a strong market position through deep gamification, Singapore Math methodology, and a school-first distribution strategy. With 250,000+ monthly active users, presence in 150+ countries, and penetration into 2/3 of Singapore's primary schools, it has achieved significant scale in its target market.
 
 **Key Strengths:**
 - Proven engagement model through gamification
@@ -301,4 +301,4 @@ KooBits is a well-established Singapore EdTech company (founded 2007) that has b
 
 ---
 
-*Sources: koobits.com, NUS Enterprise, Enterprise Singapore, MIT Solve, Vulcan Post, Little Day Out, SGPrimarySchool.com, Tracxn, CBInsights, KooBits Support Centre*
+*Sources: koblio.com, NUS Enterprise, Enterprise Singapore, MIT Solve, Vulcan Post, Little Day Out, SGPrimarySchool.com, Tracxn, CBInsights, Koblio Support Centre*

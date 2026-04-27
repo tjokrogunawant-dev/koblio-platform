@@ -742,7 +742,7 @@ Pre-Sprint 02 dependencies to confirm before 2026-05-18:
 **Guidance for Implementation Agent:**
 
 1. **Immediately: Docker Compose stub** — implement `docker-compose.yml` at repo root with NestJS API + PostgreSQL 16 + Redis 7. This is the highest-value unblocked action remaining in Sprint 01. It partially resolves the P1-T03 blocker and delivers the local dev stack AC in the Sprint 06 phase gate.
-2. **Begin Sprint 02 prep reading** — read Sprint 02 tasks in `koobits_scheduled_task_plan.md` to understand the content pipeline and problem schema scope. Do not begin Sprint 02 implementation before 2026-05-18.
+2. **Begin Sprint 02 prep reading** — read Sprint 02 tasks in `koblio_scheduled_task_plan.md` to understand the content pipeline and problem schema scope. Do not begin Sprint 02 implementation before 2026-05-18.
 3. **Do NOT mark P1-T08 done with on-device AC until** Apple Developer + Google Play accounts are confirmed active.
 
 ---

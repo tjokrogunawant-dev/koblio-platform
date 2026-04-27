@@ -1,4 +1,4 @@
-# KooBits Legal & Compliance Implementation Package
+# Koblio Legal & Compliance Implementation Package
 
 **Prepared:** 2026-04-16
 **Audience:** External dev team building the auth, account, and data-handling layers
@@ -309,7 +309,7 @@ The FTC has approved several VPC methods. Pick by risk tier:
 | **Connect-by-phone** (toll-free call to trained personnel) | Acceptable but operationally heavy | High | $5-10 per call |
 | **Video conference** with trained personnel | Acceptable | Very high | $10+ |
 
-**Recommendation for KooBits:** Default to email-plus for free-tier accounts where data is internal-use-only. Require credit-card-verify when subscribing (the payment itself doubles as VPC) or when the parent enables features that share data externally (school connection, classroom join, third-party single sign-on).
+**Recommendation for Koblio:** Default to email-plus for free-tier accounts where data is internal-use-only. Require credit-card-verify when subscribing (the payment itself doubles as VPC) or when the parent enables features that share data externally (school connection, classroom join, third-party single sign-on).
 
 ### 7.2 The consent flow (concrete steps)
 
@@ -381,7 +381,7 @@ Export format: ZIP containing:
   - subscription_history.json (billing summary, no full PCI data)
   - README.md (explains the format)
 
-SLA: <30 days under GDPR; under 7 days for KooBits as a service commitment.
+SLA: <30 days under GDPR; under 7 days for Koblio as a service commitment.
 ```
 
 ### 8.2 Right to erasure (deletion)

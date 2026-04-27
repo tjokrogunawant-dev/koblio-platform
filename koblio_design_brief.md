@@ -1,4 +1,4 @@
-# KooBits Design Brief & Key Screen Wireframes
+# Koblio Design Brief & Key Screen Wireframes
 
 **Prepared:** 2026-04-16
 **Audience:** Product designer (final visual design) and frontend dev team (initial scaffolding)
@@ -33,7 +33,7 @@ The platform serves children ages 6-12 — a wide range that requires care. A 6-
 
 The target feeling is **"my friend who happens to be good at math"** — calm, encouraging, willing to help, never condescending.
 
-### 1.2 What KooBits is NOT
+### 1.2 What Koblio is NOT
 
 - NOT a game with math wrapped around it. Math is the experience; gamification supports motivation, not distraction.
 - NOT a serious test-prep tool. Stress is the enemy of learning at this age.
@@ -166,7 +166,7 @@ Older students (10-12) actively reject "baby fonts" — it makes the platform fe
 
 ### 4.2 Icon library recommendation
 
-Start with **Phosphor Icons** (filled variant) or **Tabler Icons** as base. Both free, both have rounded options, both have wide coverage. Customize 5-10 KooBits-specific icons (mascot, trophy variants, mission types) as needed.
+Start with **Phosphor Icons** (filled variant) or **Tabler Icons** as base. Both free, both have rounded options, both have wide coverage. Customize 5-10 Koblio-specific icons (mascot, trophy variants, mission types) as needed.
 
 ### 4.3 Icons to never use
 
@@ -259,8 +259,8 @@ Buttons: subtle scale + shadow on press. Cards: 2px lift on hover. Inputs: focus
 ```
 ┌──────────────────────────────────────────────────────┐
 │                                                      │
-│                  [KooBits Logo]                      │
-│                  KooBits Math                        │
+│                  [Koblio Logo]                      │
+│                  Koblio Math                        │
 │                                                      │
 │              [ Mascot illustration ]                 │
 │                  "Welcome back!"                     │
@@ -490,7 +490,7 @@ Buttons: subtle scale + shadow on press. Cards: 2px lift on hover. Inputs: focus
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  KooBits  •  Parent Dashboard         [Account]  [Logout]    │
+│  Koblio  •  Parent Dashboard         [Account]  [Logout]    │
 ├──────────────────────────────────────────────────────────────┤
 │                                                              │
 │  My Children:                                                │
@@ -576,7 +576,7 @@ Buttons: subtle scale + shadow on press. Cards: 2px lift on hover. Inputs: focus
 
 ```
 ┌──────────────────────────────────────────────────────────────────┐
-│  KooBits  •  Teacher Dashboard          [Account] [Logout]       │
+│  Koblio  •  Teacher Dashboard          [Account] [Logout]       │
 ├──────────────────────────────────────────────────────────────────┤
 │                                                                  │
 │  Ms. Patel  •  Lincoln Elementary                                │

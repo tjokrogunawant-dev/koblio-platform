@@ -1,4 +1,4 @@
-# Scheduled Task Plan: Gamified Math Learning Platform (KooBits-Style)
+# Scheduled Task Plan: Gamified Math Learning Platform (Koblio-Style)
 
 **Version:** 1.0
 **Date:** 2026-04-16
