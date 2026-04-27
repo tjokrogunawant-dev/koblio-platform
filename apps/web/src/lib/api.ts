@@ -179,6 +179,9 @@ export interface SubmitAnswerResponse {
   correctAnswer: string;
   solution: string;
   attemptId: string;
+  coinsEarned?: number;
+  xpEarned?: number;
+  leveledUp?: boolean;
 }
 
 export async function submitAnswer(
@@ -193,4 +196,62 @@ export async function submitAnswer(
     body: JSON.stringify(data),
   });
   return handleResponse<SubmitAnswerResponse>(res);
+}
+
+// ─── Gamification ─────────────────────────────────────────────────────────────
+
+export interface StudentGamificationProfile {
+  coins: number;
+  xp: number;
+  level: number;
+  streakCount: number;
+  levelInfo: {
+    level: number;
+    xpToNextLevel: number;
+    progressPercent: number;
+  };
+}
+
+export interface LeaderboardEntry {
+  rank: number;
+  studentId: string;
+  displayName: string;
+  weeklyCoins: number;
+}
+
+export interface LeaderboardResponse {
+  rank: number;
+  leaderboard: LeaderboardEntry[];
+}
+
+export async function getStudentProfile(
+  token: string,
+): Promise<StudentGamificationProfile> {
+  const res = await fetch(`${API_BASE}/gamification/me`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<StudentGamificationProfile>(res);
+}
+
+export async function getLeaderboard(
+  classroomId: string,
+  token: string,
+): Promise<LeaderboardResponse> {
+  const res = await fetch(
+    `${API_BASE}/gamification/leaderboard/${classroomId}`,
+    { headers: { Authorization: `Bearer ${token}` } },
+  );
+  return handleResponse<LeaderboardResponse>(res);
+}
+
+export async function getDailyChallenge(grade: number): Promise<Problem | null> {
+  try {
+    const res = await fetch(
+      `${API_BASE}/gamification/daily-challenge/${grade}`,
+    );
+    if (res.status === 404) return null;
+    return handleResponse<Problem>(res);
+  } catch {
+    return null;
+  }
 }
