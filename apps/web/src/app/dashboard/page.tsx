@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { MathRenderer } from '@koblio/ui';
 
 const placeholderStats = [
   { title: 'Total Students', value: '—', description: 'Across all classes' },
@@ -44,6 +45,36 @@ export default function DashboardOverviewPage() {
             </CardContent>
           </Card>
         ))}
+      </div>
+      <div>
+        <h2 className="text-xl font-semibold tracking-tight mb-4">
+          Math Rendering Demo
+        </h2>
+        <Card>
+          <CardHeader>
+            <CardTitle>KaTeX Examples</CardTitle>
+            <CardDescription>
+              Inline and display math rendering powered by KaTeX
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground w-20">Inline:</span>
+              <MathRenderer expression="x^2 + y^2 = z^2" />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground w-20">Display:</span>
+              <MathRenderer
+                expression="\frac{-b \pm \sqrt{b^2-4ac}}{2a}"
+                display
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground w-20">Inline:</span>
+              <MathRenderer expression="\sqrt{16} = 4" />
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
