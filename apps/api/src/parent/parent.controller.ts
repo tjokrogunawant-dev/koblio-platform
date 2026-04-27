@@ -11,6 +11,15 @@ import { AuthenticatedUser } from '../auth/interfaces/jwt-payload.interface';
 export class ParentController {
   constructor(private readonly parentService: ParentService) {}
 
+  // ─── P1-T33: List linked children ────────────────────────────────────────
+
+  @Get('children')
+  @Roles(UserRole.PARENT, UserRole.ADMIN)
+  @ApiOperation({ summary: "List the authenticated parent's linked children" })
+  getLinkedChildren(@CurrentUser() user: AuthenticatedUser) {
+    return this.parentService.getLinkedChildren(user.userId);
+  }
+
   // ─── P1-T33: Parent views child progress ─────────────────────────────────
 
   @Get('children/:childId/progress')

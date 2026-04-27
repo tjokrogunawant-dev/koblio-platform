@@ -4,14 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/components/providers/auth-provider';
-import { getChildProgress, type ChildProgress } from '@/lib/api';
-
-// The AuthUser type may carry children as an extension — define locally
-interface ChildRef {
-  id: string;
-  name: string;
-  grade?: number;
-}
+import { getChildProgress, getMyChildren, type ChildProgress, type ChildRef } from '@/lib/api';
 
 function AccuracyBar({ percent }: { percent: number }) {
   const clamped = Math.max(0, Math.min(100, percent));
@@ -150,10 +143,17 @@ function ChildProgressCard({ child, token }: { child: ChildRef; token: string })
 export default function ParentDashboardPage() {
   const router = useRouter();
   const { user, token, logout } = useAuth();
+  const [children, setChildren] = useState<ChildRef[]>([]);
+  const [loadingChildren, setLoadingChildren] = useState(true);
 
-  // Attempt to extract children from the user object (may be present after backend populates it)
-  const children: ChildRef[] =
-    (user as (typeof user & { children?: ChildRef[] }) | null)?.children ?? [];
+  useEffect(() => {
+    if (!token) return;
+    setLoadingChildren(true);
+    getMyChildren(token)
+      .then(setChildren)
+      .catch(() => setChildren([]))
+      .finally(() => setLoadingChildren(false));
+  }, [token]);
 
   function handleLogout() {
     logout();
@@ -187,7 +187,9 @@ export default function ParentDashboardPage() {
             My Children
           </h2>
 
-          {children.length === 0 ? (
+          {loadingChildren ? (
+            <p className="text-sm text-slate-400">Loading…</p>
+          ) : children.length === 0 ? (
             <div className="rounded-xl border border-dashed border-slate-300 bg-white px-8 py-12 text-center">
               <p className="text-base font-medium text-slate-600">
                 No children linked yet

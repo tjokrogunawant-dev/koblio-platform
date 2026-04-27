@@ -12,6 +12,31 @@ export class ParentService {
 
   constructor(private readonly prisma: PrismaService) {}
 
+  // ─── P1-T33: List linked children ────────────────────────────────────────
+
+  async getLinkedChildren(parentAuth0Id: string) {
+    const parent = await this.prisma.user.findUnique({
+      where: { auth0Id: parentAuth0Id },
+    });
+
+    if (!parent) {
+      throw new NotFoundException('Parent account not found');
+    }
+
+    const links = await this.prisma.parentChildLink.findMany({
+      where: { parentId: parent.id },
+      include: {
+        child: { select: { id: true, displayName: true, grade: true } },
+      },
+    });
+
+    return links.map((l) => ({
+      id: l.child.id,
+      name: l.child.displayName,
+      grade: l.child.grade ?? undefined,
+    }));
+  }
+
   // ─── P1-T33: Parent views child progress ─────────────────────────────────
 
   async getChildProgress(parentAuth0Id: string, childId: string) {

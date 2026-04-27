@@ -271,7 +271,7 @@ export interface ClassroomSummary extends Classroom {
 }
 
 export interface StudentSummary {
-  studentId: string;
+  id: string;
   name: string;
   grade?: number;
   streakCount: number;
@@ -295,7 +295,7 @@ export async function createClassroom(
 }
 
 export async function getMyClassrooms(token: string): Promise<ClassroomSummary[]> {
-  const res = await fetch(`${API_BASE}/classrooms/my`, {
+  const res = await fetch(`${API_BASE}/classrooms/mine`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return handleResponse<ClassroomSummary[]>(res);
@@ -370,7 +370,7 @@ export async function createAssignment(
 }
 
 export async function getMyAssignments(token: string): Promise<AssignmentSummary[]> {
-  const res = await fetch(`${API_BASE}/assignments/my`, {
+  const res = await fetch(`${API_BASE}/assignments/mine`, {
     headers: { Authorization: `Bearer ${token}` },
   });
   return handleResponse<AssignmentSummary[]>(res);
@@ -444,4 +444,17 @@ export async function getChildProgress(
     headers: { Authorization: `Bearer ${token}` },
   });
   return handleResponse<ChildProgress>(res);
+}
+
+export interface ChildRef {
+  id: string;
+  name: string;
+  grade?: number;
+}
+
+export async function getMyChildren(token: string): Promise<ChildRef[]> {
+  const res = await fetch(`${API_BASE}/parent/children`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
+  return handleResponse<ChildRef[]>(res);
 }
