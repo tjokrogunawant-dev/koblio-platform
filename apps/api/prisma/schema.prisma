@@ -130,3 +130,36 @@ model ParentalConsent {
 
   @@map("parental_consents")
 }
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum ProblemType {
+  MCQ
+  FILL_BLANK
+  TRUE_FALSE
+}
+
+enum Curriculum {
+  US_COMMON_CORE
+}
+
+model Problem {
+  id         String      @id @default(uuid()) @db.Uuid
+  curriculum Curriculum  @default(US_COMMON_CORE)
+  grade      Int
+  strand     String
+  topic      String
+  difficulty Difficulty
+  type       ProblemType
+  content    Json
+  createdAt  DateTime    @default(now()) @map("created_at")
+  updatedAt  DateTime    @updatedAt @map("updated_at")
+
+  @@index([grade, strand, topic])
+  @@index([difficulty])
+  @@map("problems")
+}
