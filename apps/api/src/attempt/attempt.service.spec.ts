@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { AttemptService } from './attempt.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { GamificationService } from '../gamification/gamification.service';
 
 const STUDENT_ID = '00000000-0000-0000-0000-000000000001';
 const PROBLEM_ID = '00000000-0000-0000-0000-000000000010';
@@ -44,6 +45,10 @@ describe('AttemptService', () => {
       count: jest.Mock;
     };
   };
+  let gamification: {
+    awardForAttempt: jest.Mock;
+    updateStreak: jest.Mock;
+  };
 
   beforeEach(async () => {
     prisma = {
@@ -55,10 +60,21 @@ describe('AttemptService', () => {
       },
     };
 
+    gamification = {
+      awardForAttempt: jest.fn().mockResolvedValue({
+        coinsEarned: 3,
+        xpEarned: 5,
+        newLevel: 1,
+        leveledUp: false,
+      }),
+      updateStreak: jest.fn().mockResolvedValue({ streakCount: 1, streakBonusMultiplier: 1.0 }),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AttemptService,
         { provide: PrismaService, useValue: prisma },
+        { provide: GamificationService, useValue: gamification },
       ],
     }).compile();
 
@@ -79,6 +95,9 @@ describe('AttemptService', () => {
       expect(result.correct).toBe(true);
       expect(result.correctAnswer).toBe('5');
       expect(result.attemptId).toBe(ATTEMPT_ID);
+      expect(result.coinsEarned).toBe(3);
+      expect(result.xpEarned).toBe(5);
+      expect(result.leveledUp).toBe(false);
       expect(prisma.studentProblemAttempt.create).toHaveBeenCalledWith({
         data: {
           studentId: STUDENT_ID,

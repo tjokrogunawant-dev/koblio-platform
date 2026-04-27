@@ -31,6 +31,11 @@ model User {
   country     String?
   locale      String?
   avatarId    String?  @map("avatar_id")
+  xp            Int      @default(0)
+  level         Int      @default(1)
+  streakCount   Int      @default(0) @map("streak_count")
+  lastActiveDate DateTime? @map("last_active_date")
+  coins         Int      @default(0)
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
@@ -42,6 +47,7 @@ model User {
   classroomsOwned  Classroom[]
   enrollments      Enrollment[]
   attempts         StudentProblemAttempt[]
+  pointsLedger     PointsLedger[]
 
   @@map("users")
 }
@@ -183,4 +189,18 @@ model StudentProblemAttempt {
   @@index([studentId, problemId])
   @@index([studentId, createdAt])
   @@map("student_problem_attempts")
+}
+
+model PointsLedger {
+  id          String   @id @default(uuid()) @db.Uuid
+  studentId   String   @map("student_id") @db.Uuid
+  amount      Int
+  reason      String
+  attemptId   String?  @map("attempt_id") @db.Uuid
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([studentId, createdAt])
+  @@map("points_ledger")
 }

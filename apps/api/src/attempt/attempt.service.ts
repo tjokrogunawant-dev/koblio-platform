@@ -1,17 +1,21 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { StudentProblemAttempt } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { GamificationService } from '../gamification/gamification.service';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Injectable()
 export class AttemptService {
   private readonly logger = new Logger(AttemptService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly gamificationService: GamificationService,
+  ) {}
 
   /**
    * Record a student's attempt — validates the answer against the problem's
-   * stored content and persists the result.
+   * stored content and persists the result. Awards coins/XP and updates streak.
    */
   async submitAnswer(
     studentId: string,
@@ -21,6 +25,9 @@ export class AttemptService {
     correctAnswer: string;
     solution: string;
     attemptId: string;
+    coinsEarned: number;
+    xpEarned: number;
+    leveledUp: boolean;
   }> {
     const problem = await this.prisma.problem.findUnique({
       where: { id: dto.problemId },
@@ -55,7 +62,21 @@ export class AttemptService {
       `Attempt recorded: student=${studentId} problem=${dto.problemId} correct=${correct}`,
     );
 
-    return { correct, correctAnswer, solution, attemptId: attempt.id };
+    // Award coins/XP for the attempt
+    const { coinsEarned, xpEarned, leveledUp } =
+      await this.gamificationService.awardForAttempt(
+        studentId,
+        String(problem.difficulty),
+        correct,
+        attempt.id,
+      );
+
+    // Update streak only on correct answers
+    if (correct) {
+      await this.gamificationService.updateStreak(studentId);
+    }
+
+    return { correct, correctAnswer, solution, attemptId: attempt.id, coinsEarned, xpEarned, leveledUp };
   }
 
   /**
