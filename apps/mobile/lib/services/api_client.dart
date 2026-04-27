@@ -66,4 +66,38 @@ class ApiClient {
   Future<Response<T>> delete<T>(String path) {
     return dio.delete<T>(path);
   }
+
+  // ─── Student convenience methods ────────────────────────────────────────────
+
+  Future<Response<Map<String, dynamic>>> getProblems(int grade) {
+    return get<Map<String, dynamic>>(
+      '/content/problems',
+      queryParameters: {'grade': grade},
+    );
+  }
+
+  Future<Response<Map<String, dynamic>>> getDailyChallenge(int grade) {
+    return get<Map<String, dynamic>>('/gamification/daily-challenge/$grade');
+  }
+
+  Future<Response<Map<String, dynamic>>> submitAnswer({
+    required String problemId,
+    required String answer,
+    required int timeSpentMs,
+    bool hintUsed = false,
+  }) {
+    return post<Map<String, dynamic>>(
+      '/attempts',
+      data: {
+        'problemId': problemId,
+        'answer': answer,
+        'timeSpentMs': timeSpentMs,
+        'hintUsed': hintUsed,
+      },
+    );
+  }
+
+  Future<Response<Map<String, dynamic>>> getStudentStats() {
+    return get<Map<String, dynamic>>('/gamification/me');
+  }
 }
