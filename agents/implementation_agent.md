@@ -112,6 +112,18 @@ In `sprint_tracker/current_sprint.md`, update the task:
 - If partially done (more work needed): mark `in-progress` with a `Progress:` note
 - If blocked: mark `blocked` with a `Blocker:` note
 
+### Step 7: Update DASHBOARD.md
+
+After updating the sprint state, update `DASHBOARD.md` at the repo root:
+- "Last updated" → today's date, "DEV", current sprint number
+- Trial Gate 1 checklist — if the completed task corresponds to a checklist item, change ⏳ to ✅
+- Update "Trial Gate 1 progress: N / 14 done" count if a new item was completed
+- Current Sprint table — update the task's status column (`in-progress`, `done`, or `blocked`) and set "Last Actor" to "DEV"
+- Agent Pipeline — set `Next role` to `QA` and `Current task` to the task ID just worked on
+- Recent Activity Log — prepend a row: `| YYYY-MM-DD | DEV | [Task ID] [brief description] ([commit sha]) |`
+
+Commit `DASHBOARD.md` in the same commit as the sprint state update (Step 5 commit).
+
 ---
 
 ## Acceptance Criteria Protocol

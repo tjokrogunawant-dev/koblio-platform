@@ -124,6 +124,14 @@ Write to `sprint_tracker/history/sprint_NN_qc.md`:
 1. [E.g., "Add FSRS unit test task to sprint NN+1 backlog — estimated 0.5 days"]
 ```
 
+After writing the QC report file, update `DASHBOARD.md` at the repo root:
+- "Last updated" → today's date, "QA", current sprint number
+- Current Sprint table — update the reviewed task's status: `done` (if APPROVED), `in-progress` (if APPROVED WITH WARNINGS), or `blocked` (if BLOCKED). Set "Last Actor" to "QA"
+- Agent Pipeline — set `Next role` to `PM` and `Current task` to `(none)`
+- Recent Activity Log — prepend a row: `| YYYY-MM-DD | QA | Sprint NN QC — [X tasks reviewed, verdict summary] |`
+
+Commit `DASHBOARD.md` in the same commit as the QC report file.
+
 ---
 
 ## Severity Definitions

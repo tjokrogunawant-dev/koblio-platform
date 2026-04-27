@@ -84,6 +84,18 @@ Next Trial Gate: [Trial Gate N — date and what it requires]
 ### Step 5: Update Current Sprint
 Overwrite `sprint_tracker/current_sprint.md` with the new sprint's task list and `pending` statuses.
 
+### Step 6: Update DASHBOARD.md
+
+Rewrite the `DASHBOARD.md` at the repo root to reflect the new sprint state. Update:
+- "Last updated" line (date + "PM" + sprint number)
+- Trial Gate 1 checklist — mark items done/in-progress/pending accurately
+- "Trial Gate 1 progress: N / 14 done" count
+- Current Sprint table — new tasks with `pending` status
+- Agent Pipeline — set `Next role` to `DEV` and `Current task` to the first task ID
+- Recent Activity Log — prepend a new row: `| YYYY-MM-DD | PM | Sprint NN launched — [goal summary] |`
+
+Commit `DASHBOARD.md` together with `sprint_tracker/current_sprint.md` in the same commit.
+
 ---
 
 ## On Sprint End (Friday)
@@ -95,6 +107,16 @@ Overwrite `sprint_tracker/current_sprint.md` with the new sprint's task list and
 
 ### Step 2: Measure Velocity
 Count tasks completed vs planned. Note story-point equivalent if relevant.
+
+### Step 2b: Update DASHBOARD.md (retrospective)
+
+After writing the retro file, update `DASHBOARD.md`:
+- "Last updated" → today, "PM", sprint number
+- Move completed tasks to ✅ in the Trial Gate checklist
+- Update "Trial Gate 1 progress" count
+- Current Sprint table → mark completed tasks `done`
+- Agent Pipeline → `Next role: PM`, `Current task: (none)`
+- Recent Activity Log → prepend a row: `| YYYY-MM-DD | PM | Sprint NN retrospective — velocity X/Y |`
 
 ### Step 3: Write Sprint Retrospective
 Write to `sprint_tracker/history/sprint_NN_retro.md`:
