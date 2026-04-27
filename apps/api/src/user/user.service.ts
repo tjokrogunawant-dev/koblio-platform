@@ -12,6 +12,7 @@ import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
 import { JoinClassDto } from './dto/join-class.dto';
 import { AvatarSlug } from './dto/update-avatar.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @Injectable()
 export class UserService {
@@ -335,6 +336,22 @@ export class UserService {
       where: { id: user.id },
       data: { avatarSlug },
     });
+    return {
+      id: updated.id,
+      displayName: updated.displayName,
+      avatarSlug: updated.avatarSlug,
+    };
+  }
+
+  async updateProfile(auth0Id: string, dto: UpdateProfileDto) {
+    const user = await this.prisma.user.findUnique({ where: { auth0Id } });
+    if (!user) throw new NotFoundException('User not found');
+
+    const data: { displayName?: string; avatarSlug?: string } = {};
+    if (dto.displayName !== undefined) data.displayName = dto.displayName;
+    if (dto.avatarSlug !== undefined) data.avatarSlug = dto.avatarSlug;
+
+    const updated = await this.prisma.user.update({ where: { id: user.id }, data });
     return {
       id: updated.id,
       displayName: updated.displayName,

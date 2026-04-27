@@ -10,6 +10,7 @@ import { CreateChildAccountDto } from './dto/create-child-account.dto';
 import { CreateSchoolDto } from './dto/create-school.dto';
 import { JoinClassDto } from './dto/join-class.dto';
 import { UpdateAvatarDto } from './dto/update-avatar.dto';
+import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @ApiTags('Users')
 @Controller()
@@ -38,6 +39,16 @@ export class UserController {
     @Body() dto: UpdateAvatarDto,
   ) {
     return this.userService.updateAvatar(user.userId, dto.avatarSlug);
+  }
+
+  @Put('me/profile')
+  @Roles(UserRole.STUDENT)
+  @ApiOperation({ summary: 'Update student display name and/or avatar' })
+  updateProfile(
+    @CurrentUser() user: AuthenticatedUser,
+    @Body() dto: UpdateProfileDto,
+  ) {
+    return this.userService.updateProfile(user.userId, dto);
   }
 
   @Post('parents/me/children')
