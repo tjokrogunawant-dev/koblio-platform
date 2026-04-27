@@ -1,10 +1,10 @@
 # Current Sprint State
 
-**Sprint:** 13  
-**Phase:** 2 — Growth & Retention (Section 7 wrap-up)  
+**Sprint:** 14  
+**Phase:** 3 — Trial Gate 2 / Closed Beta Prep  
 **Start:** 2026-04-27  
 **End:** 2026-05-10  
-**Sprint Goal:** Section 7 wrap-up — Flutter gamification UI (coins/XP/streak/badges in app) + Flutter parent dashboard (child progress cards).
+**Sprint Goal:** Deploy-ready infrastructure — Dockerize API + web, Railway config, migration runbook, health checks. Targets Trial Gate 2 (closed beta invite).
 
 ---
 
@@ -21,8 +21,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 
 ## Active Tasks
 
-- **P3-T05** (Dev1): Flutter gamification UI — coins/XP/level bar, streak flame, badge shelf
-- **P3-T06** (Dev2): Flutter parent dashboard — linked children list, per-child progress cards
+- **P4-T01** (Dev1): Dockerize API + Railway TOML config for API and web
+- **P4-T02** (Dev2): Deployment runbook + pre-beta checklist, health check endpoint
 
 ---
 
@@ -88,6 +88,8 @@ The project is now following `koblio_mvp_roadmap.md`. Key reminders:
 | P3-T02 | Flutter Student Screens (home, problem list, problem solver, all 3 types) | S11 | `6d719cf` |
 | P3-T03 | Flutter Math Rendering (MathText widget, flutter_math_fork, LaTeX in solver) | S12 | `4f52099` |
 | P3-T04 | Auth0 PKCE Login (flutter_appauth, Parent/Teacher, logout confirmation) | S12 | `da6c675` |
+| P3-T05 | Flutter Gamification UI (XP bar, streak counter, badge shelf, home integration) | S13 | `85fefcc` |
+| P3-T06 | Flutter Parent Dashboard (children list, child progress detail, role-based nav) | S13 | `85fefcc` |
 
 ---
 
@@ -97,13 +99,14 @@ None. All active tasks are unblocked.
 
 ---
 
-## Up Next (Sprint 14 — Trial Gate 2 prep)
+## Up Next (Sprint 15 — Adaptive Engine / Section 8)
 
-- Railway deployment config (Dockerfile, Railway TOML, environment variable documentation)
-- Trial Gate 2: deploy web + API to Railway, invite closed beta testers
-- TOP_OF_CLASS badge (needs leaderboard rank-1 signal)
+- FSRS-4.5 spaced repetition scheduler
+- BKT (Bayesian Knowledge Tracing) per-skill mastery
+- Mood-gated weight shifts (FLOW/FRUSTRATED/CONFUSED/BORED)
+- TOP_OF_CLASS badge (leaderboard rank-1 detection)
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 12 complete (P3-T03 math rendering, P3-T04 Auth0 PKCE). Sprint 13 launched: Flutter gamification UI + parent dashboard.
+2026-04-27 by PM — Sprint 13 complete (P3-T05 gamification UI, P3-T06 parent dashboard). Sprint 14 launched: Docker + Railway deployment prep.
