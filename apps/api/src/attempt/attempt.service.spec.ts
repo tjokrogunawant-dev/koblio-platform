@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { NotFoundException } from '@nestjs/common';
 import { AttemptService } from './attempt.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { BadgeService } from '../badge/badge.service';
 
 const STUDENT_ID = '00000000-0000-0000-0000-000000000001';
 const PROBLEM_ID = '00000000-0000-0000-0000-000000000010';
@@ -44,6 +45,7 @@ describe('AttemptService', () => {
       count: jest.Mock;
     };
   };
+  let badgeService: { checkAndAwardBadges: jest.Mock };
 
   beforeEach(async () => {
     prisma = {
@@ -51,14 +53,19 @@ describe('AttemptService', () => {
       studentProblemAttempt: {
         create: jest.fn(),
         findMany: jest.fn(),
-        count: jest.fn(),
+        count: jest.fn().mockResolvedValue(0),
       },
+    };
+
+    badgeService = {
+      checkAndAwardBadges: jest.fn().mockResolvedValue([]),
     };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AttemptService,
         { provide: PrismaService, useValue: prisma },
+        { provide: BadgeService, useValue: badgeService },
       ],
     }).compile();
 

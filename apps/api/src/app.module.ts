@@ -16,6 +16,7 @@ import { GamificationModule } from './gamification/gamification.module';
 import { ClassroomModule } from './classroom/classroom.module';
 import { NotificationModule } from './notification/notification.module';
 import { AttemptModule } from './attempt/attempt.module';
+import { BadgeModule } from './badge/badge.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { AttemptModule } from './attempt/attempt.module';
     ClassroomModule,
     NotificationModule,
     AttemptModule,
+    BadgeModule,
   ],
   controllers: [AppController],
   providers: [

@@ -1,13 +1,17 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { StudentProblemAttempt } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
+import { BadgeService } from '../badge/badge.service';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Injectable()
 export class AttemptService {
   private readonly logger = new Logger(AttemptService.name);
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly badgeService: BadgeService,
+  ) {}
 
   /**
    * Record a student's attempt — validates the answer against the problem's
@@ -21,6 +25,7 @@ export class AttemptService {
     correctAnswer: string;
     solution: string;
     attemptId: string;
+    badgesEarned: string[];
   }> {
     const problem = await this.prisma.problem.findUnique({
       where: { id: dto.problemId },
@@ -55,7 +60,38 @@ export class AttemptService {
       `Attempt recorded: student=${studentId} problem=${dto.problemId} correct=${correct}`,
     );
 
-    return { correct, correctAnswer, solution, attemptId: attempt.id };
+    // ── Badge side-effects (synchronous, idempotent) ────────────────────────
+    let badgesEarned: string[] = [];
+    try {
+      const [totalAttempts, correctTotal] = await Promise.all([
+        this.prisma.studentProblemAttempt.count({ where: { studentId } }),
+        this.prisma.studentProblemAttempt.count({
+          where: { studentId, correct: true },
+        }),
+      ]);
+
+      badgesEarned = await this.badgeService.checkAndAwardBadges(studentId, {
+        correct,
+        timeSpentMs: dto.timeSpentMs,
+        problem: {
+          grade: problem.grade,
+          topic: problem.topic,
+          strand: problem.strand,
+        },
+        studentStats: {
+          totalAttempts,
+          correctTotal,
+          // streakCount will be wired up when GamificationService tracks it
+          streakCount: 0,
+        },
+      });
+    } catch (err) {
+      this.logger.warn(
+        `Badge check failed for student=${studentId}: ${(err as Error).message}`,
+      );
+    }
+
+    return { correct, correctAnswer, solution, attemptId: attempt.id, badgesEarned };
   }
 
   /**

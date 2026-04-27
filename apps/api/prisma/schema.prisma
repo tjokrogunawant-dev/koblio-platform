@@ -42,6 +42,7 @@ model User {
   classroomsOwned  Classroom[]
   enrollments      Enrollment[]
   attempts         StudentProblemAttempt[]
+  badges           Badge[]
 
   @@map("users")
 }
@@ -183,4 +184,30 @@ model StudentProblemAttempt {
   @@index([studentId, problemId])
   @@index([studentId, createdAt])
   @@map("student_problem_attempts")
+}
+
+enum BadgeType {
+  FIRST_CORRECT
+  PERFECT_10
+  STREAK_7
+  STREAK_30
+  PROBLEMS_100
+  CORRECT_50
+  FRACTION_MASTER
+  SPEED_DEMON
+  MATH_EXPLORER
+  TOP_OF_CLASS
+}
+
+model Badge {
+  id        String    @id @default(uuid()) @db.Uuid
+  studentId String    @map("student_id") @db.Uuid
+  type      BadgeType
+  awardedAt DateTime  @default(now()) @map("awarded_at")
+
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, type])
+  @@index([studentId])
+  @@map("badges")
 }
