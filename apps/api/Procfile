@@ -1,0 +1,7 @@
+# Heroku-compatible Procfile — also used by Render.com
+#
+# `release` runs once before each deploy (before `web` starts).
+# Prisma migrate deploy applies pending migrations safely in CI/CD pipelines.
+# It is idempotent: already-applied migrations are skipped.
+release: npx prisma migrate deploy
+web: node dist/main.js

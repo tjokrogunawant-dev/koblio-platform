@@ -1,0 +1,36 @@
+# Dependencies (re-installed inside Docker)
+node_modules
+apps/*/node_modules
+packages/*/node_modules
+
+# Git metadata
+.git
+.gitignore
+
+# Claude / project tooling
+.claude
+agents
+sprint_tracker
+
+# Build artifacts (rebuilt inside Docker)
+dist
+.next
+.turbo
+
+# Test output
+coverage
+*.log
+
+# Mobile app (not deployed via Docker)
+apps/mobile
+
+# Local environment files — never bake secrets into images
+.env
+.env.*
+!.env.example
+
+# Editor / OS
+.DS_Store
+*.swp
+*.swo
+Thumbs.db
