@@ -55,6 +55,9 @@ None — all Sprint 03 tasks complete. Section 1 closed.
 | P1-T17 | KaTeX Integration — Web Math Rendering | S03 | `9ce700e` |
 | P1-T12 | Parent-Child Linking & School Association | S03 | `4b2767d` |
 | P1-T13 | Auth Frontend — Login & Registration Pages | S03 | `96bd921` |
+| P1-T14r | Problem Schema (JSONB) in Prisma | S04 | `7b3a063` |
+| P1-T14a | Problem API (GET /problems, filters, pagination) | S04 | `7b3a063` |
+| P1-T14s | Seed 50 Math Problems (Grades 1-3) | S04 | `ff736f2` |
 
 ---
 
@@ -78,4 +81,4 @@ No new external services required.
 ---
 
 ## Last Updated
-2026-04-27 by PM — Sprint 03 complete. All Section 1 tasks done. Sprint 04 starts May 5.
+2026-04-27 by PM — Sprint 04 complete. All Section 2 tasks done. Moving to Sprint 05 (Section 3) immediately.

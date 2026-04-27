@@ -413,7 +413,7 @@
         "Set up the subtraction: 312 − 175. Start with the ones place.",
         "Ones: 2 − 5 needs regrouping. Borrow from tens. Tens: 11 − 7 − 1 borrowed may also need regrouping."
       ],
-      "solution": "Ones: borrow → 12 − 5 = 7. Tens: 0 − 7 needs borrow → 10 − 7 = 3 (but tens became 0 after borrow), reborrow from hundreds → 10 − 1 − 7 = 2... Let's recompute carefully: 312 − 175. Ones: 12 − 5 = 7 (borrow from tens, tens becomes 0). Tens: 10 − 7 = 3 (borrow from hundreds, hundreds becomes 2). Hundreds: 2 − 1 = 1. Answer: 137.",
+      "solution": "Stack 312 − 175 in columns. Ones: 2 < 5, so borrow from the tens — tens digit drops from 1 to 0, ones become 12. 12 − 5 = 7. Tens: 0 < 7, so borrow from hundreds — hundreds digit drops from 3 to 2, tens become 10. 10 − 7 = 3. Hundreds: 2 − 1 = 1. Answer: 137.",
       "image_url": null
     }
   },
