@@ -88,3 +88,110 @@ export async function registerTeacher(
   });
   return handleResponse<AuthResponse>(res);
 }
+
+// ─── Content / Problems ──────────────────────────────────────────────────────
+
+export type ProblemType = 'MCQ' | 'FILL_BLANK' | 'TRUE_FALSE';
+export type Difficulty = 'EASY' | 'MEDIUM' | 'HARD';
+
+export interface ProblemOption {
+  label: string; // 'A' | 'B' | 'C' | 'D'
+  text: string;
+}
+
+export interface Problem {
+  id: string;
+  grade: number;
+  strand: string;
+  topic: string;
+  type: ProblemType;
+  difficulty: Difficulty;
+  questionText: string;
+  options?: ProblemOption[];
+  correctAnswer: string;
+  solution: string;
+  hints?: string[];
+}
+
+export interface ProblemsFilters {
+  grade?: number;
+  strand?: string;
+  topic?: string;
+  difficulty?: string;
+  limit?: number;
+  offset?: number;
+}
+
+export async function getProblems(
+  filters: ProblemsFilters,
+  token?: string,
+): Promise<Problem[]> {
+  const params = new URLSearchParams();
+  if (filters.grade !== undefined) params.set('grade', String(filters.grade));
+  if (filters.strand) params.set('strand', filters.strand);
+  if (filters.topic) params.set('topic', filters.topic);
+  if (filters.difficulty) params.set('difficulty', filters.difficulty);
+  if (filters.limit !== undefined) params.set('limit', String(filters.limit));
+  if (filters.offset !== undefined) params.set('offset', String(filters.offset));
+
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(
+    `${API_BASE}/content/problems?${params.toString()}`,
+    { headers },
+  );
+  return handleResponse<Problem[]>(res);
+}
+
+export async function getProblemsByGrade(
+  grade: number,
+  token?: string,
+): Promise<Problem[]> {
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}/content/problems/grade/${grade}`, {
+    headers,
+  });
+  return handleResponse<Problem[]>(res);
+}
+
+export async function getProblem(id: string, token?: string): Promise<Problem> {
+  const headers: Record<string, string> = {};
+  if (token) headers['Authorization'] = `Bearer ${token}`;
+
+  const res = await fetch(`${API_BASE}/content/problems/${id}`, { headers });
+  return handleResponse<Problem>(res);
+}
+
+// ─── Attempts ────────────────────────────────────────────────────────────────
+
+export interface SubmitAnswerData {
+  problemId: string;
+  answer: string;
+  timeSpentMs: number;
+  hintUsed: boolean;
+}
+
+export interface SubmitAnswerResponse {
+  correct: boolean;
+  correctAnswer: string;
+  solution: string;
+  attemptId: string;
+}
+
+export async function submitAnswer(
+  data: SubmitAnswerData,
+  token: string,
+): Promise<SubmitAnswerResponse> {
+  const res = await fetch(`${API_BASE}/attempts`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<SubmitAnswerResponse>(res);
+}

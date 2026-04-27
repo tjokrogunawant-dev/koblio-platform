@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -39,6 +40,16 @@ export default function StudentDashboardPage() {
           {grade !== undefined && (
             <p className="mt-1 text-slate-500">Grade {grade}</p>
           )}
+        </div>
+
+        {/* Start Learning CTA */}
+        <div>
+          <Link
+            href="/learn"
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-base font-semibold text-white shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+          >
+            🚀 Start Learning
+          </Link>
         </div>
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
