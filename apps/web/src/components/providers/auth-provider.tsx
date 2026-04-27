@@ -21,6 +21,7 @@ interface AuthContextValue {
   token: string | null;
   login: (token: string, user: AuthUser, expiresIn: number) => void;
   logout: () => void;
+  updateUser: (patch: Partial<AuthUser>) => void;
 }
 
 const AuthContext = createContext<AuthContextValue>({
@@ -28,6 +29,7 @@ const AuthContext = createContext<AuthContextValue>({
   token: null,
   login: () => undefined,
   logout: () => undefined,
+  updateUser: () => undefined,
 });
 
 const USER_KEY = 'koblio_user';
@@ -79,8 +81,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  const updateUser = useCallback((patch: Partial<AuthUser>) => {
+    setUser((prev) => {
+      if (!prev) return prev;
+      const updated = { ...prev, ...patch };
+      localStorage.setItem(USER_KEY, JSON.stringify(updated));
+      return updated;
+    });
+  }, []);
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, updateUser }}>
       {children}
     </AuthContext.Provider>
   );

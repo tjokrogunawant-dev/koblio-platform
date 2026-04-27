@@ -585,6 +585,27 @@ export async function getMyStudentProfile(
   return handleResponse<StudentProfile>(res);
 }
 
+export interface UpdateProfileResponse {
+  id: string;
+  displayName: string;
+  avatarSlug: string | null;
+}
+
+export async function updateProfile(
+  data: { displayName?: string; avatarSlug?: string },
+  token: string,
+): Promise<UpdateProfileResponse> {
+  const res = await fetch(`${API_BASE}/me/profile`, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(data),
+  });
+  return handleResponse<UpdateProfileResponse>(res);
+}
+
 export async function updateAvatar(
   avatarSlug: string,
   token: string,

@@ -1,34 +1,43 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Avatar, AVATAR_MAP } from '@/components/avatar';
 import { useAuth } from '@/components/providers/auth-provider';
-import { updateAvatar } from '@/lib/api';
+import { updateProfile } from '@/lib/api';
 
 const AVATAR_SLUGS = Object.keys(AVATAR_MAP) as Array<keyof typeof AVATAR_MAP>;
 
 export default function ProfileSetupPage() {
   const router = useRouter();
-  const { user, token } = useAuth();
+  const { user, token, updateUser } = useAuth();
 
   const [selected, setSelected] = useState<string | null>(
     user?.avatarSlug ?? null,
   );
+  const [displayName, setDisplayName] = useState(user?.name ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!token) router.push('/login');
+  }, [token, router]);
+
   async function handleSave() {
-    if (!selected || !token) return;
+    if (!selected || !token || displayName.trim().length < 2) return;
     setSaving(true);
     setError(null);
     try {
-      await updateAvatar(selected, token);
+      const result = await updateProfile(
+        { displayName: displayName.trim(), avatarSlug: selected ?? undefined },
+        token,
+      );
+      updateUser({ name: result.displayName, avatarSlug: result.avatarSlug ?? undefined });
       router.push('/dashboard/student');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save avatar.');
+      setError(err instanceof Error ? err.message : 'Failed to save profile.');
     } finally {
       setSaving(false);
     }
@@ -39,11 +48,30 @@ export default function ProfileSetupPage() {
       <div className="w-full max-w-lg">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
           <h1 className="text-2xl font-bold text-slate-800 mb-1">
-            Choose your avatar
+            Set up your profile
           </h1>
           <p className="text-slate-500 text-sm mb-6">
-            Pick a character that represents you!
+            Confirm your name and pick a character that represents you!
           </p>
+
+          {/* Display name input */}
+          <div className="mb-6">
+            <label htmlFor="displayName" className="block text-sm font-medium text-slate-700 mb-1">
+              Your name
+            </label>
+            <input
+              id="displayName"
+              type="text"
+              value={displayName}
+              onChange={(e) => setDisplayName(e.target.value)}
+              maxLength={30}
+              className="w-full rounded-lg border border-slate-200 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+              placeholder="Enter your display name"
+            />
+            {displayName.trim().length > 0 && displayName.trim().length < 2 && (
+              <p className="mt-1 text-xs text-red-500">Name must be at least 2 characters.</p>
+            )}
+          </div>
 
           {/* Avatar grid — 4 per row */}
           <div className="grid grid-cols-4 gap-4 mb-8">
@@ -80,10 +108,10 @@ export default function ProfileSetupPage() {
           <div className="flex items-center gap-3">
             <Button
               onClick={handleSave}
-              disabled={!selected || saving}
+              disabled={!selected || saving || displayName.trim().length < 2}
               className="flex-1"
             >
-              {saving ? 'Saving…' : 'Save Avatar'}
+              {saving ? 'Saving…' : 'Save Profile'}
             </Button>
             <Link
               href="/dashboard/student"
