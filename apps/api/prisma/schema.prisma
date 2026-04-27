@@ -40,17 +40,18 @@ model User {
   createdAt   DateTime @default(now()) @map("created_at")
   updatedAt   DateTime @updatedAt @map("updated_at")
 
-  parentLinks          ParentChildLink[]      @relation("ParentUser")
-  childLinks           ParentChildLink[]      @relation("ChildUser")
-  consentsGiven        ParentalConsent[]      @relation("ConsentParent")
-  consentsReceived     ParentalConsent[]      @relation("ConsentChild")
-  schoolTeachers       SchoolTeacher[]
-  classroomsOwned      Classroom[]
-  enrollments          Enrollment[]
-  attempts             StudentProblemAttempt[]
-  pointsLedger         PointsLedger[]
-  assignmentsCreated   Assignment[]           @relation("TeacherAssignments")
-  assignmentSubmissions AssignmentSubmission[] @relation("StudentSubmissions")
+  parentLinks           ParentChildLink[]       @relation("ParentUser")
+  childLinks            ParentChildLink[]       @relation("ChildUser")
+  consentsGiven         ParentalConsent[]       @relation("ConsentParent")
+  consentsReceived      ParentalConsent[]       @relation("ConsentChild")
+  schoolTeachers        SchoolTeacher[]
+  classroomsOwned       Classroom[]
+  enrollments           Enrollment[]
+  attempts              StudentProblemAttempt[]
+  pointsLedger          PointsLedger[]
+  assignmentsCreated    Assignment[]            @relation("TeacherAssignments")
+  assignmentSubmissions AssignmentSubmission[]  @relation("StudentSubmissions")
+  badges                Badge[]
 
   @@map("users")
 }
@@ -225,8 +226,8 @@ model Assignment {
   createdAt   DateTime   @default(now()) @map("created_at")
   updatedAt   DateTime   @updatedAt @map("updated_at")
 
-  classroom   Classroom            @relation(fields: [classroomId], references: [id], onDelete: Cascade)
-  teacher     User                 @relation("TeacherAssignments", fields: [teacherId], references: [id], onDelete: Cascade)
+  classroom   Classroom             @relation(fields: [classroomId], references: [id], onDelete: Cascade)
+  teacher     User                  @relation("TeacherAssignments", fields: [teacherId], references: [id], onDelete: Cascade)
   submissions AssignmentSubmission[]
 
   @@index([classroomId])
@@ -243,12 +244,38 @@ model AssignmentSubmission {
   submittedAt  DateTime? @map("submitted_at")
   correct      Boolean?
 
-  assignment Assignment            @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
-  student    User                  @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
-  problem    Problem               @relation(fields: [problemId], references: [id], onDelete: Cascade)
+  assignment Assignment             @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student    User                   @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+  problem    Problem                @relation(fields: [problemId], references: [id], onDelete: Cascade)
   attempt    StudentProblemAttempt? @relation(fields: [attemptId], references: [id], onDelete: SetNull)
 
   @@unique([assignmentId, studentId, problemId])
   @@index([studentId])
   @@map("assignment_submissions")
+}
+
+enum BadgeType {
+  FIRST_CORRECT
+  PERFECT_10
+  STREAK_7
+  STREAK_30
+  PROBLEMS_100
+  CORRECT_50
+  FRACTION_MASTER
+  SPEED_DEMON
+  MATH_EXPLORER
+  TOP_OF_CLASS
+}
+
+model Badge {
+  id        String    @id @default(uuid()) @db.Uuid
+  studentId String    @map("student_id") @db.Uuid
+  type      BadgeType
+  awardedAt DateTime  @default(now()) @map("awarded_at")
+
+  student User @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, type])
+  @@index([studentId])
+  @@map("badges")
 }

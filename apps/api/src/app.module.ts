@@ -18,6 +18,7 @@ import { NotificationModule } from './notification/notification.module';
 import { AttemptModule } from './attempt/attempt.module';
 import { AssignmentModule } from './assignment/assignment.module';
 import { ParentModule } from './parent/parent.module';
+import { BadgeModule } from './badge/badge.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { ParentModule } from './parent/parent.module';
     AttemptModule,
     AssignmentModule,
     ParentModule,
+    BadgeModule,
   ],
   controllers: [AppController],
   providers: [

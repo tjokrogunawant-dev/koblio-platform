@@ -3,6 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 import { AttemptService } from './attempt.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
+import { BadgeService } from '../badge/badge.service';
 
 const STUDENT_ID = '00000000-0000-0000-0000-000000000001';
 const PROBLEM_ID = '00000000-0000-0000-0000-000000000010';
@@ -49,6 +50,7 @@ describe('AttemptService', () => {
     awardForAttempt: jest.Mock;
     updateStreak: jest.Mock;
   };
+  let badgeService: { checkAndAwardBadges: jest.Mock };
 
   beforeEach(async () => {
     prisma = {
@@ -56,7 +58,7 @@ describe('AttemptService', () => {
       studentProblemAttempt: {
         create: jest.fn(),
         findMany: jest.fn(),
-        count: jest.fn(),
+        count: jest.fn().mockResolvedValue(0),
       },
     };
 
@@ -70,11 +72,16 @@ describe('AttemptService', () => {
       updateStreak: jest.fn().mockResolvedValue({ streakCount: 1, streakBonusMultiplier: 1.0 }),
     };
 
+    badgeService = {
+      checkAndAwardBadges: jest.fn().mockResolvedValue([]),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AttemptService,
         { provide: PrismaService, useValue: prisma },
         { provide: GamificationService, useValue: gamification },
+        { provide: BadgeService, useValue: badgeService },
       ],
     }).compile();
 
@@ -183,6 +190,59 @@ describe('AttemptService', () => {
       expect(prisma.studentProblemAttempt.create).toHaveBeenCalledWith({
         data: expect.objectContaining({ hintUsed: true }),
       });
+    });
+
+    it('should call gamification and badge services after a correct attempt', async () => {
+      prisma.problem.findUnique.mockResolvedValue(mockProblem);
+      prisma.studentProblemAttempt.create.mockResolvedValue(mockAttempt);
+
+      await service.submitAnswer(STUDENT_ID, {
+        problemId: PROBLEM_ID,
+        answer: '5',
+        timeSpentMs: 3000,
+      });
+
+      expect(gamification.awardForAttempt).toHaveBeenCalledWith(
+        STUDENT_ID,
+        'EASY',
+        true,
+        ATTEMPT_ID,
+      );
+      expect(gamification.updateStreak).toHaveBeenCalledWith(STUDENT_ID);
+      expect(badgeService.checkAndAwardBadges).toHaveBeenCalledWith(
+        STUDENT_ID,
+        expect.objectContaining({ correct: true, studentStats: expect.objectContaining({ streakCount: 1 }) }),
+      );
+    });
+
+    it('should not call updateStreak on incorrect attempt', async () => {
+      prisma.problem.findUnique.mockResolvedValue(mockProblem);
+      const wrongAttempt = { ...mockAttempt, correct: false };
+      prisma.studentProblemAttempt.create.mockResolvedValue(wrongAttempt);
+
+      await service.submitAnswer(STUDENT_ID, {
+        problemId: PROBLEM_ID,
+        answer: '99',
+        timeSpentMs: 2000,
+      });
+
+      expect(gamification.updateStreak).not.toHaveBeenCalled();
+    });
+
+    it('should still return a result if gamification throws', async () => {
+      prisma.problem.findUnique.mockResolvedValue(mockProblem);
+      prisma.studentProblemAttempt.create.mockResolvedValue(mockAttempt);
+      gamification.awardForAttempt.mockRejectedValue(new Error('gamification down'));
+
+      const result = await service.submitAnswer(STUDENT_ID, {
+        problemId: PROBLEM_ID,
+        answer: '5',
+        timeSpentMs: 3000,
+      });
+
+      expect(result.correct).toBe(true);
+      expect(result.coinsEarned).toBe(0);
+      expect(result.xpEarned).toBe(0);
     });
   });
 

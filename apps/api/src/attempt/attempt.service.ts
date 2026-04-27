@@ -2,6 +2,7 @@ import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { StudentProblemAttempt } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
+import { BadgeService } from '../badge/badge.service';
 import { SubmitAnswerDto } from './dto/submit-answer.dto';
 
 @Injectable()
@@ -11,12 +12,9 @@ export class AttemptService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly gamificationService: GamificationService,
+    private readonly badgeService: BadgeService,
   ) {}
 
-  /**
-   * Record a student's attempt — validates the answer against the problem's
-   * stored content and persists the result. Awards coins/XP and updates streak.
-   */
   async submitAnswer(
     studentId: string,
     dto: SubmitAnswerDto,
@@ -28,6 +26,7 @@ export class AttemptService {
     coinsEarned: number;
     xpEarned: number;
     leveledUp: boolean;
+    badgesEarned: string[];
   }> {
     const problem = await this.prisma.problem.findUnique({
       where: { id: dto.problemId },
@@ -39,7 +38,6 @@ export class AttemptService {
       );
     }
 
-    // Extract answer and solution from the JSONB content field
     const content = problem.content as Record<string, unknown>;
     const correctAnswer = String(content['answer'] ?? '');
     const solution = String(content['solution'] ?? '');
@@ -62,10 +60,12 @@ export class AttemptService {
       `Attempt recorded: student=${studentId} problem=${dto.problemId} correct=${correct}`,
     );
 
-    // Award coins/XP and update streak — failures do not block the attempt response
+    // Award coins/XP, update streak, and check badges — failures never block the attempt response
     let coinsEarned = 0;
     let xpEarned = 0;
     let leveledUp = false;
+    let badgesEarned: string[] = [];
+    let streakCount = 0;
 
     try {
       const award = await this.gamificationService.awardForAttempt(
@@ -79,7 +79,8 @@ export class AttemptService {
       leveledUp = award.leveledUp;
 
       if (correct) {
-        await this.gamificationService.updateStreak(studentId);
+        const streakResult = await this.gamificationService.updateStreak(studentId);
+        streakCount = streakResult.streakCount;
       }
     } catch (err) {
       this.logger.error(
@@ -87,12 +88,31 @@ export class AttemptService {
       );
     }
 
-    return { correct, correctAnswer, solution, attemptId: attempt.id, coinsEarned, xpEarned, leveledUp };
+    try {
+      const [totalAttempts, correctTotal] = await Promise.all([
+        this.prisma.studentProblemAttempt.count({ where: { studentId } }),
+        this.prisma.studentProblemAttempt.count({ where: { studentId, correct: true } }),
+      ]);
+
+      badgesEarned = await this.badgeService.checkAndAwardBadges(studentId, {
+        correct,
+        timeSpentMs: dto.timeSpentMs,
+        problem: {
+          grade: problem.grade,
+          topic: problem.topic,
+          strand: problem.strand,
+        },
+        studentStats: { totalAttempts, correctTotal, streakCount },
+      });
+    } catch (err) {
+      this.logger.error(
+        `Badge side-effects failed for attempt ${attempt.id}: ${err}`,
+      );
+    }
+
+    return { correct, correctAnswer, solution, attemptId: attempt.id, coinsEarned, xpEarned, leveledUp, badgesEarned };
   }
 
-  /**
-   * Get all attempts for a student (most recent first, paginated).
-   */
   async getStudentAttempts(
     studentId: string,
     limit = 20,
@@ -111,9 +131,6 @@ export class AttemptService {
     return { data, total };
   }
 
-  /**
-   * Get attempts for a specific problem by a student.
-   */
   async getStudentProblemAttempts(
     studentId: string,
     problemId: string,
@@ -124,9 +141,6 @@ export class AttemptService {
     });
   }
 
-  /**
-   * Get student stats: total attempts, correct count, accuracy %, topics attempted.
-   */
   async getStudentStats(studentId: string): Promise<{
     totalAttempts: number;
     correctAttempts: number;
