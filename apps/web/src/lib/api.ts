@@ -536,8 +536,7 @@ export async function getMyBadges(token: string): Promise<BadgeDto[]> {
   const res = await fetch(`${API_BASE}/badges/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
-  const data = await handleResponse<{ badges: BadgeDto[] }>(res);
-  return data.badges;
+  return handleResponse<BadgeDto[]>(res);
 }
 
 // ─── Avatar / Profile ─────────────────────────────────────────────────────────
