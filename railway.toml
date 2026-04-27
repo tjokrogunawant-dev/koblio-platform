@@ -22,7 +22,7 @@ dockerfile = "apps/api/Dockerfile"
 
 [services.deploy]
 startCommand = "sh -c 'prisma migrate deploy && node dist/main.js'"
-healthcheckPath = "/health"
+healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 
 # ─── Web service ──────────────────────────────────────────────────────────────
