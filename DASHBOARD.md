@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-28 | **By:** QA | **Sprint:** 19
+**Last updated:** 2026-04-28 | **By:** PM | **Sprint:** 19
 
 ---
 
@@ -37,7 +37,7 @@
 |---|---|---|---|
 | TG1-T01 | Student profile setup page | done | QA |
 | TG1-T02 | Student home dashboard | done | QA |
-| TG1-T03 | Forgot password / reset flow | pending | — |
+| TG1-T03 | Forgot password / reset flow | in-progress | PM |
 | TG1-T04 | Playwright e2e smoke tests | pending | — |
 
 ---
@@ -46,8 +46,8 @@
 
 | Field | Value |
 |---|---|
-| Next role | PM |
-| Current task | (none) |
+| Next role | DEV |
+| Current task | TG1-T03 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
 ---
@@ -79,6 +79,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-28 | PM | Brief written for TG1-T03: Forgot password / reset flow. CI check skipped — gh CLI and GitHub MCP tools unavailable in this environment. |
 | 2026-04-28 | QA | TG1-T02 QC: PASS — all 9 ACs pass, no regressions, old dashboard/student untouched |
 | 2026-04-28 | DEV | TG1-T02 Student home dashboard — /student/dashboard, middleware guard, profile setup redirects (118bf6c) |
 | 2026-04-27 | PM | Brief written for TG1-T02: Student home dashboard |
