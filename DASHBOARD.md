@@ -50,6 +50,14 @@
 | Current task | TG1-T03 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
+## CI Status
+
+| Check | Status |
+|---|---|
+| pnpm lockfile | ✅ Fixed 2026-04-28 (katex deps added to lockfile) |
+| ECS deploy workflow | ✅ Changed to `workflow_dispatch` only — won't fail on push |
+| CI pipeline (lint/typecheck/test/build) | ⏳ Pending next push to main |
+
 ---
 
 ## Completed Sprints Summary
@@ -80,8 +88,9 @@
 | Date | Agent | Action |
 |---|---|---|
 | 2026-04-28 | DEV | TG1-T03 Forgot password / reset flow — Prisma model, migration, DTOs, API endpoints, email method, web pages, login link (b2ff1cc) |
-| 2026-04-28 | PM | Brief written for TG1-T03: Forgot password / reset flow. CI check skipped — gh CLI and GitHub MCP tools unavailable in this environment. |
-| 2026-04-28 | QA | TG1-T02 QC: PASS — all 9 ACs pass, no regressions, old dashboard/student untouched |
+| 2026-04-28 | PM | Brief written for TG1-T03: Forgot password / reset flow |
+| 2026-04-28 | PM | CI HEALTH: pnpm lockfile stale (katex deps missing) — fixed. ECS deploy.yml → workflow_dispatch only. |
+| 2026-04-28 | QA | TG1-T02 QC: PASS — all 9 ACs pass, no regressions |
 | 2026-04-28 | DEV | TG1-T02 Student home dashboard — /student/dashboard, middleware guard, profile setup redirects (118bf6c) |
 | 2026-04-27 | PM | Brief written for TG1-T02: Student home dashboard |
 | 2026-04-27 | QA | TG1-T01 QC: PASS WITH NBI — all 8 ACs pass; 2 minor cold-load hydration NBIs logged |

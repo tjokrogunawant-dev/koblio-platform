@@ -188,6 +188,27 @@ export class AuthController {
     };
   }
 
+  @Post('forgot-password')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Request a password reset link' })
+  @ApiResponse({ status: 200, description: 'Reset link sent if email exists' })
+  async forgotPassword(@Body() dto: ForgotPasswordDto) {
+    await this.authService.forgotPassword(dto.email);
+    return { message: "If that email is registered, you'll receive a reset link." };
+  }
+
+  @Post('reset-password')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Reset password using token from email' })
+  @ApiResponse({ status: 200, description: 'Password updated' })
+  @ApiResponse({ status: 400, description: 'Invalid or expired reset token' })
+  async resetPassword(@Body() dto: ResetPasswordDto) {
+    await this.authService.resetPassword(dto.token, dto.newPassword);
+    return { message: 'Password updated' };
+  }
+
   @Post('login/student')
   @Public()
   @HttpCode(HttpStatus.OK)

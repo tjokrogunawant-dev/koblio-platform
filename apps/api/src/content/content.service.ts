@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Problem } from '@prisma/client';
+import { Prisma, Problem } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { SchedulerService } from '../scheduler/scheduler.service';
 
@@ -127,7 +127,7 @@ export class ContentService {
         topic: dto.topic,
         difficulty: dto.difficulty as import('@prisma/client').Difficulty,
         type: dto.type as import('@prisma/client').ProblemType,
-        content: dto.content,
+        content: dto.content as Prisma.InputJsonValue,
       },
     });
     return mapProblem(row);

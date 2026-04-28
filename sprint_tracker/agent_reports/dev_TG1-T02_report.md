@@ -2,50 +2,50 @@
 
 **Sprint:** 19  
 **Task ID:** TG1-T02  
-**Written by:** DEV  
+**Implemented by:** DEV  
 **Date:** 2026-04-28  
-**Commit:** 118bf6c
+**Commit:** `26887f4`
 
 ---
 
 ## Summary
 
-Implemented the standalone student home dashboard at `/student/dashboard`, isolated from the teacher sidebar layout. Extended middleware to protect the `/student/*` subtree, and updated profile setup redirects.
+Created the standalone `/student/dashboard` route so students get a clean home screen without the teacher sidebar, extended middleware to protect the new subtree, and updated the profile setup page to redirect to the new route.
 
 ---
 
 ## Files Created
 
-| File | Description |
-|---|---|
-| `apps/web/src/app/student/layout.tsx` | Pass-through layout — prevents `/student/*` from inheriting `dashboard/layout.tsx` (teacher sidebar) |
-| `apps/web/src/app/student/dashboard/page.tsx` | Student home page: Avatar welcome header, CoinCounter, StreakBadge, XPBar stats card, DailyChallengeCard, Practice → link, Sign Out button |
+| File | Action | Description |
+|---|---|---|
+| `apps/web/src/app/student/layout.tsx` | Created | Pass-through layout — ensures `/student/` subtree does not inherit `dashboard/layout.tsx` |
+| `apps/web/src/app/student/dashboard/page.tsx` | Created | Student home page: avatar/name header, stats card (CoinCounter + StreakBadge + XPBar), DailyChallengeCard, Practice CTA, logout button |
 
 ## Files Modified
 
-| File | Change |
-|---|---|
-| `apps/web/src/middleware.ts` | Added `pathname.startsWith('/student')` check; added `'/student/:path*'` to matcher array |
-| `apps/web/src/app/profile/setup/page.tsx` | Updated `router.push('/dashboard/student')` → `router.push('/student/dashboard')` (handleSave); updated Skip `href` from `/dashboard/student` → `/student/dashboard` |
+| File | Action | Description |
+|---|---|---|
+| `apps/web/src/middleware.ts` | Modified | Extended `if` guard to include `pathname.startsWith('/student')`; added `'/student/:path*'` to `config.matcher` |
+| `apps/web/src/app/profile/setup/page.tsx` | Modified | Changed `router.push('/dashboard/student')` → `/student/dashboard` in `handleSave`; changed `href="/dashboard/student"` → `/student/dashboard` on Skip link |
 
 ---
 
-## Acceptance Criteria Checklist (self-assessment)
+## Acceptance Criteria Verification
 
-1. ✅ `/student/dashboard` renders without teacher sidebar — uses `StudentLayout` (pass-through), not `dashboard/layout.tsx`
-2. ✅ Middleware now guards `/student/:path*` — redirects unauthenticated requests to `/login?next=/student/dashboard`
-3. ✅ Welcome header shows Avatar + display name (falls back to `username` → `name` → `'Student'`)
-4. ✅ Stats card shows CoinCounter, StreakBadge, XPBar from `getStudentProfile` response
-5. ✅ DailyChallengeCard renders; `handleStartChallenge` pushes to `/learn/problem/:id`
-6. ✅ "Practice →" link points to `/learn`
-7. ✅ "Sign Out" calls `logout()` and pushes to `/login`
-8. ✅ `handleSave` in profile setup now redirects to `/student/dashboard`
-9. ✅ Skip link in profile setup now points to `/student/dashboard`
+1. ✅ `/student/dashboard` uses `apps/web/src/app/student/layout.tsx` (pass-through) — not `dashboard/layout.tsx`. No teacher sidebar rendered.
+2. ✅ Middleware guards `/student/:path*`: unauthenticated requests (no `koblio_session` cookie) are redirected to `/login?next=/student/dashboard`.
+3. ✅ Page renders welcome header with `Avatar` component and `displayName`.
+4. ✅ `getStudentProfile` is called; CoinCounter, StreakBadge, and XPBar render with profile data.
+5. ✅ `DailyChallengeCard` renders; `handleStartChallenge` pushes to `/learn/problem/:id`.
+6. ✅ "Practice →" link points to `/learn`.
+7. ✅ "Sign Out" button calls `logout()` and pushes to `/login`.
+8. ✅ `handleSave` in profile setup now pushes to `/student/dashboard`.
+9. ✅ Skip `<Link>` in profile setup now points to `/student/dashboard`.
 
 ---
 
 ## Notes
 
-- `apps/web/src/app/dashboard/student/page.tsx` intentionally not modified — it remains for teacher/parent progress views.
-- `getDailyChallenge` returns `Problem | null`; the `.catch(() => {})` guard handles backend unavailability gracefully.
-- `user?.grade ?? 1` default applied as specified.
+- `apps/web/src/app/dashboard/student/page.tsx` was deliberately left untouched per brief (may be linked from teacher/parent progress views).
+- `getStudentProfile` confirmed to call `GET /gamification/me` and return `StudentGamificationProfile` (verified in `apps/web/src/lib/api.ts:295–302`).
+- `user?.grade` defaults to `1` when undefined, as required.

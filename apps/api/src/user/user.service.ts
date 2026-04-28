@@ -327,22 +327,6 @@ export class UserService {
     };
   }
 
-  async updateAvatar(auth0Id: string, avatarSlug: AvatarSlug) {
-    const user = await this.prisma.user.findUnique({ where: { auth0Id } });
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-    const updated = await this.prisma.user.update({
-      where: { id: user.id },
-      data: { avatarSlug },
-    });
-    return {
-      id: updated.id,
-      displayName: updated.displayName,
-      avatarSlug: updated.avatarSlug,
-    };
-  }
-
   async updateProfile(auth0Id: string, dto: UpdateProfileDto) {
     const user = await this.prisma.user.findUnique({ where: { auth0Id } });
     if (!user) throw new NotFoundException('User not found');
@@ -352,6 +336,22 @@ export class UserService {
     if (dto.avatarSlug !== undefined) data.avatarSlug = dto.avatarSlug;
 
     const updated = await this.prisma.user.update({ where: { id: user.id }, data });
+    return {
+      id: updated.id,
+      displayName: updated.displayName,
+      avatarSlug: updated.avatarSlug,
+    };
+  }
+
+  async updateAvatar(auth0Id: string, avatarSlug: AvatarSlug) {
+    const user = await this.prisma.user.findUnique({ where: { auth0Id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    const updated = await this.prisma.user.update({
+      where: { id: user.id },
+      data: { avatarSlug },
+    });
     return {
       id: updated.id,
       displayName: updated.displayName,

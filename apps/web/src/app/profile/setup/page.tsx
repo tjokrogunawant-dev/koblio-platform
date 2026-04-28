@@ -31,7 +31,7 @@ export default function ProfileSetupPage() {
     setError(null);
     try {
       const result = await updateProfile(
-        { displayName: displayName.trim(), avatarSlug: selected },
+        { displayName: displayName.trim(), avatarSlug: selected ?? undefined },
         token,
       );
       updateUser({ name: result.displayName, avatarSlug: result.avatarSlug ?? undefined });

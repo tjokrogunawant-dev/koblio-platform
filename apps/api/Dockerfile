@@ -24,8 +24,12 @@ RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/api/node_modules ./apps/api/node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
 # Copy source
 COPY . .
+
+# Build shared package first (API depends on @koblio/shared types)
+RUN pnpm --filter @koblio/shared build
 
 # Generate Prisma client and compile TypeScript
 RUN pnpm --filter @koblio/api build

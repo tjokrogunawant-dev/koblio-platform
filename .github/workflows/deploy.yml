@@ -1,11 +1,10 @@
 # Koblio — AWS ECS CD Pipeline
 #
-# Triggered exclusively on pushes to main (not PRs).
-# CI checks (lint / typecheck / test / build) run in ci.yml first;
-# this workflow handles building Docker images, pushing to ECR, and
-# deploying to ECS Fargate with a rolling update.
+# PARKED until Section 9 (~5K MAU). AWS credentials are not provisioned.
+# VPS deployment is via docker-compose — see DEPLOY.md.
+# Re-enable this workflow when AWS_ACCESS_KEY_ID is set in GitHub Secrets.
 #
-# Required GitHub Secrets:
+# Required GitHub Secrets (when re-enabling):
 #   AWS_ACCESS_KEY_ID         — IAM key with ECR push + ECS deploy permissions
 #   AWS_SECRET_ACCESS_KEY     — Corresponding secret
 #   AWS_REGION                — (optional) defaults to ap-southeast-1
@@ -15,25 +14,43 @@
 name: Deploy to ECS
 
 on:
-  push:
-    branches: [main]
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Type 'deploy' to confirm manual ECS deploy"
+        required: true
 
 concurrency:
   group: deploy-${{ github.ref }}
-  cancel-in-progress: false  # Never cancel in-flight deploys — finish them
+  cancel-in-progress: false
 
 env:
   TURBO_TOKEN: ${{ secrets.TURBO_TOKEN }}
   TURBO_TEAM: ${{ secrets.TURBO_TEAM }}
 
-# ---------------------------------------------------------------------------
-# Job 1 — Build Docker images and push to ECR
-# ---------------------------------------------------------------------------
 jobs:
+  guard:
+    name: Check AWS credentials configured
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify AWS credentials are set
+        run: |
+          if [ -z "${{ secrets.AWS_ACCESS_KEY_ID }}" ]; then
+            echo "ERROR: AWS_ACCESS_KEY_ID is not set. This workflow requires AWS credentials."
+            echo "Deploy via docker-compose on VPS instead — see DEPLOY.md."
+            exit 1
+          fi
+          if [ "${{ github.event.inputs.confirm }}" != "deploy" ]; then
+            echo "ERROR: Type 'deploy' in the confirm field to proceed."
+            exit 1
+          fi
+          echo "AWS credentials present. Proceeding with ECS deploy."
+
   build-and-push:
     name: Build & Push Docker Images
     runs-on: ubuntu-latest
     timeout-minutes: 20
+    needs: guard
 
     outputs:
       image-tag: ${{ steps.set-tag.outputs.image-tag }}
@@ -72,7 +89,6 @@ jobs:
           echo "IMAGE_TAG=${IMAGE_TAG}" >> "$GITHUB_ENV"
           echo "image-tag=${IMAGE_TAG}" >> "$GITHUB_OUTPUT"
 
-      # --- API image ---
       - name: Build API Docker image
         run: |
           docker build \
@@ -86,7 +102,6 @@ jobs:
           docker push "${{ secrets.AWS_ECR_API_URL }}:${IMAGE_TAG}"
           docker push "${{ secrets.AWS_ECR_API_URL }}:latest"
 
-      # --- Web image ---
       - name: Build Web Docker image
         run: |
           docker build \
@@ -100,9 +115,6 @@ jobs:
           docker push "${{ secrets.AWS_ECR_WEB_URL }}:${IMAGE_TAG}"
           docker push "${{ secrets.AWS_ECR_WEB_URL }}:latest"
 
-# ---------------------------------------------------------------------------
-# Job 2 — Deploy API service to ECS
-# ---------------------------------------------------------------------------
   deploy-api:
     name: Deploy API to ECS
     runs-on: ubuntu-latest
@@ -140,9 +152,6 @@ jobs:
           cluster: koblio-production
           wait-for-service-stability: true
 
-# ---------------------------------------------------------------------------
-# Job 3 — Deploy Web service to ECS
-# ---------------------------------------------------------------------------
   deploy-web:
     name: Deploy Web to ECS
     runs-on: ubuntu-latest
@@ -180,15 +189,6 @@ jobs:
           cluster: koblio-production
           wait-for-service-stability: true
 
-# ---------------------------------------------------------------------------
-# Job 4 — Run Prisma migrations against production RDS
-#
-# Runs AFTER deploy-api so the new API image (which contains the latest
-# migration files) is already registered as the active task definition.
-# A one-shot Fargate task overrides the container command to run
-# `npx prisma migrate deploy` and then exits.  The step polls until the
-# task finishes and fails the job if the container exit code is non-zero.
-# ---------------------------------------------------------------------------
   run-migrations:
     name: Run DB Migrations
     runs-on: ubuntu-latest
@@ -219,14 +219,11 @@ jobs:
             --output text)
 
           echo "Migration task ARN: ${TASK_ARN}"
-
-          # Poll until the task reaches STOPPED state
           echo "Waiting for migration task to complete..."
           aws ecs wait tasks-stopped \
             --cluster koblio-production \
             --tasks "${TASK_ARN}"
 
-          # Retrieve the container exit code
           EXIT_CODE=$(aws ecs describe-tasks \
             --cluster koblio-production \
             --tasks "${TASK_ARN}" \

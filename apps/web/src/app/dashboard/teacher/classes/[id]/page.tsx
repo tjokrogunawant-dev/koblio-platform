@@ -217,7 +217,7 @@ export default function ClassDetailPage() {
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {students.map((s) => (
-                      <tr key={s.studentId} className="hover:bg-slate-50">
+                      <tr key={s.id} className="hover:bg-slate-50">
                         <td className="px-5 py-3 font-medium text-slate-800">
                           {s.name}
                         </td>

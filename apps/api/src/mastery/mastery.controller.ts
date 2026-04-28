@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
-import { UserRole } from '@prisma/client';
+import { UserRole } from '@koblio/shared';
 import { AuthenticatedUser } from '../auth/interfaces/jwt-payload.interface';
 import { MasteryService } from './mastery.service';
 

@@ -24,8 +24,14 @@ RUN corepack enable && corepack prepare pnpm@10.33.0 --activate
 
 COPY --from=deps /app/node_modules ./node_modules
 COPY --from=deps /app/apps/web/node_modules ./apps/web/node_modules
+COPY --from=deps /app/packages/shared/node_modules ./packages/shared/node_modules
+COPY --from=deps /app/packages/ui/node_modules ./packages/ui/node_modules
 # Copy source
 COPY . .
+
+# Build workspace packages that web depends on
+RUN pnpm --filter @koblio/shared build
+RUN pnpm --filter @koblio/ui build
 
 # Build Next.js (standalone output configured in next.config.ts)
 RUN pnpm --filter @koblio/web build
