@@ -38,7 +38,13 @@ The project follows `koblio_mvp_roadmap.md`. Key state as of Sprint 19:
 | Task ID | Title | Deferred To | Reason |
 |---|---|---|---|
 | P1-T15 | Admin CMS for Problem Authoring | Section 6 Sprint 10 | Seed problems via JSON files |
-| AWS deploy | AWS ECS Fargate deploy | Section 9 (5K+ MAU) | IaC written; credentials not provisioned |
+| AWS deploy | AWS ECS Fargate deploy | Section 9 (5K+ MAU) | IaC written; credentials not provisioned. `deploy.yml` changed to `workflow_dispatch` only — won't auto-trigger. |
+
+---
+
+## Routine Eligibility
+
+Tasks in this sprint are all **routine-eligible** — the DEV agent can implement them without human intervention. Infrastructure-phase tasks (ECS setup, domain/DNS, SSL, AWS account provisioning) are NOT routine-eligible and are deferred to Section 9. If the PM agent encounters a task that requires external credentials, a live VPS, or manual DNS changes, it must defer it and note why.
 
 ---
 

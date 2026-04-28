@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-28 | **By:** DEV | **Sprint:** 19
+**Last updated:** 2026-04-28 | **By:** PM | **Sprint:** 19
 
 ---
 
@@ -46,9 +46,17 @@
 
 | Field | Value |
 |---|---|
-| Next role | QA |
-| Current task | TG1-T02 |
-| Routine | `koblio-dev-pipeline` — runs every hour |
+| Next role | PM |
+| Current task | (none) |
+| Routine | `koblio-pm` (Mon/Fri) + `koblio-dev` (daily) + `koblio-qc` (Fri) — see `agents/` |
+
+## CI Status
+
+| Check | Status |
+|---|---|
+| pnpm lockfile | ✅ Fixed 2026-04-28 (katex deps added to lockfile) |
+| ECS deploy workflow | ✅ Changed to `workflow_dispatch` only — won't fail on push |
+| CI pipeline (lint/typecheck/test/build) | ⏳ Pending next push to main |
 
 ---
 
@@ -79,7 +87,8 @@
 
 | Date | Agent | Action |
 |---|---|---|
-| 2026-04-27 | DEV | TG1-T02 Standalone /student/dashboard, middleware guard, profile setup redirect (`8c2c9b0`) |
+| 2026-04-28 | PM | CI HEALTH: pnpm lockfile stale (katex deps missing) — fixed. ECS deploy.yml → workflow_dispatch only. PM agent updated with mandatory CI check. |
+| 2026-04-28 | DEV | TG1-T02 Standalone /student/dashboard, middleware guard, profile setup redirect (`8c2c9b0`) |
 | 2026-04-27 | PM | Brief written for TG1-T02: Student home dashboard |
 | 2026-04-27 | QA | TG1-T01 QC: PASS WITH NBI — all 8 ACs pass; 2 minor cold-load hydration NBIs logged |
 | 2026-04-27 | DEV | TG1-T01 Student profile setup page — PUT /me/profile, display name + avatar, auth guard (`a0e81d2`) |
