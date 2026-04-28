@@ -90,7 +90,9 @@ describe('UserService', () => {
       parentalConsent: { create: jest.fn() },
       classroom: { findUnique: jest.fn() },
       enrollment: { findUnique: jest.fn(), create: jest.fn() },
-      $transaction: jest.fn(),
+      $transaction: jest
+        .fn()
+        .mockImplementation((fn: (tx: typeof prisma) => Promise<unknown>) => fn(prisma)),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -335,18 +337,11 @@ describe('UserService', () => {
       });
       prisma.classroom.findUnique.mockResolvedValue(mockClassroom);
       prisma.enrollment.findUnique.mockResolvedValue(null);
-      prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
-        const tx = {
-          enrollment: {
-            create: jest.fn().mockResolvedValue({
-              id: 'enrollment-1',
-              studentId: childId,
-              classroomId: mockClassroom.id,
-              enrolledAt: new Date(),
-            }),
-          },
-        };
-        return fn(tx);
+      prisma.enrollment.create.mockResolvedValue({
+        id: 'enrollment-1',
+        studentId: childId,
+        classroomId: mockClassroom.id,
+        enrolledAt: new Date(),
       });
 
       const result = await service.joinClassByCode('auth0|parent1', childId, dto);

@@ -24,6 +24,26 @@ const mockProblem = {
   updatedAt: new Date('2026-04-27T00:00:00.000Z'),
 };
 
+// mapProblem() output shape
+const mappedProblem = {
+  id: mockProblem.id,
+  grade: mockProblem.grade,
+  strand: mockProblem.strand,
+  topic: mockProblem.topic,
+  difficulty: mockProblem.difficulty,
+  type: mockProblem.type,
+  questionText: 'What is 1 + 1?',
+  correctAnswer: '2',
+  solution: '1 + 1 = 2',
+  hints: [],
+  options: [
+    { label: 'A', text: '1' },
+    { label: 'B', text: '2' },
+    { label: 'C', text: '3' },
+    { label: 'D', text: '4' },
+  ],
+};
+
 const mockPrismaService = {
   problem: {
     findMany: jest.fn(),
@@ -55,7 +75,7 @@ describe('ContentService', () => {
 
       const result = await service.findAll({});
 
-      expect(result).toEqual({ data: [mockProblem], total: 1 });
+      expect(result).toEqual({ data: [mappedProblem], total: 1 });
       expect(mockPrismaService.problem.findMany).toHaveBeenCalledWith({
         where: {},
         take: 20,
@@ -112,7 +132,7 @@ describe('ContentService', () => {
 
       const result = await service.findOne(mockProblem.id);
 
-      expect(result).toEqual(mockProblem);
+      expect(result).toEqual(mappedProblem);
       expect(mockPrismaService.problem.findUnique).toHaveBeenCalledWith({
         where: { id: mockProblem.id },
       });
@@ -131,7 +151,7 @@ describe('ContentService', () => {
 
       const result = await service.findByGrade(2);
 
-      expect(result).toEqual([mockProblem]);
+      expect(result).toEqual([mappedProblem]);
       expect(mockPrismaService.problem.findMany).toHaveBeenCalledWith({
         where: { grade: 2 },
         orderBy: [{ strand: 'asc' }, { topic: 'asc' }],
