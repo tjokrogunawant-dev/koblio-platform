@@ -79,7 +79,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
-| 2026-04-28 | DEV | TG1-T03 Forgot password / reset flow — Prisma model, migration, DTOs, API endpoints, email method, web pages, login link |
+| 2026-04-28 | DEV | TG1-T03 Forgot password / reset flow — Prisma model, migration, DTOs, API endpoints, email method, web pages, login link (b2ff1cc) |
 | 2026-04-28 | PM | Brief written for TG1-T03: Forgot password / reset flow. CI check skipped — gh CLI and GitHub MCP tools unavailable in this environment. |
 | 2026-04-28 | QA | TG1-T02 QC: PASS — all 9 ACs pass, no regressions, old dashboard/student untouched |
 | 2026-04-28 | DEV | TG1-T02 Student home dashboard — /student/dashboard, middleware guard, profile setup redirects (118bf6c) |

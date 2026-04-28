@@ -50,4 +50,4 @@ Full forgot-password / reset-password flow implemented: Prisma model, migration,
 
 ## Commit
 
-Commit hash: _(to be filled after push)_
+Commit hash: `b2ff1cc`
