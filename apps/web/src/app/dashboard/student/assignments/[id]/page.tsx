@@ -54,7 +54,7 @@ function difficultyClass(difficulty: string) {
 
 export default function StudentAssignmentSolvePage() {
   const params = useParams();
-  const router = useRouter();
+  const _router = useRouter();
   const { token } = useAuth();
 
   const assignmentId =
