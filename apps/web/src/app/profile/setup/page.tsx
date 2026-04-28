@@ -35,7 +35,7 @@ export default function ProfileSetupPage() {
         token,
       );
       updateUser({ name: result.displayName, avatarSlug: result.avatarSlug ?? undefined });
-      router.push('/dashboard/student');
+      router.push('/student/dashboard');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save profile.');
     } finally {
@@ -114,7 +114,7 @@ export default function ProfileSetupPage() {
               {saving ? 'Saving…' : 'Save Profile'}
             </Button>
             <Link
-              href="/dashboard/student"
+              href="/student/dashboard"
               className="text-sm text-slate-500 hover:text-slate-700 underline-offset-2 hover:underline"
             >
               Skip
