@@ -87,7 +87,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
-| 2026-04-28 | PM | Brief written for TG1-T04: Playwright e2e smoke tests |
+| 2026-04-28 | PM | CI HEALTH: no new failures — lockfile and ECS fixes from prior run still valid. Brief written for TG1-T04: Playwright e2e smoke tests |
 | 2026-04-28 | QA | TG1-T03 QC: PASS WITH NBI — all 11 ACs pass; 1 cosmetic NBI (method ordering in email.service.ts) |
 | 2026-04-28 | DEV | TG1-T03 Forgot password / reset flow — Prisma model, migration, DTOs, API endpoints, email method, web pages, login link (b2ff1cc) |
 | 2026-04-28 | PM | Brief written for TG1-T03: Forgot password / reset flow |
