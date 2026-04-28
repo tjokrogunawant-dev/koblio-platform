@@ -87,14 +87,14 @@ export default function AdminProblemsPage() {
 
   useEffect(() => {
     // Redirect users who are not teacher or admin
-    if (user && user.role !== 'teacher' && user.role !== 'admin') {
+    if (user && (user.role as string) !== 'teacher' && (user.role as string) !== 'admin') {
       router.replace('/dashboard');
     }
   }, [user, router]);
 
   useEffect(() => {
     if (!token) return;
-    if (user && user.role !== 'teacher' && user.role !== 'admin') return;
+    if (user && (user.role as string) !== 'teacher' && (user.role as string) !== 'admin') return;
 
     setLoading(true);
     setFetchError(null);
