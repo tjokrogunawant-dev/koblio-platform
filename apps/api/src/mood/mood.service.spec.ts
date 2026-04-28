@@ -16,10 +16,7 @@ describe('MoodService', () => {
   async function build(attempts: { correct: boolean; timeSpentMs: number }[]) {
     prisma = makePrisma(attempts);
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        MoodService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [MoodService, { provide: PrismaService, useValue: prisma }],
     }).compile();
     service = module.get<MoodService>(MoodService);
   }
@@ -106,10 +103,7 @@ describe('MoodService', () => {
       // Prisma is mocked to return ALL of these (no take: 5 enforced in mock)
       // so accuracy = 7/10 = 0.7 and avgTimeMs = 5000 → FLOW condition >=0.7 and in [5000,30000]
       const module: TestingModule = await Test.createTestingModule({
-        providers: [
-          MoodService,
-          { provide: PrismaService, useValue: prisma },
-        ],
+        providers: [MoodService, { provide: PrismaService, useValue: prisma }],
       }).compile();
       service = module.get<MoodService>(MoodService);
       expect(await service.detectMood('student-1')).toBe(MoodState.FLOW);
@@ -123,22 +117,42 @@ describe('MoodService', () => {
 
     it('returns correct weights for FLOW', () => {
       const w = service.getWeights(MoodState.FLOW);
-      expect(w).toEqual({ fsrsWeight: 0.5, bktWeight: 0.3, noveltyWeight: 0.2, difficultyOffset: 0 });
+      expect(w).toEqual({
+        fsrsWeight: 0.5,
+        bktWeight: 0.3,
+        noveltyWeight: 0.2,
+        difficultyOffset: 0,
+      });
     });
 
     it('returns correct weights for FRUSTRATED', () => {
       const w = service.getWeights(MoodState.FRUSTRATED);
-      expect(w).toEqual({ fsrsWeight: 0.3, bktWeight: 0.5, noveltyWeight: 0.2, difficultyOffset: -1 });
+      expect(w).toEqual({
+        fsrsWeight: 0.3,
+        bktWeight: 0.5,
+        noveltyWeight: 0.2,
+        difficultyOffset: -1,
+      });
     });
 
     it('returns correct weights for CONFUSED', () => {
       const w = service.getWeights(MoodState.CONFUSED);
-      expect(w).toEqual({ fsrsWeight: 0.2, bktWeight: 0.6, noveltyWeight: 0.2, difficultyOffset: -2 });
+      expect(w).toEqual({
+        fsrsWeight: 0.2,
+        bktWeight: 0.6,
+        noveltyWeight: 0.2,
+        difficultyOffset: -2,
+      });
     });
 
     it('returns correct weights for BORED', () => {
       const w = service.getWeights(MoodState.BORED);
-      expect(w).toEqual({ fsrsWeight: 0.4, bktWeight: 0.2, noveltyWeight: 0.4, difficultyOffset: 1 });
+      expect(w).toEqual({
+        fsrsWeight: 0.4,
+        bktWeight: 0.2,
+        noveltyWeight: 0.4,
+        difficultyOffset: 1,
+      });
     });
   });
 
@@ -148,7 +162,12 @@ describe('MoodService', () => {
       await build(attempts);
       const result = await service.getMoodWeights('student-1');
       expect(result.mood).toBe(MoodState.FRUSTRATED);
-      expect(result.weights).toEqual({ fsrsWeight: 0.3, bktWeight: 0.5, noveltyWeight: 0.2, difficultyOffset: -1 });
+      expect(result.weights).toEqual({
+        fsrsWeight: 0.3,
+        bktWeight: 0.5,
+        noveltyWeight: 0.2,
+        difficultyOffset: -1,
+      });
     });
   });
 });

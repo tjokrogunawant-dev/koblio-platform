@@ -1,9 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  ConflictException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 import { ClassroomService } from './classroom.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -66,10 +62,7 @@ describe('ClassroomService', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ClassroomService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [ClassroomService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = module.get<ClassroomService>(ClassroomService);
@@ -103,9 +96,9 @@ describe('ClassroomService', () => {
     it('should throw NotFoundException if teacher not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.createClassroom('auth0|unknown', dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createClassroom('auth0|unknown', dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException if user is not a teacher', async () => {
@@ -114,9 +107,9 @@ describe('ClassroomService', () => {
         auth0Id: 'auth0|student',
       });
 
-      await expect(
-        service.createClassroom('auth0|student', dto),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.createClassroom('auth0|student', dto)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should verify school membership when school_id provided', async () => {
@@ -149,9 +142,9 @@ describe('ClassroomService', () => {
     it('should throw NotFoundException if teacher not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.listTeacherClassrooms('auth0|unknown'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.listTeacherClassrooms('auth0|unknown')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -179,18 +172,14 @@ describe('ClassroomService', () => {
     it('should throw NotFoundException if classroom not found', async () => {
       prisma.classroom.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.enrollStudent('nonexistent', dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.enrollStudent('nonexistent', dto)).rejects.toThrow(NotFoundException);
     });
 
     it('should throw NotFoundException if student not found', async () => {
       prisma.classroom.findUnique.mockResolvedValue(mockClassroom);
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.enrollStudent(classroomId, dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.enrollStudent(classroomId, dto)).rejects.toThrow(NotFoundException);
     });
 
     it('should throw ForbiddenException if user is not a student', async () => {
@@ -200,9 +189,7 @@ describe('ClassroomService', () => {
         role: UserRole.TEACHER,
       });
 
-      await expect(
-        service.enrollStudent(classroomId, dto),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.enrollStudent(classroomId, dto)).rejects.toThrow(ForbiddenException);
     });
 
     it('should throw ConflictException if student already enrolled', async () => {
@@ -210,9 +197,7 @@ describe('ClassroomService', () => {
       prisma.user.findUnique.mockResolvedValue(mockStudent);
       prisma.enrollment.findUnique.mockResolvedValue({ id: 'existing' });
 
-      await expect(
-        service.enrollStudent(classroomId, dto),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.enrollStudent(classroomId, dto)).rejects.toThrow(ConflictException);
     });
   });
 
@@ -236,9 +221,7 @@ describe('ClassroomService', () => {
     it('should throw NotFoundException if classroom not found', async () => {
       prisma.classroom.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.listClassroomStudents('nonexistent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.listClassroomStudents('nonexistent')).rejects.toThrow(NotFoundException);
     });
   });
 });

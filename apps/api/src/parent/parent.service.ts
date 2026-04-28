@@ -1,9 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 
 @Injectable()
@@ -59,9 +54,7 @@ export class ParentService {
     });
 
     if (!link) {
-      throw new ForbiddenException(
-        'You are not linked as a parent of this child',
-      );
+      throw new ForbiddenException('You are not linked as a parent of this child');
     }
 
     const child = await this.prisma.user.findUnique({
@@ -88,9 +81,7 @@ export class ParentService {
     const totalAttempts = attempts.length;
     const correctAttempts = attempts.filter((a) => a.correct).length;
     const accuracyPercent =
-      totalAttempts === 0
-        ? 0
-        : Math.round((correctAttempts / totalAttempts) * 100);
+      totalAttempts === 0 ? 0 : Math.round((correctAttempts / totalAttempts) * 100);
 
     const topicMap = new Map<string, { attempted: number; correct: number }>();
     for (const attempt of attempts) {
@@ -101,17 +92,13 @@ export class ParentService {
       topicMap.set(topic, entry);
     }
 
-    const topicBreakdown = Array.from(topicMap.entries()).map(
-      ([topic, stats]) => ({
-        topic,
-        attempted: stats.attempted,
-        correct: stats.correct,
-      }),
-    );
+    const topicBreakdown = Array.from(topicMap.entries()).map(([topic, stats]) => ({
+      topic,
+      attempted: stats.attempted,
+      correct: stats.correct,
+    }));
 
-    this.logger.log(
-      `Parent ${parent.id} viewed progress for child ${childId}`,
-    );
+    this.logger.log(`Parent ${parent.id} viewed progress for child ${childId}`);
 
     return {
       totalAttempts,

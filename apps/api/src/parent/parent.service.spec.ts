@@ -37,10 +37,7 @@ describe('ParentService', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ParentService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [ParentService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = module.get<ParentService>(ParentService);
@@ -80,9 +77,7 @@ describe('ParentService', () => {
     });
 
     it('should return zero stats for a child with no attempts', async () => {
-      prisma.user.findUnique
-        .mockResolvedValueOnce(mockParent)
-        .mockResolvedValueOnce(mockChild);
+      prisma.user.findUnique.mockResolvedValueOnce(mockParent).mockResolvedValueOnce(mockChild);
       prisma.parentChildLink.findUnique.mockResolvedValue({ id: 'link-1' });
       prisma.studentProblemAttempt.findMany.mockResolvedValue([]);
 
@@ -96,18 +91,18 @@ describe('ParentService', () => {
     it('should throw NotFoundException if parent not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getChildProgress('auth0|unknown', CHILD_ID),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getChildProgress('auth0|unknown', CHILD_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException if parent-child link missing', async () => {
       prisma.user.findUnique.mockResolvedValue(mockParent);
       prisma.parentChildLink.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getChildProgress(PARENT_AUTH0, CHILD_ID),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.getChildProgress(PARENT_AUTH0, CHILD_ID)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw NotFoundException if child account not found', async () => {
@@ -116,9 +111,9 @@ describe('ParentService', () => {
         .mockResolvedValueOnce(null); // child not found
       prisma.parentChildLink.findUnique.mockResolvedValue({ id: 'link-1' });
 
-      await expect(
-        service.getChildProgress(PARENT_AUTH0, CHILD_ID),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getChildProgress(PARENT_AUTH0, CHILD_ID)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 });

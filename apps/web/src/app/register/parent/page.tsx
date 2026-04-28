@@ -45,9 +45,7 @@ export default function RegisterParentPage() {
       login(result.access_token, result.user, result.expires_in);
       router.push('/dashboard/parent');
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Registration failed. Please try again.',
-      );
+      setError(err instanceof Error ? err.message : 'Registration failed. Please try again.');
     } finally {
       setLoading(false);
     }

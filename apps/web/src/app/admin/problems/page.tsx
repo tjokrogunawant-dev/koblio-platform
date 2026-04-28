@@ -166,9 +166,7 @@ export default function AdminProblemsPage() {
         setTotal((t) => t + 1);
       } else {
         const updated = await updateProblem(editor.problem!.id, payload, token);
-        setProblems((prev) =>
-          prev.map((p) => (p.id === updated.id ? updated : p)),
-        );
+        setProblems((prev) => prev.map((p) => (p.id === updated.id ? updated : p)));
       }
       closeEditor();
     } catch (err) {
@@ -206,10 +204,7 @@ export default function AdminProblemsPage() {
               {total} problem{total !== 1 ? 's' : ''} in database
             </p>
           </div>
-          <Button
-            className="bg-indigo-600 text-white hover:bg-indigo-700"
-            onClick={openCreate}
-          >
+          <Button className="bg-indigo-600 text-white hover:bg-indigo-700" onClick={openCreate}>
             + New Problem
           </Button>
         </div>
@@ -312,16 +307,12 @@ export default function AdminProblemsPage() {
 
                 {/* Strand */}
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-600">
-                    Strand
-                  </label>
+                  <label className="mb-1 block text-xs font-medium text-slate-600">Strand</label>
                   <input
                     type="text"
                     value={editor.strand}
                     onChange={(e) =>
-                      setEditor((prev) =>
-                        prev ? { ...prev, strand: e.target.value } : prev,
-                      )
+                      setEditor((prev) => (prev ? { ...prev, strand: e.target.value } : prev))
                     }
                     placeholder="e.g. operations-and-algebraic-thinking"
                     className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
@@ -330,16 +321,12 @@ export default function AdminProblemsPage() {
 
                 {/* Topic */}
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-600">
-                    Topic
-                  </label>
+                  <label className="mb-1 block text-xs font-medium text-slate-600">Topic</label>
                   <input
                     type="text"
                     value={editor.topic}
                     onChange={(e) =>
-                      setEditor((prev) =>
-                        prev ? { ...prev, topic: e.target.value } : prev,
-                      )
+                      setEditor((prev) => (prev ? { ...prev, topic: e.target.value } : prev))
                     }
                     placeholder="e.g. addition"
                     className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
@@ -355,9 +342,7 @@ export default function AdminProblemsPage() {
                     value={editor.difficulty}
                     onChange={(e) =>
                       setEditor((prev) =>
-                        prev
-                          ? { ...prev, difficulty: e.target.value as Difficulty }
-                          : prev,
+                        prev ? { ...prev, difficulty: e.target.value as Difficulty } : prev,
                       )
                     }
                     className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
@@ -372,16 +357,12 @@ export default function AdminProblemsPage() {
 
                 {/* Type */}
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-600">
-                    Type
-                  </label>
+                  <label className="mb-1 block text-xs font-medium text-slate-600">Type</label>
                   <select
                     value={editor.type}
                     onChange={(e) =>
                       setEditor((prev) =>
-                        prev
-                          ? { ...prev, type: e.target.value as ProblemType }
-                          : prev,
+                        prev ? { ...prev, type: e.target.value as ProblemType } : prev,
                       )
                     }
                     className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-200"
@@ -409,9 +390,7 @@ export default function AdminProblemsPage() {
                     value={editor.contentJson}
                     onChange={(e) => {
                       setJsonError(null);
-                      setEditor((prev) =>
-                        prev ? { ...prev, contentJson: e.target.value } : prev,
-                      );
+                      setEditor((prev) => (prev ? { ...prev, contentJson: e.target.value } : prev));
                     }}
                     spellCheck={false}
                     className={`w-full rounded-lg border px-3 py-2 font-mono text-xs focus:outline-none focus:ring-2 ${
@@ -420,9 +399,7 @@ export default function AdminProblemsPage() {
                         : 'border-slate-300 focus:border-indigo-500 focus:ring-indigo-200'
                     }`}
                   />
-                  {jsonError && (
-                    <p className="mt-1 text-xs text-red-600">{jsonError}</p>
-                  )}
+                  {jsonError && <p className="mt-1 text-xs text-red-600">{jsonError}</p>}
                 </div>
               </div>
 

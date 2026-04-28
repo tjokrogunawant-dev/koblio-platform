@@ -57,8 +57,7 @@ export class MoodService {
 
     const correctCount = attempts.filter((a) => a.correct).length;
     const accuracy = correctCount / attempts.length;
-    const avgTimeMs =
-      attempts.reduce((sum, a) => sum + a.timeSpentMs, 0) / attempts.length;
+    const avgTimeMs = attempts.reduce((sum, a) => sum + a.timeSpentMs, 0) / attempts.length;
 
     this.logger.debug(
       `Mood detection: student=${studentId} window=${attempts.length} accuracy=${accuracy.toFixed(2)} avgTimeMs=${Math.round(avgTimeMs)}`,
@@ -81,9 +80,7 @@ export class MoodService {
   /**
    * Combined: detect current mood and return its weights.
    */
-  async getMoodWeights(
-    studentId: string,
-  ): Promise<{ mood: MoodState; weights: MoodWeights }> {
+  async getMoodWeights(studentId: string): Promise<{ mood: MoodState; weights: MoodWeights }> {
     const mood = await this.detectMood(studentId);
     const weights = this.getWeights(mood);
     return { mood, weights };

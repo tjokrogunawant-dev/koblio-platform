@@ -9,7 +9,14 @@ import { AttemptController } from './attempt.controller';
 import { AttemptService } from './attempt.service';
 
 @Module({
-  imports: [PrismaModule, GamificationModule, BadgeModule, MasteryModule, SchedulerModule, LeaderboardModule],
+  imports: [
+    PrismaModule,
+    GamificationModule,
+    BadgeModule,
+    MasteryModule,
+    SchedulerModule,
+    LeaderboardModule,
+  ],
   controllers: [AttemptController],
   providers: [AttemptService],
   exports: [AttemptService],

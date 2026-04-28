@@ -18,7 +18,9 @@ export class RegisterStudentDto {
   @IsString()
   @MinLength(3)
   @MaxLength(50)
-  @Matches(/^[a-zA-Z0-9_]+$/, { message: 'Username may only contain letters, numbers, and underscores' })
+  @Matches(/^[a-zA-Z0-9_]+$/, {
+    message: 'Username may only contain letters, numbers, and underscores',
+  })
   username!: string;
 
   @ApiProperty({ minLength: 6, maxLength: 72 })

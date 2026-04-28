@@ -42,10 +42,7 @@ describe('BadgeService', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        BadgeService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [BadgeService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = module.get<BadgeService>(BadgeService);
@@ -69,10 +66,7 @@ describe('BadgeService', () => {
       // No queries needed for this badge beyond the existing-badges check
       prisma.studentProblemAttempt.findMany.mockResolvedValue([]); // last-10 check (perfect_10 path)
 
-      const slugs = await service.checkAndAwardBadges(
-        STUDENT_ID,
-        makeContext({ correct: true }),
-      );
+      const slugs = await service.checkAndAwardBadges(STUDENT_ID, makeContext({ correct: true }));
 
       expect(slugs).toContain('first_correct');
       expect(prisma.badge.createMany).toHaveBeenCalledWith(
@@ -88,10 +82,7 @@ describe('BadgeService', () => {
       mockNoBadgesYet();
       prisma.studentProblemAttempt.findMany.mockResolvedValue([]);
 
-      const slugs = await service.checkAndAwardBadges(
-        STUDENT_ID,
-        makeContext({ correct: false }),
-      );
+      const slugs = await service.checkAndAwardBadges(STUDENT_ID, makeContext({ correct: false }));
 
       expect(slugs).not.toContain('first_correct');
     });
@@ -197,11 +188,7 @@ describe('BadgeService', () => {
 
   describe('idempotency', () => {
     it('does NOT award a badge the student already has', async () => {
-      mockAlreadyHas(
-        BadgeType.FIRST_CORRECT,
-        BadgeType.SPEED_DEMON,
-        BadgeType.STREAK_7,
-      );
+      mockAlreadyHas(BadgeType.FIRST_CORRECT, BadgeType.SPEED_DEMON, BadgeType.STREAK_7);
       prisma.studentProblemAttempt.findMany.mockResolvedValue([]);
 
       const slugs = await service.checkAndAwardBadges(
@@ -222,10 +209,7 @@ describe('BadgeService', () => {
       mockNoBadgesYet();
       prisma.studentProblemAttempt.findMany.mockResolvedValue([]);
 
-      await service.checkAndAwardBadges(
-        STUDENT_ID,
-        makeContext({ correct: true }),
-      );
+      await service.checkAndAwardBadges(STUDENT_ID, makeContext({ correct: true }));
 
       expect(prisma.badge.createMany).toHaveBeenCalledWith(
         expect.objectContaining({ skipDuplicates: true }),

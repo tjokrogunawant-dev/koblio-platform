@@ -13,7 +13,9 @@ export class MoodController {
 
   @Get('me')
   @Roles(UserRole.STUDENT)
-  @ApiOperation({ summary: 'Get current mood state and scheduler weight shifts for the authenticated student' })
+  @ApiOperation({
+    summary: 'Get current mood state and scheduler weight shifts for the authenticated student',
+  })
   async getMyMood(@CurrentUser() user: AuthenticatedUser) {
     return this.moodService.getMoodWeights(user.userId);
   }

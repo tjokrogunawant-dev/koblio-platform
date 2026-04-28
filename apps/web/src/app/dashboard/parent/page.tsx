@@ -8,12 +8,7 @@ import { getChildProgress, getMyChildren, type ChildProgress, type ChildRef } fr
 
 function AccuracyBar({ percent }: { percent: number }) {
   const clamped = Math.max(0, Math.min(100, percent));
-  const color =
-    clamped >= 80
-      ? 'bg-green-500'
-      : clamped >= 50
-        ? 'bg-yellow-400'
-        : 'bg-red-400';
+  const color = clamped >= 80 ? 'bg-green-500' : clamped >= 50 ? 'bg-yellow-400' : 'bg-red-400';
   return (
     <div className="flex items-center gap-2">
       <div className="h-2.5 w-32 overflow-hidden rounded-full bg-slate-100">
@@ -33,13 +28,12 @@ function XPBar({ xp, level }: { xp: number; level: number }) {
     <div>
       <div className="mb-1 flex items-center justify-between text-xs text-slate-500">
         <span>Level {level}</span>
-        <span>{xpInLevel}/{xpPerLevel} XP</span>
+        <span>
+          {xpInLevel}/{xpPerLevel} XP
+        </span>
       </div>
       <div className="h-2 w-full overflow-hidden rounded-full bg-slate-100">
-        <div
-          className="h-full bg-indigo-500"
-          style={{ width: `${progressPct}%` }}
-        />
+        <div className="h-full bg-indigo-500" style={{ width: `${progressPct}%` }} />
       </div>
     </div>
   );
@@ -69,12 +63,8 @@ function ChildProgressCard({ child, token }: { child: ChildRef; token: string })
         </div>
         {progress && (
           <div className="flex items-center gap-3">
-            <span className="text-sm text-slate-500">
-              🔥 {progress.streakCount}
-            </span>
-            <span className="text-sm text-slate-500">
-              🪙 {progress.coins.toLocaleString()}
-            </span>
+            <span className="text-sm text-slate-500">🔥 {progress.streakCount}</span>
+            <span className="text-sm text-slate-500">🪙 {progress.coins.toLocaleString()}</span>
           </div>
         )}
       </div>
@@ -89,15 +79,11 @@ function ChildProgressCard({ child, token }: { child: ChildRef; token: string })
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
             <div className="rounded-lg bg-slate-50 p-3">
               <p className="text-xs text-slate-500">Problems Attempted</p>
-              <p className="mt-1 text-xl font-bold text-slate-800">
-                {progress.totalAttempts}
-              </p>
+              <p className="mt-1 text-xl font-bold text-slate-800">{progress.totalAttempts}</p>
             </div>
             <div className="rounded-lg bg-slate-50 p-3">
               <p className="text-xs text-slate-500">Correct</p>
-              <p className="mt-1 text-xl font-bold text-slate-800">
-                {progress.correctAttempts}
-              </p>
+              <p className="mt-1 text-xl font-bold text-slate-800">{progress.correctAttempts}</p>
             </div>
             <div className="rounded-lg bg-slate-50 p-3 sm:col-span-1 col-span-2">
               <p className="text-xs text-slate-500">Accuracy</p>
@@ -109,9 +95,7 @@ function ChildProgressCard({ child, token }: { child: ChildRef; token: string })
 
           {progress.topicBreakdown.length > 0 && (
             <div>
-              <h4 className="mb-2 text-sm font-medium text-slate-700">
-                Topic Breakdown
-              </h4>
+              <h4 className="mb-2 text-sm font-medium text-slate-700">Topic Breakdown</h4>
               <div className="overflow-hidden rounded-lg border border-slate-100">
                 <table className="w-full text-sm">
                   <thead>
@@ -174,29 +158,20 @@ export default function ParentDashboardPage() {
 
       <main className="mx-auto max-w-4xl space-y-8 p-8">
         <div>
-          <h1 className="text-3xl font-bold text-slate-800">
-            Parent Dashboard
-          </h1>
-          <p className="mt-1 text-slate-500">
-            Welcome, {user?.name ?? 'Parent'}
-          </p>
+          <h1 className="text-3xl font-bold text-slate-800">Parent Dashboard</h1>
+          <p className="mt-1 text-slate-500">Welcome, {user?.name ?? 'Parent'}</p>
         </div>
 
         <section>
-          <h2 className="mb-4 text-xl font-semibold text-slate-800">
-            My Children
-          </h2>
+          <h2 className="mb-4 text-xl font-semibold text-slate-800">My Children</h2>
 
           {loadingChildren ? (
             <p className="text-sm text-slate-400">Loading…</p>
           ) : children.length === 0 ? (
             <div className="rounded-xl border border-dashed border-slate-300 bg-white px-8 py-12 text-center">
-              <p className="text-base font-medium text-slate-600">
-                No children linked yet
-              </p>
+              <p className="text-base font-medium text-slate-600">No children linked yet</p>
               <p className="mt-2 text-sm text-slate-400">
-                Ask your child&apos;s teacher for the class code, then link your
-                child at{' '}
+                Ask your child&apos;s teacher for the class code, then link your child at{' '}
                 <span className="font-medium text-indigo-600">Settings</span>.
               </p>
             </div>

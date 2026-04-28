@@ -17,10 +17,7 @@ describe('ContentController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ContentController],
-      providers: [
-        ContentService,
-        { provide: PrismaService, useValue: mockPrismaService },
-      ],
+      providers: [ContentService, { provide: PrismaService, useValue: mockPrismaService }],
     }).compile();
 
     controller = module.get<ContentController>(ContentController);

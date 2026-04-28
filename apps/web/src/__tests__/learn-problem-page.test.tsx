@@ -9,13 +9,9 @@ jest.mock('next/navigation', () => ({
 }));
 
 jest.mock('next/link', () => {
-  const MockLink = ({
-    children,
-    href,
-  }: {
-    children: React.ReactNode;
-    href: string;
-  }) => <a href={href}>{children}</a>;
+  const MockLink = ({ children, href }: { children: React.ReactNode; href: string }) => (
+    <a href={href}>{children}</a>
+  );
   MockLink.displayName = 'MockLink';
   return MockLink;
 });
@@ -25,12 +21,8 @@ jest.mock('@/components/providers/auth-provider', () => ({
 }));
 
 jest.mock('react-katex', () => ({
-  InlineMath: ({ math }: { math: string }) => (
-    <span data-testid="inline-math">{math}</span>
-  ),
-  BlockMath: ({ math }: { math: string }) => (
-    <div data-testid="block-math">{math}</div>
-  ),
+  InlineMath: ({ math }: { math: string }) => <span data-testid="inline-math">{math}</span>,
+  BlockMath: ({ math }: { math: string }) => <div data-testid="block-math">{math}</div>,
 }));
 
 jest.mock('katex/dist/katex.min.css', () => ({}));

@@ -1,13 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from '../card';
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '../card';
 
 describe('Card', () => {
   it('renders Card with children', () => {
@@ -44,7 +37,11 @@ describe('Card', () => {
   });
 
   it('merges custom className', () => {
-    render(<Card className="extra" data-testid="card">Hi</Card>);
+    render(
+      <Card className="extra" data-testid="card">
+        Hi
+      </Card>,
+    );
     expect(screen.getByTestId('card').className).toContain('extra');
   });
 });

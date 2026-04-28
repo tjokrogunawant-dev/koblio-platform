@@ -1,8 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { Difficulty } from '@prisma/client';
 import { AssignmentService } from './assignment.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -122,18 +119,16 @@ describe('AssignmentService', () => {
     it('should throw NotFoundException if teacher not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.createAssignment('auth0|unknown', dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createAssignment('auth0|unknown', dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException if classroom not found', async () => {
       prisma.user.findUnique.mockResolvedValue(mockTeacher);
       prisma.classroom.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.createAssignment(TEACHER_AUTH0, dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createAssignment(TEACHER_AUTH0, dto)).rejects.toThrow(NotFoundException);
     });
 
     it('should throw ForbiddenException if teacher does not own the classroom', async () => {
@@ -143,9 +138,9 @@ describe('AssignmentService', () => {
         teacherId: 'different-teacher-id',
       });
 
-      await expect(
-        service.createAssignment(TEACHER_AUTH0, dto),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.createAssignment(TEACHER_AUTH0, dto)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 
@@ -172,9 +167,9 @@ describe('AssignmentService', () => {
     it('should throw NotFoundException if teacher not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.listTeacherAssignments('auth0|unknown'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.listTeacherAssignments('auth0|unknown')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -219,9 +214,9 @@ describe('AssignmentService', () => {
     it('should throw NotFoundException if student not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getStudentAssignments('auth0|unknown'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getStudentAssignments('auth0|unknown')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -247,9 +242,7 @@ describe('AssignmentService', () => {
 
     it('should submit answers and return correct count', async () => {
       prisma.user.findUnique.mockResolvedValue(mockStudent);
-      prisma.assignment.findUnique.mockResolvedValue(
-        mockAssignmentWithEnrollment,
-      );
+      prisma.assignment.findUnique.mockResolvedValue(mockAssignmentWithEnrollment);
       attemptService.submitAnswer.mockResolvedValue({
         correct: true,
         correctAnswer: '42',
@@ -261,11 +254,7 @@ describe('AssignmentService', () => {
       });
       prisma.assignmentSubmission.upsert.mockResolvedValue({});
 
-      const result = await service.submitAssignment(
-        STUDENT_AUTH0,
-        mockAssignment.id,
-        dto,
-      );
+      const result = await service.submitAssignment(STUDENT_AUTH0, mockAssignment.id, dto);
 
       expect(result.correct).toBe(1);
       expect(result.total).toBe(1);
@@ -276,9 +265,9 @@ describe('AssignmentService', () => {
       prisma.user.findUnique.mockResolvedValue(mockStudent);
       prisma.assignment.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.submitAssignment(STUDENT_AUTH0, 'nonexistent', dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.submitAssignment(STUDENT_AUTH0, 'nonexistent', dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException if student not enrolled', async () => {
@@ -288,9 +277,9 @@ describe('AssignmentService', () => {
         classroom: { ...mockClassroom, enrollments: [] },
       });
 
-      await expect(
-        service.submitAssignment(STUDENT_AUTH0, mockAssignment.id, dto),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.submitAssignment(STUDENT_AUTH0, mockAssignment.id, dto)).rejects.toThrow(
+        ForbiddenException,
+      );
     });
   });
 });

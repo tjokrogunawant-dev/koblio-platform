@@ -1,12 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  ArrayMaxSize,
-  ArrayMinSize,
-  IsArray,
-  IsEmail,
-  IsEnum,
-  IsString,
-} from 'class-validator';
+import { ArrayMaxSize, ArrayMinSize, IsArray, IsEmail, IsEnum, IsString } from 'class-validator';
 
 enum LoginKind {
   EMAIL = 'email',

@@ -2,9 +2,9 @@ import { Injectable } from '@nestjs/common';
 
 export interface BktParams {
   pL0: number; // prior = 0.1
-  pT: number;  // transit = 0.1
-  pG: number;  // guess = 0.25
-  pS: number;  // slip = 0.1
+  pT: number; // transit = 0.1
+  pG: number; // guess = 0.25
+  pS: number; // slip = 0.1
 }
 
 export const DEFAULT_BKT_PARAMS: BktParams = {

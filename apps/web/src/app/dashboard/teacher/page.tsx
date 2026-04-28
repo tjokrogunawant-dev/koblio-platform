@@ -73,10 +73,7 @@ export default function TeacherDashboardPage() {
         { name: newClassName.trim(), grade: newClassGrade },
         token,
       );
-      setClassrooms((prev) => [
-        ...prev,
-        { ...created, studentCount: 0 },
-      ]);
+      setClassrooms((prev) => [...prev, { ...created, studentCount: 0 }]);
       setNewClassName('');
       setNewClassGrade(1);
       setShowNewClass(false);
@@ -108,9 +105,7 @@ export default function TeacherDashboardPage() {
         {/* Page title */}
         <div>
           <h1 className="text-3xl font-bold text-slate-800">Teacher Dashboard</h1>
-          <p className="mt-1 text-slate-500">
-            Welcome back, {user?.name ?? 'Teacher'}
-          </p>
+          <p className="mt-1 text-slate-500">Welcome back, {user?.name ?? 'Teacher'}</p>
         </div>
 
         {/* ── My Classes ─────────────────────────────────────────────────────── */}
@@ -129,13 +124,13 @@ export default function TeacherDashboardPage() {
           {/* Inline new-class form */}
           {showNewClass && (
             <form
-              onSubmit={(e) => { void handleCreateClass(e); }}
+              onSubmit={(e) => {
+                void handleCreateClass(e);
+              }}
               className="mb-4 rounded-xl border border-indigo-200 bg-indigo-50 p-5 space-y-4"
             >
               <h3 className="text-sm font-semibold text-indigo-800">Create a New Class</h3>
-              {createError && (
-                <p className="text-sm text-red-600">{createError}</p>
-              )}
+              {createError && <p className="text-sm text-red-600">{createError}</p>}
               <div className="flex flex-col gap-3 sm:flex-row">
                 <div className="flex-1">
                   <label className="mb-1 block text-xs font-medium text-slate-600">
@@ -151,9 +146,7 @@ export default function TeacherDashboardPage() {
                   />
                 </div>
                 <div>
-                  <label className="mb-1 block text-xs font-medium text-slate-600">
-                    Grade
-                  </label>
+                  <label className="mb-1 block text-xs font-medium text-slate-600">Grade</label>
                   <select
                     value={newClassGrade}
                     onChange={(e) => setNewClassGrade(Number(e.target.value))}
@@ -221,9 +214,7 @@ export default function TeacherDashboardPage() {
         {/* ── Recent Assignments ─────────────────────────────────────────────── */}
         <section>
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-xl font-semibold text-slate-800">
-              Recent Assignments
-            </h2>
+            <h2 className="text-xl font-semibold text-slate-800">Recent Assignments</h2>
             <Link
               href="/dashboard/teacher/assignments/new"
               className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-2 text-sm font-semibold text-white hover:bg-indigo-700"

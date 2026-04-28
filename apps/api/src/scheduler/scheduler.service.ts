@@ -75,11 +75,7 @@ export class SchedulerService {
    * Record a review outcome for a student+problem pair, updating FSRS state.
    * Uses upsert so first-time reviews create the card state.
    */
-  async recordReview(
-    studentId: string,
-    problemId: string,
-    rating: 1 | 2 | 3 | 4,
-  ): Promise<void> {
+  async recordReview(studentId: string, problemId: string, rating: 1 | 2 | 3 | 4): Promise<void> {
     const now = new Date();
 
     // Fetch existing card state (if any)
@@ -105,10 +101,7 @@ export class SchedulerService {
         ? (now.getTime() - existing.lastReview.getTime()) / (1000 * 60 * 60 * 24)
         : 0;
 
-      const retrievability = this.fsrs.computeRetrievability(
-        existing.stability,
-        daysSinceLast,
-      );
+      const retrievability = this.fsrs.computeRetrievability(existing.stability, daysSinceLast);
 
       const result = this.fsrs.computeNextState(
         {
@@ -156,11 +149,7 @@ export class SchedulerService {
    * Priority: due cards first, then new cards.
    * @deprecated Use getNextProblemBlended — this method ignores mood weights and BKT scoring.
    */
-  async getNextProblem(
-    studentId: string,
-    grade: number,
-    topic: string,
-  ): Promise<Problem | null> {
+  async getNextProblem(studentId: string, grade: number, topic: string): Promise<Problem | null> {
     // 1. Check for a due card
     const dueCards = await this.getDueCards(studentId, 1);
     if (dueCards.length > 0) {
@@ -204,9 +193,7 @@ export class SchedulerService {
         weights = result.weights;
         mood = result.mood;
       } catch (err) {
-        this.logger.warn(
-          `MoodService.getMoodWeights failed, using FLOW defaults: ${String(err)}`,
-        );
+        this.logger.warn(`MoodService.getMoodWeights failed, using FLOW defaults: ${String(err)}`);
       }
     }
 
@@ -266,8 +253,7 @@ export class SchedulerService {
       // FSRS urgency
       let fsrsUrgency = 0;
       if (cardState) {
-        const daysSinceDue =
-          (now - cardState.dueDate.getTime()) / (1000 * 60 * 60 * 24);
+        const daysSinceDue = (now - cardState.dueDate.getTime()) / (1000 * 60 * 60 * 24);
         const stability = Math.max(cardState.stability, 1);
         fsrsUrgency = Math.max(0, daysSinceDue / stability);
       }

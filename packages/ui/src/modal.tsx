@@ -1,8 +1,4 @@
-import {
-  type ComponentPropsWithoutRef,
-  type HTMLAttributes,
-  forwardRef,
-} from 'react';
+import { type ComponentPropsWithoutRef, type HTMLAttributes, forwardRef } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { cn } from './cn';
 
@@ -61,10 +57,7 @@ const ModalFooter = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
-      className={cn(
-        'flex flex-col-reverse gap-2 sm:flex-row sm:justify-end',
-        className,
-      )}
+      className={cn('flex flex-col-reverse gap-2 sm:flex-row sm:justify-end', className)}
       {...props}
     />
   ),

@@ -30,8 +30,6 @@ describe('LearnPage — Topic Browser', () => {
 
   it('shows "Start Learning" heading on the grade step', () => {
     render(<LearnPage />);
-    expect(
-      screen.getByRole('heading', { name: /start learning/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /start learning/i })).toBeInTheDocument();
   });
 });

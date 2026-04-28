@@ -61,11 +61,7 @@ describe('UserController', () => {
 
       const result = await controller.createChild(user, dto, '10.0.0.1');
 
-      expect(userService.createChildAccount).toHaveBeenCalledWith(
-        'auth0|parent1',
-        dto,
-        '10.0.0.1',
-      );
+      expect(userService.createChildAccount).toHaveBeenCalledWith('auth0|parent1', dto, '10.0.0.1');
       expect(result).toEqual({ id: 'child-1' });
     });
 
@@ -85,11 +81,7 @@ describe('UserController', () => {
 
       await controller.createChild(user, dto, '');
 
-      expect(userService.createChildAccount).toHaveBeenCalledWith(
-        'auth0|parent1',
-        dto,
-        'unknown',
-      );
+      expect(userService.createChildAccount).toHaveBeenCalledWith('auth0|parent1', dto, 'unknown');
     });
   });
 
@@ -144,11 +136,7 @@ describe('UserController', () => {
 
       const result = await controller.joinClass(user, childId, dto);
 
-      expect(userService.joinClassByCode).toHaveBeenCalledWith(
-        'auth0|parent1',
-        childId,
-        dto,
-      );
+      expect(userService.joinClassByCode).toHaveBeenCalledWith('auth0|parent1', childId, dto);
       expect(result).toEqual(expected);
     });
   });
@@ -168,10 +156,7 @@ describe('UserController', () => {
 
       const result = await controller.createSchool(user, dto);
 
-      expect(userService.createSchool).toHaveBeenCalledWith(
-        'auth0|teacher1',
-        dto,
-      );
+      expect(userService.createSchool).toHaveBeenCalledWith('auth0|teacher1', dto);
       expect(result).toEqual({ id: 'school-1', name: 'Test School' });
     });
   });

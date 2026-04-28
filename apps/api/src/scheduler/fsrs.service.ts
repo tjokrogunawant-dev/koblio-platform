@@ -23,7 +23,7 @@ const INITIAL_STABILITY: Record<1 | 2 | 3 | 4, number> = {
 
 // Easy penalty coefficient for post-review stability formula
 const STABILITY_PENALTY: Record<3 | 4, number> = {
-  4: 0.0,  // Easy — no penalty
+  4: 0.0, // Easy — no penalty
   3: -0.15, // Good — small penalty
 };
 
@@ -67,11 +67,7 @@ export class FsrsService {
    * Next review interval (90% retention target):
    *   I = S * 9/10  (derived from R_target = 0.9 = e^(-I/(9S)))
    */
-  computeNextState(
-    card: CardState,
-    rating: 1 | 2 | 3 | 4,
-    retrievability: number,
-  ): ReviewResult {
+  computeNextState(card: CardState, rating: 1 | 2 | 3 | 4, retrievability: number): ReviewResult {
     const { stability, difficulty } = card;
 
     // Clamp R to valid range
@@ -83,8 +79,7 @@ export class FsrsService {
       // Correct review: Good (3) or Easy (4)
       const penalty = STABILITY_PENALTY[rating as 3 | 4];
       newStability =
-        stability *
-        Math.exp(0.9 * (11 - difficulty) * (Math.pow(R, 0.5) - 1) + penalty);
+        stability * Math.exp(0.9 * (11 - difficulty) * (Math.pow(R, 0.5) - 1) + penalty);
     } else {
       // Failed review: Again (1) or Hard (2)
       newStability = stability * Math.exp(-0.3 * R);

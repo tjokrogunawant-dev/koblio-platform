@@ -44,40 +44,76 @@ export class AuthService {
     return { module: 'auth', status: 'operational' };
   }
 
-  private issueToken(id: string, role: string, email: string | undefined, name: string): AuthResult {
+  private issueToken(
+    id: string,
+    role: string,
+    email: string | undefined,
+    name: string,
+  ): AuthResult {
     const payload = { sub: id, roles: [role], iss: 'koblio-internal', email };
-    return { access_token: this.jwtService.sign(payload), expires_in: 3600, user: { id, role, email, name } };
+    return {
+      access_token: this.jwtService.sign(payload),
+      expires_in: 3600,
+      user: { id, role, email, name },
+    };
   }
 
-  async registerParent(dto: RegisterParentDto): Promise<{ authResult: AuthResult; refreshToken: string }> {
+  async registerParent(
+    dto: RegisterParentDto,
+  ): Promise<{ authResult: AuthResult; refreshToken: string }> {
     const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (existing) throw new ConflictException('Email already registered');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const user = await this.prisma.user.create({
-      data: { email: dto.email, role: PrismaUserRole.PARENT, displayName: dto.name, passwordHash, country: dto.country, locale: dto.locale },
+      data: {
+        email: dto.email,
+        role: PrismaUserRole.PARENT,
+        displayName: dto.name,
+        passwordHash,
+        country: dto.country,
+        locale: dto.locale,
+      },
     });
 
     this.logger.log(`Parent registered: ${user.id}`);
-    return { authResult: this.issueToken(user.id, 'parent', user.email ?? undefined, user.displayName), refreshToken: '' };
+    return {
+      authResult: this.issueToken(user.id, 'parent', user.email ?? undefined, user.displayName),
+      refreshToken: '',
+    };
   }
 
-  async registerTeacher(dto: RegisterTeacherDto): Promise<{ authResult: AuthResult; refreshToken: string }> {
+  async registerTeacher(
+    dto: RegisterTeacherDto,
+  ): Promise<{ authResult: AuthResult; refreshToken: string }> {
     const existing = await this.prisma.user.findUnique({ where: { email: dto.email } });
     if (existing) throw new ConflictException('Email already registered');
 
     const passwordHash = await bcrypt.hash(dto.password, 10);
     const user = await this.prisma.$transaction(async (tx) => {
       const newUser = await tx.user.create({
-        data: { email: dto.email, role: PrismaUserRole.TEACHER, displayName: dto.name, passwordHash, country: dto.school_country },
+        data: {
+          email: dto.email,
+          role: PrismaUserRole.TEACHER,
+          displayName: dto.name,
+          passwordHash,
+          country: dto.school_country,
+        },
       });
-      const school = await tx.school.create({ data: { name: dto.school_name, country: dto.school_country } });
-      await tx.schoolTeacher.create({ data: { teacherId: newUser.id, schoolId: school.id, role: 'SCHOOL_ADMIN' } });
+      const school = await tx.school.create({
+        data: { name: dto.school_name, country: dto.school_country },
+      });
+      await tx.schoolTeacher.create({
+        data: { teacherId: newUser.id, schoolId: school.id, role: 'SCHOOL_ADMIN' },
+      });
       return newUser;
     });
 
     this.logger.log(`Teacher registered: ${user.id}`);
-    return { authResult: this.issueToken(user.id, 'teacher', user.email ?? undefined, user.displayName), refreshToken: '' };
+    return {
+      authResult: this.issueToken(user.id, 'teacher', user.email ?? undefined, user.displayName),
+      refreshToken: '',
+    };
   }
 
   async login(dto: EmailLoginDto): Promise<{ authResult: AuthResult; refreshToken: string }> {
@@ -87,15 +123,30 @@ export class AuthService {
     const valid = await bcrypt.compare(dto.password, user.passwordHash);
     if (!valid) throw new UnauthorizedException('Invalid credentials');
 
-    return { authResult: this.issueToken(user.id, user.role.toLowerCase(), user.email ?? undefined, user.displayName), refreshToken: '' };
+    return {
+      authResult: this.issueToken(
+        user.id,
+        user.role.toLowerCase(),
+        user.email ?? undefined,
+        user.displayName,
+      ),
+      refreshToken: '',
+    };
   }
 
-  async refresh(refreshToken: string): Promise<{ access_token: string; expires_in: number; newRefreshToken?: string }> {
+  async refresh(
+    refreshToken: string,
+  ): Promise<{ access_token: string; expires_in: number; newRefreshToken?: string }> {
     try {
       const payload = this.jwtService.verify(refreshToken);
       const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
       if (!user) throw new UnauthorizedException('User not found');
-      const result = this.issueToken(user.id, user.role.toLowerCase(), user.email ?? undefined, user.displayName);
+      const result = this.issueToken(
+        user.id,
+        user.role.toLowerCase(),
+        user.email ?? undefined,
+        user.displayName,
+      );
       return { access_token: result.access_token, expires_in: result.expires_in };
     } catch {
       throw new UnauthorizedException('Invalid refresh token');
@@ -297,5 +348,4 @@ export class AuthService {
       }),
     ]);
   }
-
 }

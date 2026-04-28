@@ -14,9 +14,7 @@ export default function ProfileSetupPage() {
   const router = useRouter();
   const { user, token, updateUser } = useAuth();
 
-  const [selected, setSelected] = useState<string | null>(
-    user?.avatarSlug ?? null,
-  );
+  const [selected, setSelected] = useState<string | null>(user?.avatarSlug ?? null);
   const [displayName, setDisplayName] = useState(user?.name ?? '');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -47,9 +45,7 @@ export default function ProfileSetupPage() {
     <div className="min-h-screen bg-slate-50 flex items-start justify-center pt-16 px-4">
       <div className="w-full max-w-lg">
         <div className="bg-white rounded-2xl shadow-sm border border-slate-200 p-8">
-          <h1 className="text-2xl font-bold text-slate-800 mb-1">
-            Set up your profile
-          </h1>
+          <h1 className="text-2xl font-bold text-slate-800 mb-1">Set up your profile</h1>
           <p className="text-slate-500 text-sm mb-6">
             Choose a name and avatar that represents you!
           </p>
@@ -93,17 +89,13 @@ export default function ProfileSetupPage() {
                   aria-label={`Select ${slug} avatar`}
                 >
                   <Avatar slug={slug} size="lg" />
-                  <span className="text-xs font-medium text-slate-700 capitalize">
-                    {slug}
-                  </span>
+                  <span className="text-xs font-medium text-slate-700 capitalize">{slug}</span>
                 </button>
               );
             })}
           </div>
 
-          {error && (
-            <p className="text-sm text-red-600 mb-4 text-center">{error}</p>
-          )}
+          {error && <p className="text-sm text-red-600 mb-4 text-center">{error}</p>}
 
           <div className="flex items-center gap-3">
             <Button

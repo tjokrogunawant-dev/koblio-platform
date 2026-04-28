@@ -8,11 +8,7 @@ export const metadata: Metadata = {
   description: 'Gamified adaptive math learning for K-6 students',
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <body className="min-h-screen bg-background antialiased">

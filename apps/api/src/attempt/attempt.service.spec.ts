@@ -89,8 +89,14 @@ describe('AttemptService', () => {
         { provide: PrismaService, useValue: prisma },
         { provide: GamificationService, useValue: gamification },
         { provide: BadgeService, useValue: badgeService },
-        { provide: MasteryService, useValue: { recordAttempt: jest.fn().mockResolvedValue({ justMastered: false }) } },
-        { provide: SchedulerService, useValue: { recordReview: jest.fn().mockResolvedValue(undefined) } },
+        {
+          provide: MasteryService,
+          useValue: { recordAttempt: jest.fn().mockResolvedValue({ justMastered: false }) },
+        },
+        {
+          provide: SchedulerService,
+          useValue: { recordReview: jest.fn().mockResolvedValue(undefined) },
+        },
         { provide: LeaderboardService, useValue: leaderboardService },
       ],
     }).compile();
@@ -222,7 +228,10 @@ describe('AttemptService', () => {
       expect(gamification.updateStreak).toHaveBeenCalledWith(STUDENT_ID);
       expect(badgeService.checkAndAwardBadges).toHaveBeenCalledWith(
         STUDENT_ID,
-        expect.objectContaining({ correct: true, studentStats: expect.objectContaining({ streakCount: 1 }) }),
+        expect.objectContaining({
+          correct: true,
+          studentStats: expect.objectContaining({ streakCount: 1 }),
+        }),
       );
     });
 
@@ -231,10 +240,18 @@ describe('AttemptService', () => {
       prisma.studentProblemAttempt.create.mockResolvedValue(mockAttempt);
       leaderboardService.getStudentRank.mockResolvedValue(0); // rank 1 (0-indexed)
 
-      await service.submitAnswer(STUDENT_ID, { problemId: PROBLEM_ID, answer: '5', timeSpentMs: 3000 });
+      await service.submitAnswer(STUDENT_ID, {
+        problemId: PROBLEM_ID,
+        answer: '5',
+        timeSpentMs: 3000,
+      });
 
       expect(gamification.awardForAttempt).toHaveBeenCalledWith(
-        STUDENT_ID, 'EASY', true, ATTEMPT_ID, CLASSROOM_ID,
+        STUDENT_ID,
+        'EASY',
+        true,
+        ATTEMPT_ID,
+        CLASSROOM_ID,
       );
       expect(badgeService.checkAndAwardBadges).toHaveBeenCalledWith(
         STUDENT_ID,
@@ -330,10 +347,7 @@ describe('AttemptService', () => {
     it('should return attempts filtered by student and problem', async () => {
       prisma.studentProblemAttempt.findMany.mockResolvedValue([mockAttempt]);
 
-      const result = await service.getStudentProblemAttempts(
-        STUDENT_ID,
-        PROBLEM_ID,
-      );
+      const result = await service.getStudentProblemAttempts(STUDENT_ID, PROBLEM_ID);
 
       expect(result).toHaveLength(1);
       expect(prisma.studentProblemAttempt.findMany).toHaveBeenCalledWith(

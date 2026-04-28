@@ -42,7 +42,9 @@ export default function StudentHomePage() {
   }, [token]);
 
   useEffect(() => {
-    void getDailyChallenge(grade).then((p) => setDailyChallenge(p)).catch(() => {});
+    void getDailyChallenge(grade)
+      .then((p) => setDailyChallenge(p))
+      .catch(() => {});
   }, [grade]);
 
   function handleLogout() {
@@ -68,9 +70,7 @@ export default function StudentHomePage() {
         <div className="flex items-center gap-4">
           <Avatar slug={user?.avatarSlug} size="lg" name={displayName} />
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">
-              Welcome back, {displayName}!
-            </h1>
+            <h1 className="text-3xl font-bold text-slate-800">Welcome back, {displayName}!</h1>
             <p className="mt-1 text-slate-500">Grade {grade}</p>
           </div>
         </div>
@@ -96,11 +96,7 @@ export default function StudentHomePage() {
         </div>
 
         {/* Daily Challenge */}
-        <DailyChallengeCard
-          problem={dailyChallenge}
-          grade={grade}
-          onStart={handleStartChallenge}
-        />
+        <DailyChallengeCard problem={dailyChallenge} grade={grade} onStart={handleStartChallenge} />
 
         {/* Practice CTA */}
         <div>

@@ -27,7 +27,9 @@ export function CoinCounter({ coins, animated = false }: CoinCounterProps) {
         scaled ? 'scale-125' : 'scale-100'
       }`}
     >
-      <span role="img" aria-label="coins">🪙</span>
+      <span role="img" aria-label="coins">
+        🪙
+      </span>
       <span>{coins.toLocaleString()}</span>
     </span>
   );

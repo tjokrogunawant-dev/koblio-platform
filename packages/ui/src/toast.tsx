@@ -20,26 +20,14 @@ const toastVariants = cva(
 );
 
 export interface ToastProps
-  extends HTMLAttributes<HTMLDivElement>,
-    VariantProps<typeof toastVariants> {
+  extends HTMLAttributes<HTMLDivElement>, VariantProps<typeof toastVariants> {
   open?: boolean;
   onClose?: () => void;
   duration?: number;
 }
 
 const Toast = forwardRef<HTMLDivElement, ToastProps>(
-  (
-    {
-      className,
-      variant,
-      open = true,
-      onClose,
-      duration = 5000,
-      children,
-      ...props
-    },
-    ref,
-  ) => {
+  ({ className, variant, open = true, onClose, duration = 5000, children, ...props }, ref) => {
     const [visible, setVisible] = useState(open);
 
     const handleClose = useCallback(() => {
@@ -85,25 +73,16 @@ Toast.displayName = 'Toast';
 
 const ToastTitle = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div
-      ref={ref}
-      className={cn('text-sm font-bold', className)}
-      {...props}
-    />
+    <div ref={ref} className={cn('text-sm font-bold', className)} {...props} />
   ),
 );
 ToastTitle.displayName = 'ToastTitle';
 
-const ToastDescription = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn('text-sm text-muted-foreground', className)}
-    {...props}
-  />
-));
+const ToastDescription = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div ref={ref} className={cn('text-sm text-muted-foreground', className)} {...props} />
+  ),
+);
 ToastDescription.displayName = 'ToastDescription';
 
 export { Toast, ToastTitle, ToastDescription, toastVariants };

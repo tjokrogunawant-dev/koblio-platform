@@ -58,11 +58,7 @@ export default function StudentAssignmentSolvePage() {
   const { token } = useAuth();
 
   const assignmentId =
-    typeof params.id === 'string'
-      ? params.id
-      : Array.isArray(params.id)
-        ? params.id[0]
-        : '';
+    typeof params.id === 'string' ? params.id : Array.isArray(params.id) ? params.id[0] : '';
 
   const [pageState, setPageState] = useState<PageState>('LOADING');
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -162,8 +158,7 @@ export default function StudentAssignmentSolvePage() {
       const localResults = problems.map((p) => {
         const entry = allAnswers.find((a) => a.problemId === p.id);
         const isCorrect =
-          !!entry &&
-          entry.answer.trim().toLowerCase() === p.correctAnswer.trim().toLowerCase();
+          !!entry && entry.answer.trim().toLowerCase() === p.correctAnswer.trim().toLowerCase();
         return { problemId: p.id, correct: isCorrect, correctAnswer: p.correctAnswer };
       });
       const correct = localResults.filter((r) => r.correct).length;
@@ -223,8 +218,7 @@ export default function StudentAssignmentSolvePage() {
   // ── RESULTS ─────────────────────────────────────────────────────────────────
 
   if (pageState === 'RESULTS' && results) {
-    const pct =
-      results.total > 0 ? Math.round((results.correct / results.total) * 100) : 0;
+    const pct = results.total > 0 ? Math.round((results.correct / results.total) * 100) : 0;
 
     return (
       <div className="min-h-screen bg-slate-50">
@@ -241,11 +235,7 @@ export default function StudentAssignmentSolvePage() {
           <div className="text-center">
             <div
               className={`mx-auto mb-4 flex h-20 w-20 items-center justify-center rounded-full text-3xl ${
-                pct >= 80
-                  ? 'bg-green-100'
-                  : pct >= 50
-                    ? 'bg-yellow-100'
-                    : 'bg-red-100'
+                pct >= 80 ? 'bg-green-100' : pct >= 50 ? 'bg-yellow-100' : 'bg-red-100'
               }`}
             >
               {pct >= 80 ? '🎉' : pct >= 50 ? '👍' : '💪'}
@@ -269,15 +259,8 @@ export default function StudentAssignmentSolvePage() {
                     const p = problems.find((prob) => prob.id === r.problemId);
                     const yourAnswer = answers.find((a) => a.problemId === r.problemId)?.answer;
                     return (
-                      <div
-                        key={r.problemId}
-                        className="rounded-lg bg-red-50 p-4 text-sm"
-                      >
-                        {p && (
-                          <p className="mb-1 font-medium text-slate-800">
-                            {p.questionText}
-                          </p>
-                        )}
+                      <div key={r.problemId} className="rounded-lg bg-red-50 p-4 text-sm">
+                        {p && <p className="mb-1 font-medium text-slate-800">{p.questionText}</p>}
                         {yourAnswer && (
                           <p className="text-red-600">
                             Your answer: <span className="font-medium">{yourAnswer}</span>
@@ -331,9 +314,7 @@ export default function StudentAssignmentSolvePage() {
         >
           ← Dashboard
         </Link>
-        <span className="text-sm font-medium text-slate-700">
-          {assignment?.title}
-        </span>
+        <span className="text-sm font-medium text-slate-700">{assignment?.title}</span>
       </header>
 
       <main className="mx-auto max-w-2xl space-y-6 p-8">
@@ -370,9 +351,7 @@ export default function StudentAssignmentSolvePage() {
                       : 'border-slate-200 bg-white'
                   }`}
                 >
-                  <span className="mr-3 font-bold text-indigo-600">
-                    {opt.label}.
-                  </span>
+                  <span className="mr-3 font-bold text-indigo-600">{opt.label}.</span>
                   {opt.text}
                 </button>
               ))}

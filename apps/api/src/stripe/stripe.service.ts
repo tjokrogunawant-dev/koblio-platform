@@ -58,10 +58,7 @@ export class StripeService {
     return customer.id;
   }
 
-  constructWebhookEvent(
-    payload: Buffer,
-    signature: string,
-  ): Stripe.Event | null {
+  constructWebhookEvent(payload: Buffer, signature: string): Stripe.Event | null {
     if (!this.stripe || !this.webhookSecret) {
       this.logger.warn(
         'Stripe webhook not configured — STRIPE_SECRET_KEY or STRIPE_WEBHOOK_SECRET missing',
@@ -70,11 +67,7 @@ export class StripeService {
     }
 
     try {
-      return this.stripe.webhooks.constructEvent(
-        payload,
-        signature,
-        this.webhookSecret,
-      );
+      return this.stripe.webhooks.constructEvent(payload, signature, this.webhookSecret);
     } catch (err) {
       this.logger.warn(`Webhook signature verification failed: ${String(err)}`);
       return null;

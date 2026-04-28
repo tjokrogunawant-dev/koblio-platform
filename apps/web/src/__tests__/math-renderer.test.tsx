@@ -3,12 +3,8 @@ import '@testing-library/jest-dom';
 
 // Mock react-katex and katex CSS since they are not available in jsdom
 jest.mock('react-katex', () => ({
-  InlineMath: ({ math }: { math: string }) => (
-    <span data-testid="inline-math">{math}</span>
-  ),
-  BlockMath: ({ math }: { math: string }) => (
-    <div data-testid="block-math">{math}</div>
-  ),
+  InlineMath: ({ math }: { math: string }) => <span data-testid="inline-math">{math}</span>,
+  BlockMath: ({ math }: { math: string }) => <div data-testid="block-math">{math}</div>,
 }));
 
 jest.mock('katex/dist/katex.min.css', () => ({}));
@@ -30,9 +26,7 @@ describe('MathRenderer', () => {
   });
 
   it('applies custom className to the wrapper span', () => {
-    const { container } = render(
-      <MathRenderer expression="\sqrt{16}" className="custom-math" />,
-    );
+    const { container } = render(<MathRenderer expression="\sqrt{16}" className="custom-math" />);
     const span = container.querySelector('span.custom-math');
     expect(span).toBeInTheDocument();
   });

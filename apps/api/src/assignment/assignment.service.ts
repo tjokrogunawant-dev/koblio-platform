@@ -1,9 +1,4 @@
-import {
-  ForbiddenException,
-  Injectable,
-  Logger,
-  NotFoundException,
-} from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { AttemptService } from '../attempt/attempt.service';
 import { CreateAssignmentDto } from './dto/create-assignment.dto';
@@ -55,9 +50,7 @@ export class AssignmentService {
       },
     });
 
-    this.logger.log(
-      `Assignment created: ${assignment.id} by teacher: ${teacher.id}`,
-    );
+    this.logger.log(`Assignment created: ${assignment.id} by teacher: ${teacher.id}`);
 
     return this.formatAssignment(assignment, classroom.name, 0);
   }
@@ -88,9 +81,7 @@ export class AssignmentService {
       orderBy: { createdAt: 'desc' },
     });
 
-    return assignments.map((a) =>
-      this.formatAssignment(a, a.classroom.name, a._count.submissions),
-    );
+    return assignments.map((a) => this.formatAssignment(a, a.classroom.name, a._count.submissions));
   }
 
   // ─── P1-T31: Student pending assignments ─────────────────────────────────
@@ -161,11 +152,7 @@ export class AssignmentService {
 
   // ─── P1-T31: Submit assignment ────────────────────────────────────────────
 
-  async submitAssignment(
-    studentAuth0Id: string,
-    assignmentId: string,
-    dto: SubmitAssignmentDto,
-  ) {
+  async submitAssignment(studentAuth0Id: string, assignmentId: string, dto: SubmitAssignmentDto) {
     const student = await this.prisma.user.findUnique({
       where: { auth0Id: studentAuth0Id },
     });
@@ -192,8 +179,7 @@ export class AssignmentService {
       throw new ForbiddenException('You are not enrolled in this classroom');
     }
 
-    const results: { problemId: string; correct: boolean; correctAnswer: string }[] =
-      [];
+    const results: { problemId: string; correct: boolean; correctAnswer: string }[] = [];
     let correct = 0;
 
     for (const answer of dto.answers) {

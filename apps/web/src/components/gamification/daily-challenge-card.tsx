@@ -17,16 +17,14 @@ function difficultyBadgeClass(difficulty: Difficulty): string {
   return map[difficulty] ?? 'bg-slate-100 text-slate-700';
 }
 
-export function DailyChallengeCard({
-  problem,
-  grade,
-  onStart,
-}: DailyChallengeCardProps) {
+export function DailyChallengeCard({ problem, grade, onStart }: DailyChallengeCardProps) {
   return (
     <div className="rounded-xl border border-amber-200 bg-amber-50 p-5 shadow-sm">
       <div className="flex items-start justify-between gap-4">
         <div className="flex items-center gap-2">
-          <span className="text-2xl" role="img" aria-label="daily challenge star">⭐</span>
+          <span className="text-2xl" role="img" aria-label="daily challenge star">
+            ⭐
+          </span>
           <div>
             <p className="font-bold text-slate-800">Daily Challenge</p>
             <p className="text-xs text-slate-500">Grade {grade}</p>
@@ -43,9 +41,7 @@ export function DailyChallengeCard({
 
       {problem ? (
         <>
-          <p className="mt-3 text-sm text-slate-700 line-clamp-2">
-            {problem.questionText}
-          </p>
+          <p className="mt-3 text-sm text-slate-700 line-clamp-2">{problem.questionText}</p>
           <button
             onClick={onStart}
             className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-amber-500 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-600 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2"
@@ -54,9 +50,7 @@ export function DailyChallengeCard({
           </button>
         </>
       ) : (
-        <p className="mt-3 text-sm text-slate-500">
-          Come back tomorrow for a new challenge!
-        </p>
+        <p className="mt-3 text-sm text-slate-500">Come back tomorrow for a new challenge!</p>
       )}
     </div>
   );

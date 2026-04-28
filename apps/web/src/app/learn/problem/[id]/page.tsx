@@ -5,12 +5,7 @@ import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { MathRenderer } from '@koblio/ui';
 import { useAuth } from '@/components/providers/auth-provider';
-import {
-  getProblem,
-  submitAnswer,
-  type Problem,
-  type Difficulty,
-} from '@/lib/api';
+import { getProblem, submitAnswer, type Problem, type Difficulty } from '@/lib/api';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -150,8 +145,7 @@ export default function ProblemPage() {
     setElapsedMs(timeSpentMs);
 
     // Optimistic local comparison — used if API is unavailable
-    const localCorrect =
-      answer.trim().toLowerCase() === problem.correctAnswer.trim().toLowerCase();
+    const localCorrect = answer.trim().toLowerCase() === problem.correctAnswer.trim().toLowerCase();
 
     try {
       const res = await submitAnswer(
@@ -220,11 +214,7 @@ export default function ProblemPage() {
   const hints = problem?.hints ?? [];
   const hasMoreHints = hintIndex < hints.length - 1;
   const hintButtonLabel =
-    hintIndex === -1
-      ? 'Hint'
-      : hasMoreHints
-        ? `Hint ${hintIndex + 2}`
-        : 'No more hints';
+    hintIndex === -1 ? 'Hint' : hasMoreHints ? `Hint ${hintIndex + 2}` : 'No more hints';
 
   // ── Render ──────────────────────────────────────────────────────────────────
 
@@ -256,10 +246,7 @@ export default function ProblemPage() {
     return (
       <div className="min-h-screen bg-slate-50">
         <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-          <Link
-            href="/learn"
-            className="text-sm font-medium text-slate-600 hover:text-indigo-600"
-          >
+          <Link href="/learn" className="text-sm font-medium text-slate-600 hover:text-indigo-600">
             ← Back to topics
           </Link>
           <button
@@ -278,7 +265,9 @@ export default function ProblemPage() {
             {' • '}
             {problem.strand}
             {' • '}
-            <span className={`rounded px-1.5 py-0.5 text-xs font-semibold ${difficultyBadge(problem.difficulty)}`}>
+            <span
+              className={`rounded px-1.5 py-0.5 text-xs font-semibold ${difficultyBadge(problem.difficulty)}`}
+            >
               {problem.difficulty}
             </span>
           </p>
@@ -298,12 +287,8 @@ export default function ProblemPage() {
             {hintIndex >= 0 && (
               <div className="mt-4 space-y-2">
                 {hints.slice(0, hintIndex + 1).map((h, i) => (
-                  <div
-                    key={i}
-                    className="rounded-lg bg-amber-50 px-4 py-2 text-sm text-amber-800"
-                  >
-                    <span className="font-semibold">Hint {i + 1}:</span>{' '}
-                    <RichText text={h} />
+                  <div key={i} className="rounded-lg bg-amber-50 px-4 py-2 text-sm text-amber-800">
+                    <span className="font-semibold">Hint {i + 1}:</span> <RichText text={h} />
                   </div>
                 ))}
               </div>
@@ -325,9 +310,7 @@ export default function ProblemPage() {
                         : 'border-slate-200 bg-white'
                     }`}
                   >
-                    <span className="mr-3 font-bold text-indigo-600">
-                      {opt.label}.
-                    </span>
+                    <span className="mr-3 font-bold text-indigo-600">{opt.label}.</span>
                     <RichText text={opt.text} />
                   </button>
                 ))}
@@ -382,10 +365,7 @@ export default function ProblemPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       <header className="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4">
-        <Link
-          href="/learn"
-          className="text-sm font-medium text-slate-600 hover:text-indigo-600"
-        >
+        <Link href="/learn" className="text-sm font-medium text-slate-600 hover:text-indigo-600">
           ← Back to topics
         </Link>
       </header>
@@ -399,16 +379,8 @@ export default function ProblemPage() {
         )}
 
         {/* Feedback banner */}
-        <div
-          className={`mb-6 rounded-xl p-5 ${
-            isCorrect ? 'bg-green-50' : 'bg-red-50'
-          }`}
-        >
-          <p
-            className={`text-2xl font-bold ${
-              isCorrect ? 'text-green-600' : 'text-red-600'
-            }`}
-          >
+        <div className={`mb-6 rounded-xl p-5 ${isCorrect ? 'bg-green-50' : 'bg-red-50'}`}>
+          <p className={`text-2xl font-bold ${isCorrect ? 'text-green-600' : 'text-red-600'}`}>
             {isCorrect ? '✅ Correct!' : '❌ Not quite.'}
           </p>
 
@@ -431,8 +403,7 @@ export default function ProblemPage() {
           {!isCorrect && result && (
             <div className="mt-3 space-y-1 text-sm">
               <p className="text-slate-600">
-                <span className="font-semibold">Your answer:</span>{' '}
-                {result.yourAnswer}
+                <span className="font-semibold">Your answer:</span> {result.yourAnswer}
               </p>
               <p className={`font-semibold ${isCorrect ? 'text-green-700' : 'text-red-700'}`}>
                 Correct answer:{' '}

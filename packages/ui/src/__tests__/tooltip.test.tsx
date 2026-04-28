@@ -1,12 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import {
-  Tooltip,
-  TooltipTrigger,
-  TooltipContent,
-  TooltipProvider,
-} from '../tooltip';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from '../tooltip';
 
 describe('Tooltip', () => {
   it('does not render tooltip content initially', () => {

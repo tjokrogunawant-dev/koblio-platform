@@ -46,7 +46,11 @@ describe('Toast', () => {
 
   it('calls onClose when auto-closing', () => {
     const onClose = jest.fn();
-    render(<Toast duration={2000} onClose={onClose}>Closing</Toast>);
+    render(
+      <Toast duration={2000} onClose={onClose}>
+        Closing
+      </Toast>,
+    );
 
     act(() => {
       jest.advanceTimersByTime(2000);
@@ -59,7 +63,11 @@ describe('Toast', () => {
     jest.useRealTimers();
     const user = userEvent.setup();
     const onClose = jest.fn();
-    render(<Toast onClose={onClose} duration={0}>Closeable</Toast>);
+    render(
+      <Toast onClose={onClose} duration={0}>
+        Closeable
+      </Toast>,
+    );
 
     await user.click(screen.getByLabelText('Close'));
     expect(onClose).toHaveBeenCalledTimes(1);

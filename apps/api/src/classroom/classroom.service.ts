@@ -29,10 +29,7 @@ export class ClassroomService {
       throw new NotFoundException('Teacher account not found');
     }
 
-    if (
-      teacher.role !== PrismaUserRole.TEACHER &&
-      teacher.role !== PrismaUserRole.ADMIN
-    ) {
+    if (teacher.role !== PrismaUserRole.TEACHER && teacher.role !== PrismaUserRole.ADMIN) {
       throw new ForbiddenException('Only teachers can create classrooms');
     }
 
@@ -46,9 +43,7 @@ export class ClassroomService {
         },
       });
       if (!schoolTeacher) {
-        throw new ForbiddenException(
-          'You are not a member of the specified school',
-        );
+        throw new ForbiddenException('You are not a member of the specified school');
       }
     }
 
@@ -64,9 +59,7 @@ export class ClassroomService {
       },
     });
 
-    this.logger.log(
-      `Classroom created: ${classroom.id} by teacher: ${teacher.id}`,
-    );
+    this.logger.log(`Classroom created: ${classroom.id} by teacher: ${teacher.id}`);
 
     return {
       id: classroom.id,
@@ -145,9 +138,7 @@ export class ClassroomService {
       },
     });
 
-    this.logger.log(
-      `Student ${dto.student_id} enrolled in classroom ${classroomId}`,
-    );
+    this.logger.log(`Student ${dto.student_id} enrolled in classroom ${classroomId}`);
 
     return {
       id: enrollment.id,
@@ -225,9 +216,7 @@ export class ClassroomService {
         const totalAttempts = attempts.length;
         const correctAttempts = attempts.filter((a) => a.correct).length;
         const accuracyPercent =
-          totalAttempts === 0
-            ? 0
-            : Math.round((correctAttempts / totalAttempts) * 100);
+          totalAttempts === 0 ? 0 : Math.round((correctAttempts / totalAttempts) * 100);
 
         const topicMap = new Map<string, { attempted: number; correct: number }>();
         for (const attempt of attempts) {
@@ -238,13 +227,11 @@ export class ClassroomService {
           topicMap.set(topic, entry);
         }
 
-        const topicBreakdown = Array.from(topicMap.entries()).map(
-          ([topic, stats]) => ({
-            topic,
-            attempted: stats.attempted,
-            correct: stats.correct,
-          }),
-        );
+        const topicBreakdown = Array.from(topicMap.entries()).map(([topic, stats]) => ({
+          topic,
+          attempted: stats.attempted,
+          correct: stats.correct,
+        }));
 
         return {
           studentId: student.id,
@@ -262,26 +249,8 @@ export class ClassroomService {
   }
 
   private generateClassCode(): string {
-    const adjectives = [
-      'SUN',
-      'STAR',
-      'MOON',
-      'SKY',
-      'BLUE',
-      'RED',
-      'GOLD',
-      'PINE',
-    ];
-    const nouns = [
-      'DRAGON',
-      'TIGER',
-      'EAGLE',
-      'PANDA',
-      'LION',
-      'HAWK',
-      'BEAR',
-      'WOLF',
-    ];
+    const adjectives = ['SUN', 'STAR', 'MOON', 'SKY', 'BLUE', 'RED', 'GOLD', 'PINE'];
+    const nouns = ['DRAGON', 'TIGER', 'EAGLE', 'PANDA', 'LION', 'HAWK', 'BEAR', 'WOLF'];
     const adj = adjectives[Math.floor(Math.random() * adjectives.length)];
     const noun = nouns[Math.floor(Math.random() * nouns.length)];
     const num = Math.floor(10 + Math.random() * 90);

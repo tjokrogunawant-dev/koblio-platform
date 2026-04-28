@@ -41,10 +41,7 @@ describe('ParentController', () => {
 
       const result = await controller.getChildProgress(parentUser, CHILD_ID);
 
-      expect(service.getChildProgress).toHaveBeenCalledWith(
-        'auth0|parent1',
-        CHILD_ID,
-      );
+      expect(service.getChildProgress).toHaveBeenCalledWith('auth0|parent1', CHILD_ID);
       expect(result).toEqual(expected);
     });
   });

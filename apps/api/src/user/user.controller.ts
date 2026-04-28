@@ -34,20 +34,14 @@ export class UserController {
   @Put('me/avatar')
   @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'Set avatar slug for the current student' })
-  updateAvatar(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() dto: UpdateAvatarDto,
-  ) {
+  updateAvatar(@CurrentUser() user: AuthenticatedUser, @Body() dto: UpdateAvatarDto) {
     return this.userService.updateAvatar(user.userId, dto.avatarSlug);
   }
 
   @Put('me/profile')
   @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'Update student display name and/or avatar' })
-  updateProfile(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() dto: UpdateProfileDto,
-  ) {
+  updateProfile(@CurrentUser() user: AuthenticatedUser, @Body() dto: UpdateProfileDto) {
     return this.userService.updateProfile(user.userId, dto);
   }
 
@@ -59,11 +53,7 @@ export class UserController {
     @Body() dto: CreateChildAccountDto,
     @Ip() ip: string,
   ) {
-    return this.userService.createChildAccount(
-      user.userId,
-      dto,
-      ip || 'unknown',
-    );
+    return this.userService.createChildAccount(user.userId, dto, ip || 'unknown');
   }
 
   @Get('parents/me/children')
@@ -97,10 +87,7 @@ export class UserController {
   @Post('schools')
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a school (teacher/admin only)' })
-  createSchool(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() dto: CreateSchoolDto,
-  ) {
+  createSchool(@CurrentUser() user: AuthenticatedUser, @Body() dto: CreateSchoolDto) {
     return this.userService.createSchool(user.userId, dto);
   }
 

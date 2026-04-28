@@ -1,9 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import {
-  ConflictException,
-  ForbiddenException,
-  NotFoundException,
-} from '@nestjs/common';
+import { ConflictException, ForbiddenException, NotFoundException } from '@nestjs/common';
 import { UserRole } from '@prisma/client';
 import { UserService } from './user.service';
 import { PrismaService } from '../prisma/prisma.service';
@@ -98,10 +94,7 @@ describe('UserService', () => {
     };
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        UserService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [UserService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = module.get<UserService>(UserService);
@@ -146,9 +139,7 @@ describe('UserService', () => {
     };
 
     it('should create a child account linked to parent with consent record', async () => {
-      prisma.user.findUnique
-        .mockResolvedValueOnce(mockParent)
-        .mockResolvedValueOnce(null);
+      prisma.user.findUnique.mockResolvedValueOnce(mockParent).mockResolvedValueOnce(null);
 
       prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
         const tx = {
@@ -159,11 +150,7 @@ describe('UserService', () => {
         return fn(tx);
       });
 
-      const result = await service.createChildAccount(
-        'auth0|parent1',
-        dto,
-        '192.168.1.1',
-      );
+      const result = await service.createChildAccount('auth0|parent1', dto, '192.168.1.1');
 
       expect(result.name).toBe('Bobby Zhang');
       expect(result.role).toBe('student');
@@ -174,9 +161,9 @@ describe('UserService', () => {
     it('should throw NotFoundException if parent not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.createChildAccount('auth0|nonexistent', dto, '1.2.3.4'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createChildAccount('auth0|nonexistent', dto, '1.2.3.4')).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException if user is not a parent', async () => {
@@ -185,9 +172,9 @@ describe('UserService', () => {
         auth0Id: 'auth0|teacher1',
       });
 
-      await expect(
-        service.createChildAccount('auth0|teacher1', dto, '1.2.3.4'),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.createChildAccount('auth0|teacher1', dto, '1.2.3.4')).rejects.toThrow(
+        ForbiddenException,
+      );
     });
 
     it('should throw ForbiddenException if consent not accepted', async () => {
@@ -208,15 +195,13 @@ describe('UserService', () => {
         .mockResolvedValueOnce(mockParent)
         .mockResolvedValueOnce({ id: 'existing' });
 
-      await expect(
-        service.createChildAccount('auth0|parent1', dto, '1.2.3.4'),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.createChildAccount('auth0|parent1', dto, '1.2.3.4')).rejects.toThrow(
+        ConflictException,
+      );
     });
 
     it('should not collect email from child account (COPPA)', async () => {
-      prisma.user.findUnique
-        .mockResolvedValueOnce(mockParent)
-        .mockResolvedValueOnce(null);
+      prisma.user.findUnique.mockResolvedValueOnce(mockParent).mockResolvedValueOnce(null);
 
       prisma.$transaction.mockImplementation(async (fn: (tx: unknown) => Promise<unknown>) => {
         const tx = {
@@ -259,9 +244,7 @@ describe('UserService', () => {
     it('should throw NotFoundException if parent not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.listChildren('auth0|nonexistent'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.listChildren('auth0|nonexistent')).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -287,9 +270,9 @@ describe('UserService', () => {
     it('should throw NotFoundException if teacher not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.createSchool('auth0|nonexistent', dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.createSchool('auth0|nonexistent', dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw ForbiddenException if user is not teacher/admin', async () => {
@@ -298,9 +281,7 @@ describe('UserService', () => {
         role: UserRole.STUDENT,
       });
 
-      await expect(
-        service.createSchool('auth0|parent1', dto),
-      ).rejects.toThrow(ForbiddenException);
+      await expect(service.createSchool('auth0|parent1', dto)).rejects.toThrow(ForbiddenException);
     });
   });
 
@@ -328,18 +309,18 @@ describe('UserService', () => {
     it('should throw NotFoundException if parent not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getChild('auth0|nonexistent', childId),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getChild('auth0|nonexistent', childId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException if child does not belong to parent', async () => {
       prisma.user.findUnique.mockResolvedValue(mockParent);
       prisma.parentChildLink.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.getChild('auth0|parent1', 'some-other-child-id'),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.getChild('auth0|parent1', 'some-other-child-id')).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -378,18 +359,18 @@ describe('UserService', () => {
     it('should throw NotFoundException if parent not found', async () => {
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.joinClassByCode('auth0|nonexistent', childId, dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.joinClassByCode('auth0|nonexistent', childId, dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException if child does not belong to parent', async () => {
       prisma.user.findUnique.mockResolvedValue(mockParent);
       prisma.parentChildLink.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.joinClassByCode('auth0|parent1', 'other-child', dto),
-      ).rejects.toThrow(NotFoundException);
+      await expect(service.joinClassByCode('auth0|parent1', 'other-child', dto)).rejects.toThrow(
+        NotFoundException,
+      );
     });
 
     it('should throw NotFoundException if class code not found', async () => {
@@ -412,9 +393,9 @@ describe('UserService', () => {
       prisma.classroom.findUnique.mockResolvedValue(mockClassroom);
       prisma.enrollment.findUnique.mockResolvedValue({ id: 'existing-enrollment' });
 
-      await expect(
-        service.joinClassByCode('auth0|parent1', childId, dto),
-      ).rejects.toThrow(ConflictException);
+      await expect(service.joinClassByCode('auth0|parent1', childId, dto)).rejects.toThrow(
+        ConflictException,
+      );
     });
   });
 
@@ -438,9 +419,7 @@ describe('UserService', () => {
     it('should throw NotFoundException if school not found', async () => {
       prisma.school.findUnique.mockResolvedValue(null);
 
-      await expect(service.getSchool('nonexistent-id')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.getSchool('nonexistent-id')).rejects.toThrow(NotFoundException);
     });
   });
 });

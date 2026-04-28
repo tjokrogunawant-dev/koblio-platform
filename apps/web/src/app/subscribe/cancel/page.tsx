@@ -9,9 +9,7 @@ export default function SubscribeCancelPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
       <div className="w-full max-w-md rounded-2xl bg-white p-10 text-center shadow-xl">
         <span className="text-6xl">👋</span>
-        <h1 className="mt-5 text-3xl font-bold text-slate-800">
-          No worries!
-        </h1>
+        <h1 className="mt-5 text-3xl font-bold text-slate-800">No worries!</h1>
         <p className="mt-3 text-slate-500">
           You can subscribe anytime to unlock premium features for your family.
         </p>

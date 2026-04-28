@@ -71,10 +71,7 @@ describe('AssignmentController', () => {
 
       const result = await controller.createAssignment(teacherUser, dto);
 
-      expect(service.createAssignment).toHaveBeenCalledWith(
-        'auth0|teacher1',
-        dto,
-      );
+      expect(service.createAssignment).toHaveBeenCalledWith('auth0|teacher1', dto);
       expect(result).toEqual(mockAssignmentResult);
     });
   });
@@ -85,9 +82,7 @@ describe('AssignmentController', () => {
 
       const result = await controller.listMyAssignments(teacherUser);
 
-      expect(service.listTeacherAssignments).toHaveBeenCalledWith(
-        'auth0|teacher1',
-      );
+      expect(service.listTeacherAssignments).toHaveBeenCalledWith('auth0|teacher1');
       expect(result).toHaveLength(1);
     });
   });
@@ -98,9 +93,7 @@ describe('AssignmentController', () => {
 
       const result = await controller.getStudentAssignments(studentUser);
 
-      expect(service.getStudentAssignments).toHaveBeenCalledWith(
-        'auth0|student1',
-      );
+      expect(service.getStudentAssignments).toHaveBeenCalledWith('auth0|student1');
       expect(result).toEqual([]);
     });
   });
@@ -108,9 +101,7 @@ describe('AssignmentController', () => {
   describe('submitAssignment', () => {
     it('should call submitAssignment and return result', async () => {
       const dto = {
-        answers: [
-          { problemId: '00000000-0000-0000-0000-000000000100', answer: '5' },
-        ],
+        answers: [{ problemId: '00000000-0000-0000-0000-000000000100', answer: '5' }],
       };
       const expected = { correct: 1, total: 1, results: [] };
       service.submitAssignment.mockResolvedValue(expected);

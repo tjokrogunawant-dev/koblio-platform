@@ -16,17 +16,7 @@ const variantClasses: Record<string, string> = {
 };
 
 const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
-  (
-    {
-      className,
-      value,
-      max = 100,
-      showLabel = false,
-      variant = 'default',
-      ...props
-    },
-    ref,
-  ) => {
+  ({ className, value, max = 100, showLabel = false, variant = 'default', ...props }, ref) => {
     const percentage = Math.min(100, Math.max(0, (value / max) * 100));
 
     return (
@@ -36,10 +26,7 @@ const ProgressBar = forwardRef<HTMLDivElement, ProgressBarProps>(
         aria-valuenow={value}
         aria-valuemin={0}
         aria-valuemax={max}
-        className={cn(
-          'relative h-4 w-full overflow-hidden rounded-full bg-secondary',
-          className,
-        )}
+        className={cn('relative h-4 w-full overflow-hidden rounded-full bg-secondary', className)}
         {...props}
       >
         <div

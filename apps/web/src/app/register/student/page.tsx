@@ -103,7 +103,10 @@ export default function StudentRegisterPage() {
                 Class code: <span className="font-mono font-bold">{classCode}</span>{' '}
                 <button
                   type="button"
-                  onClick={() => { setStep('code'); setError(''); }}
+                  onClick={() => {
+                    setStep('code');
+                    setError('');
+                  }}
                   className="underline hover:no-underline"
                 >
                   change

@@ -8,13 +8,9 @@ export class RedisService implements OnModuleDestroy {
   private readonly client: Redis;
 
   constructor(private readonly configService: ConfigService) {
-    this.client = new Redis(
-      this.configService.get<string>('REDIS_URL', 'redis://localhost:6379'),
-    );
+    this.client = new Redis(this.configService.get<string>('REDIS_URL', 'redis://localhost:6379'));
     this.client.on('connect', () => this.logger.log('Redis connected'));
-    this.client.on('error', (err) =>
-      this.logger.error('Redis connection error', err.message),
-    );
+    this.client.on('error', (err) => this.logger.error('Redis connection error', err.message));
   }
 
   async onModuleDestroy() {
@@ -30,17 +26,8 @@ export class RedisService implements OnModuleDestroy {
     return result !== null;
   }
 
-  async storeRefreshToken(
-    userId: string,
-    tokenId: string,
-    ttlSeconds: number,
-  ): Promise<void> {
-    await this.client.set(
-      `refresh:${userId}:${tokenId}`,
-      '1',
-      'EX',
-      ttlSeconds,
-    );
+  async storeRefreshToken(userId: string, tokenId: string, ttlSeconds: number): Promise<void> {
+    await this.client.set(`refresh:${userId}:${tokenId}`, '1', 'EX', ttlSeconds);
   }
 
   async deleteRefreshToken(userId: string, tokenId: string): Promise<void> {

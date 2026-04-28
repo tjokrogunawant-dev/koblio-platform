@@ -121,11 +121,7 @@ export default function LearnPage() {
         <nav className="flex items-center gap-2 text-sm text-slate-500">
           <button
             onClick={handleBackToGrades}
-            className={
-              step === 'grade'
-                ? 'font-semibold text-indigo-600'
-                : 'hover:text-indigo-600'
-            }
+            className={step === 'grade' ? 'font-semibold text-indigo-600' : 'hover:text-indigo-600'}
           >
             Grades
           </button>
@@ -135,9 +131,7 @@ export default function LearnPage() {
               <button
                 onClick={handleBackToTopics}
                 className={
-                  step === 'topics'
-                    ? 'font-semibold text-indigo-600'
-                    : 'hover:text-indigo-600'
+                  step === 'topics' ? 'font-semibold text-indigo-600' : 'hover:text-indigo-600'
                 }
               >
                 Grade {selectedGrade}
@@ -157,12 +151,8 @@ export default function LearnPage() {
         {/* ── Step 1: Grade Selection ── */}
         {step === 'grade' && (
           <section>
-            <h1 className="mb-2 text-3xl font-bold text-slate-800">
-              Start Learning
-            </h1>
-            <p className="mb-8 text-slate-500">
-              Choose your grade to explore topics.
-            </p>
+            <h1 className="mb-2 text-3xl font-bold text-slate-800">Start Learning</h1>
+            <p className="mb-8 text-slate-500">Choose your grade to explore topics.</p>
             <div className="grid gap-6 sm:grid-cols-3">
               {GRADES.map((grade) => (
                 <button
@@ -192,22 +182,12 @@ export default function LearnPage() {
               >
                 ← Back to Grades
               </button>
-              <h1 className="text-2xl font-bold text-slate-800">
-                Grade {selectedGrade} Topics
-              </h1>
+              <h1 className="text-2xl font-bold text-slate-800">Grade {selectedGrade} Topics</h1>
             </div>
 
-            {loading && (
-              <div className="text-center py-16 text-slate-500">
-                Loading topics…
-              </div>
-            )}
+            {loading && <div className="text-center py-16 text-slate-500">Loading topics…</div>}
 
-            {error && (
-              <div className="rounded-xl bg-red-50 p-4 text-red-600">
-                {error}
-              </div>
-            )}
+            {error && <div className="rounded-xl bg-red-50 p-4 text-red-600">{error}</div>}
 
             {!loading && !error && strandGroups.length === 0 && (
               <div className="text-center py-16 text-slate-500">
@@ -215,27 +195,29 @@ export default function LearnPage() {
               </div>
             )}
 
-            {!loading && !error && strandGroups.map(({ strand, topics }) => (
-              <div key={strand} className="mb-8">
-                <h2 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">
-                  {strand}
-                </h2>
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {topics.map(({ topic, count }) => (
-                    <button
-                      key={topic}
-                      onClick={() => handleSelectTopic(topic)}
-                      className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm hover:border-indigo-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                    >
-                      <span className="font-medium text-slate-800">{topic}</span>
-                      <span className="ml-3 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
-                        {count} {count === 1 ? 'problem' : 'problems'}
-                      </span>
-                    </button>
-                  ))}
+            {!loading &&
+              !error &&
+              strandGroups.map(({ strand, topics }) => (
+                <div key={strand} className="mb-8">
+                  <h2 className="mb-3 text-xs font-bold uppercase tracking-widest text-slate-500">
+                    {strand}
+                  </h2>
+                  <div className="grid gap-3 sm:grid-cols-2">
+                    {topics.map(({ topic, count }) => (
+                      <button
+                        key={topic}
+                        onClick={() => handleSelectTopic(topic)}
+                        className="flex items-center justify-between rounded-xl border border-slate-200 bg-white px-5 py-4 text-left shadow-sm hover:border-indigo-400 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                      >
+                        <span className="font-medium text-slate-800">{topic}</span>
+                        <span className="ml-3 rounded-full bg-indigo-50 px-3 py-1 text-xs font-semibold text-indigo-600">
+                          {count} {count === 1 ? 'problem' : 'problems'}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
           </section>
         )}
 
@@ -249,9 +231,7 @@ export default function LearnPage() {
               >
                 ← Back to Topics
               </button>
-              <h1 className="text-2xl font-bold text-slate-800">
-                {selectedTopic}
-              </h1>
+              <h1 className="text-2xl font-bold text-slate-800">{selectedTopic}</h1>
             </div>
 
             {filteredProblems.length === 0 ? (
@@ -276,9 +256,7 @@ export default function LearnPage() {
                         {typeLabel(problem.type)}
                       </span>
                     </div>
-                    <p className="line-clamp-2 text-sm text-slate-700">
-                      {problem.questionText}
-                    </p>
+                    <p className="line-clamp-2 text-sm text-slate-700">{problem.questionText}</p>
                   </button>
                 ))}
               </div>

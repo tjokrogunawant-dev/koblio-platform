@@ -2,13 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import {
-  LayoutDashboard,
-  Users,
-  BookOpen,
-  BarChart3,
-  Settings,
-} from 'lucide-react';
+import { LayoutDashboard, Users, BookOpen, BarChart3, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [

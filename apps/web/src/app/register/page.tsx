@@ -1,11 +1,5 @@
 import Link from 'next/link';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
 export const metadata = {
@@ -25,9 +19,7 @@ export default function RegisterPage() {
           <CardHeader className="p-0">
             <div className="text-4xl">🎒</div>
             <CardTitle className="mt-2 text-xl">I&apos;m a Student</CardTitle>
-            <CardDescription>
-              Join your class with a code from your teacher
-            </CardDescription>
+            <CardDescription>Join your class with a code from your teacher</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <Button asChild className="bg-indigo-600 hover:bg-indigo-700">
@@ -40,9 +32,7 @@ export default function RegisterPage() {
           <CardHeader className="p-0">
             <div className="text-4xl">👨‍👩‍👧</div>
             <CardTitle className="mt-2 text-xl">I&apos;m a Parent</CardTitle>
-            <CardDescription>
-              Create an account and set up learning for your child
-            </CardDescription>
+            <CardDescription>Create an account and set up learning for your child</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <Button asChild variant="outline">
@@ -55,9 +45,7 @@ export default function RegisterPage() {
           <CardHeader className="p-0">
             <div className="text-4xl">👩‍🏫</div>
             <CardTitle className="mt-2 text-xl">I&apos;m a Teacher</CardTitle>
-            <CardDescription>
-              Manage your class and track student progress
-            </CardDescription>
+            <CardDescription>Manage your class and track student progress</CardDescription>
           </CardHeader>
           <CardContent className="p-0">
             <Button asChild variant="outline">

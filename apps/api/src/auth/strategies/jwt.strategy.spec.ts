@@ -3,7 +3,10 @@ import { UserRole } from '@koblio/shared';
 import { JwtPayload } from '../interfaces/jwt-payload.interface';
 
 jest.mock('jwks-rsa', () => ({
-  passportJwtSecret: jest.fn(() => (_req: unknown, _header: unknown, cb: (err: null, key: string) => void) => cb(null, 'test-key')),
+  passportJwtSecret: jest.fn(
+    () => (_req: unknown, _header: unknown, cb: (err: null, key: string) => void) =>
+      cb(null, 'test-key'),
+  ),
 }));
 
 import { JwtStrategy } from './jwt.strategy';

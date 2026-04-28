@@ -1,13 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import {
-  IsEnum,
-  IsInt,
-  IsNotEmpty,
-  IsObject,
-  IsString,
-  Max,
-  Min,
-} from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsObject, IsString, Max, Min } from 'class-validator';
 import { Difficulty, ProblemType } from '@prisma/client';
 
 export class CreateProblemDto {

@@ -40,9 +40,7 @@ export class Auth0ClientService {
   constructor(private readonly configService: ConfigService) {
     this.domain = this.configService.getOrThrow<string>('AUTH0_ISSUER_URL');
     this.clientId = this.configService.getOrThrow<string>('AUTH0_CLIENT_ID');
-    this.clientSecret = this.configService.getOrThrow<string>(
-      'AUTH0_CLIENT_SECRET',
-    );
+    this.clientSecret = this.configService.getOrThrow<string>('AUTH0_CLIENT_SECRET');
     this.audience = this.configService.getOrThrow<string>('AUTH0_AUDIENCE');
     this.connection = this.configService.get<string>(
       'AUTH0_DB_CONNECTION',
@@ -55,10 +53,7 @@ export class Auth0ClientService {
   }
 
   private async getManagementToken(): Promise<string> {
-    if (
-      this.managementToken &&
-      this.managementToken.expires_at > Date.now() + 60_000
-    ) {
+    if (this.managementToken && this.managementToken.expires_at > Date.now() + 60_000) {
       return this.managementToken.access_token;
     }
 
@@ -77,9 +72,7 @@ export class Auth0ClientService {
     if (!response.ok) {
       const body = await response.text();
       this.logger.error(`Failed to get management token: ${body}`);
-      throw new InternalServerErrorException(
-        'Auth provider unavailable',
-      );
+      throw new InternalServerErrorException('Auth provider unavailable');
     }
 
     const data = (await response.json()) as Auth0TokenResponse;
@@ -123,18 +116,13 @@ export class Auth0ClientService {
     if (!response.ok) {
       const body = await response.text();
       this.logger.error(`Auth0 create user failed: ${body}`);
-      throw new InternalServerErrorException(
-        'Failed to create account',
-      );
+      throw new InternalServerErrorException('Failed to create account');
     }
 
     return (await response.json()) as Auth0UserResponse;
   }
 
-  async authenticateUser(
-    email: string,
-    password: string,
-  ): Promise<Auth0TokenResponse> {
+  async authenticateUser(email: string, password: string): Promise<Auth0TokenResponse> {
     const response = await fetch(`${this.baseUrl}/oauth/token`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -157,9 +145,7 @@ export class Auth0ClientService {
     if (!response.ok) {
       const body = await response.text();
       this.logger.error(`Auth0 authentication failed: ${body}`);
-      throw new InternalServerErrorException(
-        'Authentication service error',
-      );
+      throw new InternalServerErrorException('Authentication service error');
     }
 
     return (await response.json()) as Auth0TokenResponse;
@@ -204,16 +190,11 @@ export class Auth0ClientService {
     });
 
     if (!response.ok) {
-      this.logger.warn(
-        `Auth0 revoke failed (non-critical): ${response.status}`,
-      );
+      this.logger.warn(`Auth0 revoke failed (non-critical): ${response.status}`);
     }
   }
 
-  async assignRoles(
-    auth0UserId: string,
-    roles: string[],
-  ): Promise<void> {
+  async assignRoles(auth0UserId: string, roles: string[]): Promise<void> {
     const token = await this.getManagementToken();
 
     const roleIds = await this.getRoleIds(token, roles);
@@ -238,10 +219,7 @@ export class Auth0ClientService {
     }
   }
 
-  private async getRoleIds(
-    token: string,
-    roleNames: string[],
-  ): Promise<string[]> {
+  private async getRoleIds(token: string, roleNames: string[]): Promise<string[]> {
     const response = await fetch(`${this.baseUrl}/api/v2/roles`, {
       headers: { Authorization: `Bearer ${token}` },
       signal: AbortSignal.timeout(10_000),
@@ -253,8 +231,6 @@ export class Auth0ClientService {
       id: string;
       name: string;
     }>;
-    return allRoles
-      .filter((r) => roleNames.includes(r.name))
-      .map((r) => r.id);
+    return allRoles.filter((r) => roleNames.includes(r.name)).map((r) => r.id);
   }
 }

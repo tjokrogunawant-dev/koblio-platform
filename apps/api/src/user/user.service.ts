@@ -28,11 +28,7 @@ export class UserService {
     return this.prisma.user.findUnique({ where: { auth0Id } });
   }
 
-  async createChildAccount(
-    parentAuth0Id: string,
-    dto: CreateChildAccountDto,
-    ipAddress: string,
-  ) {
+  async createChildAccount(parentAuth0Id: string, dto: CreateChildAccountDto, ipAddress: string) {
     const parent = await this.prisma.user.findUnique({
       where: { auth0Id: parentAuth0Id },
     });
@@ -46,9 +42,7 @@ export class UserService {
     }
 
     if (!dto.consent.accepted) {
-      throw new ForbiddenException(
-        'Parental consent must be accepted to create a child account',
-      );
+      throw new ForbiddenException('Parental consent must be accepted to create a child account');
     }
 
     const username = this.generateUsername(dto.name);
@@ -57,9 +51,7 @@ export class UserService {
       where: { username },
     });
     if (existingUsername) {
-      throw new ConflictException(
-        'Generated username already taken, please try again',
-      );
+      throw new ConflictException('Generated username already taken, please try again');
     }
 
     const child = await this.prisma.$transaction(async (tx) => {
@@ -98,9 +90,7 @@ export class UserService {
       return newChild;
     });
 
-    this.logger.log(
-      `Child account created: ${child.id} linked to parent: ${parent.id}`,
-    );
+    this.logger.log(`Child account created: ${child.id} linked to parent: ${parent.id}`);
 
     return {
       id: child.id,
@@ -154,10 +144,7 @@ export class UserService {
       throw new NotFoundException('Teacher account not found');
     }
 
-    if (
-      teacher.role !== PrismaUserRole.TEACHER &&
-      teacher.role !== PrismaUserRole.ADMIN
-    ) {
+    if (teacher.role !== PrismaUserRole.TEACHER && teacher.role !== PrismaUserRole.ADMIN) {
       throw new ForbiddenException('Only teachers can create schools');
     }
 
@@ -180,9 +167,7 @@ export class UserService {
       return newSchool;
     });
 
-    this.logger.log(
-      `School created: ${school.id} by teacher: ${teacher.id}`,
-    );
+    this.logger.log(`School created: ${school.id} by teacher: ${teacher.id}`);
 
     return {
       id: school.id,
@@ -235,11 +220,7 @@ export class UserService {
     };
   }
 
-  async joinClassByCode(
-    parentAuth0Id: string,
-    childId: string,
-    dto: JoinClassDto,
-  ) {
+  async joinClassByCode(parentAuth0Id: string, childId: string, dto: JoinClassDto) {
     const parent = await this.prisma.user.findUnique({
       where: { auth0Id: parentAuth0Id },
     });
@@ -282,9 +263,7 @@ export class UserService {
       });
     });
 
-    this.logger.log(
-      `Child ${childId} joined classroom ${classroom.id} via code ${dto.class_code}`,
-    );
+    this.logger.log(`Child ${childId} joined classroom ${classroom.id} via code ${dto.class_code}`);
 
     const child = link.child;
     return {

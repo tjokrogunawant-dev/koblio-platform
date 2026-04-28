@@ -1,11 +1,4 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Param,
-  ParseUUIDPipe,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseUUIDPipe, Post } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { UserRole } from '@koblio/shared';
 import { AssignmentService } from './assignment.service';
@@ -25,10 +18,7 @@ export class AssignmentController {
   @Post()
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Create an assignment for a classroom (teacher only)' })
-  createAssignment(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() dto: CreateAssignmentDto,
-  ) {
+  createAssignment(@CurrentUser() user: AuthenticatedUser, @Body() dto: CreateAssignmentDto) {
     return this.assignmentService.createAssignment(user.userId, dto);
   }
 
@@ -60,10 +50,6 @@ export class AssignmentController {
     @Param('id', ParseUUIDPipe) assignmentId: string,
     @Body() dto: SubmitAssignmentDto,
   ) {
-    return this.assignmentService.submitAssignment(
-      user.userId,
-      assignmentId,
-      dto,
-    );
+    return this.assignmentService.submitAssignment(user.userId, assignmentId, dto);
   }
 }

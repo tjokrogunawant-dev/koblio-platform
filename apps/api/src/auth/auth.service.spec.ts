@@ -106,15 +106,10 @@ describe('AuthService', () => {
 
       const result = await service.registerParent(dto);
 
-      expect(auth0.createUser).toHaveBeenCalledWith(
-        dto.email,
-        dto.password,
-        dto.name,
-        { role: 'parent' },
-      );
-      expect(auth0.assignRoles).toHaveBeenCalledWith('auth0|abc123', [
-        'parent',
-      ]);
+      expect(auth0.createUser).toHaveBeenCalledWith(dto.email, dto.password, dto.name, {
+        role: 'parent',
+      });
+      expect(auth0.assignRoles).toHaveBeenCalledWith('auth0|abc123', ['parent']);
       expect(prisma.user.create).toHaveBeenCalledWith({
         data: expect.objectContaining({
           auth0Id: 'auth0|abc123',
@@ -131,9 +126,7 @@ describe('AuthService', () => {
     it('should throw ConflictException if email already exists', async () => {
       prisma.user.findUnique.mockResolvedValue({ id: 'existing-user' });
 
-      await expect(service.registerParent(dto)).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(service.registerParent(dto)).rejects.toThrow(ConflictException);
       expect(auth0.createUser).not.toHaveBeenCalled();
     });
 
@@ -206,12 +199,10 @@ describe('AuthService', () => {
 
       const result = await service.registerTeacher(dto);
 
-      expect(auth0.createUser).toHaveBeenCalledWith(
-        dto.email,
-        dto.password,
-        dto.name,
-        { role: 'teacher', school_name: dto.school_name },
-      );
+      expect(auth0.createUser).toHaveBeenCalledWith(dto.email, dto.password, dto.name, {
+        role: 'teacher',
+        school_name: dto.school_name,
+      });
       expect(mockTx.school.create).toHaveBeenCalledWith({
         data: { name: dto.school_name, country: dto.school_country },
       });
@@ -222,9 +213,7 @@ describe('AuthService', () => {
     it('should throw ConflictException if email already exists', async () => {
       prisma.user.findUnique.mockResolvedValue({ id: 'existing-teacher' });
 
-      await expect(service.registerTeacher(dto)).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(service.registerTeacher(dto)).rejects.toThrow(ConflictException);
     });
   });
 
@@ -250,10 +239,7 @@ describe('AuthService', () => {
 
       const result = await service.login(dto);
 
-      expect(auth0.authenticateUser).toHaveBeenCalledWith(
-        dto.email,
-        dto.password,
-      );
+      expect(auth0.authenticateUser).toHaveBeenCalledWith(dto.email, dto.password);
       expect(result.authResult.access_token).toBe('at-login');
       expect(result.authResult.user.id).toBe('uuid-1');
       expect(result.refreshToken).toBe('rt-login');
@@ -266,19 +252,13 @@ describe('AuthService', () => {
       });
       prisma.user.findUnique.mockResolvedValue(null);
 
-      await expect(service.login(dto)).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
     });
 
     it('should propagate Auth0 UnauthorizedException for bad credentials', async () => {
-      auth0.authenticateUser.mockRejectedValue(
-        new UnauthorizedException('Invalid credentials'),
-      );
+      auth0.authenticateUser.mockRejectedValue(new UnauthorizedException('Invalid credentials'));
 
-      await expect(service.login(dto)).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(service.login(dto)).rejects.toThrow(UnauthorizedException);
     });
   });
 
@@ -301,9 +281,7 @@ describe('AuthService', () => {
     it('should reject revoked refresh token', async () => {
       redis.isRevoked.mockResolvedValue(true);
 
-      await expect(service.refresh('rt-revoked')).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(service.refresh('rt-revoked')).rejects.toThrow(UnauthorizedException);
       expect(auth0.refreshToken).not.toHaveBeenCalled();
     });
 
@@ -317,10 +295,7 @@ describe('AuthService', () => {
 
       await service.refresh('rt-old');
 
-      expect(redis.addToRevocationList).toHaveBeenCalledWith(
-        expect.any(String),
-        7 * 24 * 60 * 60,
-      );
+      expect(redis.addToRevocationList).toHaveBeenCalledWith(expect.any(String), 7 * 24 * 60 * 60);
     });
   });
 
@@ -328,10 +303,7 @@ describe('AuthService', () => {
     it('should revoke refresh token in Redis and Auth0', async () => {
       await service.logout('rt-active');
 
-      expect(redis.addToRevocationList).toHaveBeenCalledWith(
-        expect.any(String),
-        7 * 24 * 60 * 60,
-      );
+      expect(redis.addToRevocationList).toHaveBeenCalledWith(expect.any(String), 7 * 24 * 60 * 60);
       expect(auth0.revokeRefreshToken).toHaveBeenCalledWith('rt-active');
     });
 
@@ -345,35 +317,25 @@ describe('AuthService', () => {
 
   describe('validateUserRoles', () => {
     it('should return true when user has required role', () => {
-      expect(
-        service.validateUserRoles(
-          { userId: '1', roles: ['teacher'] },
-          ['teacher'],
-        ),
-      ).toBe(true);
+      expect(service.validateUserRoles({ userId: '1', roles: ['teacher'] }, ['teacher'])).toBe(
+        true,
+      );
     });
 
     it('should return false when user lacks required role', () => {
-      expect(
-        service.validateUserRoles(
-          { userId: '1', roles: ['student'] },
-          ['teacher'],
-        ),
-      ).toBe(false);
+      expect(service.validateUserRoles({ userId: '1', roles: ['student'] }, ['teacher'])).toBe(
+        false,
+      );
     });
   });
 
   describe('isStudentAccount', () => {
     it('should return true for student without email', () => {
-      expect(
-        service.isStudentAccount({ userId: '1', roles: ['student'] }),
-      ).toBe(true);
+      expect(service.isStudentAccount({ userId: '1', roles: ['student'] })).toBe(true);
     });
 
     it('should return false for non-student', () => {
-      expect(
-        service.isStudentAccount({ userId: '1', roles: ['parent'] }),
-      ).toBe(false);
+      expect(service.isStudentAccount({ userId: '1', roles: ['parent'] })).toBe(false);
     });
   });
 
@@ -415,9 +377,7 @@ describe('AuthService', () => {
     });
 
     it('should return access_token with id/role/name but NO email on success', async () => {
-      prisma.user.findUnique.mockResolvedValue(
-        makeStudent({ passwordHash }),
-      );
+      prisma.user.findUnique.mockResolvedValue(makeStudent({ passwordHash }));
 
       const dto = { username: 'bobby1234', password: PLAIN_PASSWORD };
       const result = await service.loginStudent(dto);
@@ -440,9 +400,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException for wrong password', async () => {
-      prisma.user.findUnique.mockResolvedValue(
-        makeStudent({ passwordHash }),
-      );
+      prisma.user.findUnique.mockResolvedValue(makeStudent({ passwordHash }));
 
       await expect(
         service.loginStudent({ username: 'bobby1234', password: 'wrongpass' }),
@@ -450,9 +408,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException for non-student account', async () => {
-      prisma.user.findUnique.mockResolvedValue(
-        makeStudent({ role: 'PARENT', passwordHash }),
-      );
+      prisma.user.findUnique.mockResolvedValue(makeStudent({ role: 'PARENT', passwordHash }));
 
       await expect(
         service.loginStudent({ username: 'bobby1234', password: PLAIN_PASSWORD }),
@@ -460,9 +416,7 @@ describe('AuthService', () => {
     });
 
     it('should throw UnauthorizedException when passwordHash is null', async () => {
-      prisma.user.findUnique.mockResolvedValue(
-        makeStudent({ passwordHash: null }),
-      );
+      prisma.user.findUnique.mockResolvedValue(makeStudent({ passwordHash: null }));
 
       await expect(
         service.loginStudent({ username: 'bobby1234', password: PLAIN_PASSWORD }),
@@ -470,9 +424,7 @@ describe('AuthService', () => {
     });
 
     it('should sign JWT with koblio-internal issuer and student role', async () => {
-      prisma.user.findUnique.mockResolvedValue(
-        makeStudent({ passwordHash }),
-      );
+      prisma.user.findUnique.mockResolvedValue(makeStudent({ passwordHash }));
 
       await service.loginStudent({ username: 'bobby1234', password: PLAIN_PASSWORD });
 

@@ -104,10 +104,7 @@ export class BadgeService {
    *
    * @returns Array of slug strings for each newly awarded badge (may be empty).
    */
-  async checkAndAwardBadges(
-    studentId: string,
-    context: BadgeAwardContext,
-  ): Promise<string[]> {
+  async checkAndAwardBadges(studentId: string, context: BadgeAwardContext): Promise<string[]> {
     // Fetch badges the student already has — used to short-circuit per-badge
     const existingBadges = await this.prisma.badge.findMany({
       where: { studentId },
@@ -118,51 +115,32 @@ export class BadgeService {
     const toAward: BadgeType[] = [];
 
     // ── FIRST_CORRECT ──────────────────────────────────────────────────────────
-    if (
-      context.correct &&
-      !alreadyHas.has(BadgeType.FIRST_CORRECT)
-    ) {
+    if (context.correct && !alreadyHas.has(BadgeType.FIRST_CORRECT)) {
       toAward.push(BadgeType.FIRST_CORRECT);
     }
 
     // ── SPEED_DEMON ────────────────────────────────────────────────────────────
-    if (
-      context.correct &&
-      context.timeSpentMs < 10_000 &&
-      !alreadyHas.has(BadgeType.SPEED_DEMON)
-    ) {
+    if (context.correct && context.timeSpentMs < 10_000 && !alreadyHas.has(BadgeType.SPEED_DEMON)) {
       toAward.push(BadgeType.SPEED_DEMON);
     }
 
     // ── STREAK_7 ───────────────────────────────────────────────────────────────
-    if (
-      context.studentStats.streakCount >= 7 &&
-      !alreadyHas.has(BadgeType.STREAK_7)
-    ) {
+    if (context.studentStats.streakCount >= 7 && !alreadyHas.has(BadgeType.STREAK_7)) {
       toAward.push(BadgeType.STREAK_7);
     }
 
     // ── STREAK_30 ──────────────────────────────────────────────────────────────
-    if (
-      context.studentStats.streakCount >= 30 &&
-      !alreadyHas.has(BadgeType.STREAK_30)
-    ) {
+    if (context.studentStats.streakCount >= 30 && !alreadyHas.has(BadgeType.STREAK_30)) {
       toAward.push(BadgeType.STREAK_30);
     }
 
     // ── PROBLEMS_100 ──────────────────────────────────────────────────────────
-    if (
-      context.studentStats.totalAttempts >= 100 &&
-      !alreadyHas.has(BadgeType.PROBLEMS_100)
-    ) {
+    if (context.studentStats.totalAttempts >= 100 && !alreadyHas.has(BadgeType.PROBLEMS_100)) {
       toAward.push(BadgeType.PROBLEMS_100);
     }
 
     // ── CORRECT_50 ────────────────────────────────────────────────────────────
-    if (
-      context.studentStats.correctTotal >= 50 &&
-      !alreadyHas.has(BadgeType.CORRECT_50)
-    ) {
+    if (context.studentStats.correctTotal >= 50 && !alreadyHas.has(BadgeType.CORRECT_50)) {
       toAward.push(BadgeType.CORRECT_50);
     }
 
@@ -181,37 +159,29 @@ export class BadgeService {
 
     // ── FRACTION_MASTER ───────────────────────────────────────────────────────
     if (!alreadyHas.has(BadgeType.FRACTION_MASTER)) {
-      const fractionAttempts = await this.prisma.studentProblemAttempt.findMany(
-        {
-          where: {
-            studentId,
-            problem: {
-              grade: 3,
-              topic: { contains: 'fraction', mode: 'insensitive' },
-            },
+      const fractionAttempts = await this.prisma.studentProblemAttempt.findMany({
+        where: {
+          studentId,
+          problem: {
+            grade: 3,
+            topic: { contains: 'fraction', mode: 'insensitive' },
           },
-          select: { correct: true },
         },
-      );
-      if (
-        fractionAttempts.length >= 10 &&
-        fractionAttempts.every((a) => a.correct)
-      ) {
+        select: { correct: true },
+      });
+      if (fractionAttempts.length >= 10 && fractionAttempts.every((a) => a.correct)) {
         toAward.push(BadgeType.FRACTION_MASTER);
       }
     }
 
     // ── MATH_EXPLORER ─────────────────────────────────────────────────────────
     if (!alreadyHas.has(BadgeType.MATH_EXPLORER)) {
-      const distinctTopicAttempts =
-        await this.prisma.studentProblemAttempt.findMany({
-          where: { studentId },
-          distinct: ['problemId'],
-          include: { problem: { select: { topic: true } } },
-        });
-      const distinctTopics = new Set(
-        distinctTopicAttempts.map((a) => a.problem.topic),
-      );
+      const distinctTopicAttempts = await this.prisma.studentProblemAttempt.findMany({
+        where: { studentId },
+        distinct: ['problemId'],
+        include: { problem: { select: { topic: true } } },
+      });
+      const distinctTopics = new Set(distinctTopicAttempts.map((a) => a.problem.topic));
       if (distinctTopics.size >= 5) {
         toAward.push(BadgeType.MATH_EXPLORER);
       }
@@ -219,10 +189,7 @@ export class BadgeService {
 
     // ── TOP_OF_CLASS ──────────────────────────────────────────────────────────
     // Award once when student first reaches rank 1 (0-indexed ZREVRANK === 0)
-    if (
-      context.classroomRank === 0 &&
-      !alreadyHas.has(BadgeType.TOP_OF_CLASS)
-    ) {
+    if (context.classroomRank === 0 && !alreadyHas.has(BadgeType.TOP_OF_CLASS)) {
       toAward.push(BadgeType.TOP_OF_CLASS);
     }
 
@@ -237,9 +204,7 @@ export class BadgeService {
     });
 
     const slugs = toAward.map((type) => BADGE_SLUG[type]);
-    this.logger.log(
-      `Badges awarded to student=${studentId}: ${slugs.join(', ')}`,
-    );
+    this.logger.log(`Badges awarded to student=${studentId}: ${slugs.join(', ')}`);
     return slugs;
   }
 

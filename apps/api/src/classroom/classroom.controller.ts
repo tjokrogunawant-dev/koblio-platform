@@ -24,10 +24,7 @@ export class ClassroomController {
   @Post('classrooms')
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Create a classroom (teacher only)' })
-  createClassroom(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() dto: CreateClassroomDto,
-  ) {
+  createClassroom(@CurrentUser() user: AuthenticatedUser, @Body() dto: CreateClassroomDto) {
     return this.classroomService.createClassroom(user.userId, dto);
   }
 

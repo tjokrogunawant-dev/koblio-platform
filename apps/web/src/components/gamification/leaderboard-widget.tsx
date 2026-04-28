@@ -48,9 +48,7 @@ export function LeaderboardWidget({
                   isCurrent ? 'bg-indigo-50' : 'hover:bg-slate-50'
                 }`}
               >
-                <td className="px-5 py-3 font-semibold text-slate-700">
-                  {rankMedal(entry.rank)}
-                </td>
+                <td className="px-5 py-3 font-semibold text-slate-700">{rankMedal(entry.rank)}</td>
                 <td className="px-5 py-3 text-slate-700">
                   {entry.displayName}
                   {isCurrent && (
@@ -74,9 +72,7 @@ export function LeaderboardWidget({
                 </td>
               </tr>
               <tr className="bg-indigo-50">
-                <td className="px-5 py-3 font-semibold text-slate-700">
-                  {myRank}
-                </td>
+                <td className="px-5 py-3 font-semibold text-slate-700">{myRank}</td>
                 <td className="px-5 py-3 text-slate-700">
                   {myEntry.displayName}
                   <span className="ml-2 rounded bg-indigo-100 px-1.5 py-0.5 text-xs font-semibold text-indigo-700">

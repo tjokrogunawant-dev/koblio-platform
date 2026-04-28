@@ -5,7 +5,8 @@ import { AuthenticatedUser } from '../auth/interfaces/jwt-payload.interface';
 
 describe('ClassroomController', () => {
   let controller: ClassroomController;
-  let classroomService: Partial<{ [K in keyof ClassroomService]: jest.Mock }> & Record<string, jest.Mock>;
+  let classroomService: Partial<{ [K in keyof ClassroomService]: jest.Mock }> &
+    Record<string, jest.Mock>;
 
   beforeEach(async () => {
     classroomService = {
@@ -19,9 +20,7 @@ describe('ClassroomController', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ClassroomController],
-      providers: [
-        { provide: ClassroomService, useValue: classroomService },
-      ],
+      providers: [{ provide: ClassroomService, useValue: classroomService }],
     }).compile();
 
     controller = module.get<ClassroomController>(ClassroomController);
@@ -58,10 +57,7 @@ describe('ClassroomController', () => {
 
       const result = await controller.createClassroom(user, dto);
 
-      expect(classroomService.createClassroom).toHaveBeenCalledWith(
-        'auth0|teacher1',
-        dto,
-      );
+      expect(classroomService.createClassroom).toHaveBeenCalledWith('auth0|teacher1', dto);
       expect(result).toEqual(expected);
     });
   });
@@ -77,9 +73,7 @@ describe('ClassroomController', () => {
 
       const result = await controller.listMyClassrooms(user);
 
-      expect(classroomService.listTeacherClassrooms).toHaveBeenCalledWith(
-        'auth0|teacher1',
-      );
+      expect(classroomService.listTeacherClassrooms).toHaveBeenCalledWith('auth0|teacher1');
       expect(result).toEqual([]);
     });
   });
@@ -96,10 +90,7 @@ describe('ClassroomController', () => {
 
       const result = await controller.enrollStudent('classroom-id', dto);
 
-      expect(classroomService.enrollStudent).toHaveBeenCalledWith(
-        'classroom-id',
-        dto,
-      );
+      expect(classroomService.enrollStudent).toHaveBeenCalledWith('classroom-id', dto);
       expect(result).toEqual({ id: 'enrollment-1' });
     });
   });

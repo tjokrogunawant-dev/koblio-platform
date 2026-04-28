@@ -13,10 +13,7 @@ interface MathErrorBoundaryState {
   hasError: boolean;
 }
 
-class MathErrorBoundary extends Component<
-  MathErrorBoundaryProps,
-  MathErrorBoundaryState
-> {
+class MathErrorBoundary extends Component<MathErrorBoundaryProps, MathErrorBoundaryState> {
   constructor(props: MathErrorBoundaryProps) {
     super(props);
     this.state = { hasError: false };
@@ -28,9 +25,7 @@ class MathErrorBoundary extends Component<
 
   render() {
     if (this.state.hasError) {
-      return (
-        <code className="text-red-500 text-sm">{this.props.expression}</code>
-      );
+      return <code className="text-red-500 text-sm">{this.props.expression}</code>;
     }
     return this.props.children;
   }
@@ -42,19 +37,11 @@ export interface MathRendererProps {
   className?: string;
 }
 
-export function MathRenderer({
-  expression,
-  display = false,
-  className,
-}: MathRendererProps) {
+export function MathRenderer({ expression, display = false, className }: MathRendererProps) {
   return (
     <MathErrorBoundary expression={expression}>
       <span className={className}>
-        {display ? (
-          <BlockMath math={expression} />
-        ) : (
-          <InlineMath math={expression} />
-        )}
+        {display ? <BlockMath math={expression} /> : <InlineMath math={expression} />}
       </span>
     </MathErrorBoundary>
   );

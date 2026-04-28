@@ -1,11 +1,4 @@
-import {
-  Controller,
-  Post,
-  Req,
-  Headers,
-  BadRequestException,
-  Logger,
-} from '@nestjs/common';
+import { Controller, Post, Req, Headers, BadRequestException, Logger } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { Request } from 'express';
 import { UserRole } from '@koblio/shared';
@@ -68,10 +61,7 @@ export class StripeController {
   @Public()
   @Post('webhook')
   @ApiOperation({ summary: 'Stripe webhook receiver (public — no JWT)' })
-  async handleWebhook(
-    @Req() req: Request,
-    @Headers('stripe-signature') signature: string,
-  ) {
+  async handleWebhook(@Req() req: Request, @Headers('stripe-signature') signature: string) {
     // express.raw() middleware (wired in main.ts) stores raw body in req.body as a Buffer for this route
     const rawBody = req.body as Buffer;
 
@@ -87,13 +77,9 @@ export class StripeController {
   private async processEvent(event: import('stripe').default.Event) {
     const type = event.type;
 
-    if (
-      type === 'customer.subscription.created' ||
-      type === 'customer.subscription.updated'
-    ) {
+    if (type === 'customer.subscription.created' || type === 'customer.subscription.updated') {
       const sub = event.data.object as import('stripe').default.Subscription;
-      const customerId =
-        typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+      const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
 
       await this.prisma.user.updateMany({
         where: { stripeCustomerId: customerId },
@@ -106,8 +92,7 @@ export class StripeController {
       this.logger.log(`Subscription activated for customer ${customerId}`);
     } else if (type === 'customer.subscription.deleted') {
       const sub = event.data.object as import('stripe').default.Subscription;
-      const customerId =
-        typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+      const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
 
       await this.prisma.user.updateMany({
         where: { stripeCustomerId: customerId },

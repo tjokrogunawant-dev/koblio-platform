@@ -29,16 +29,12 @@ export function BadgeShelf({ badges }: BadgeShelfProps) {
               className="group/badge relative flex flex-col items-center gap-1 rounded-xl border border-slate-200 bg-white p-3 shadow-sm transition-shadow hover:shadow-md"
             >
               <span className="text-3xl leading-none">{badge.iconEmoji}</span>
-              <span className="text-center text-xs font-medium text-slate-700">
-                {badge.name}
-              </span>
+              <span className="text-center text-xs font-medium text-slate-700">{badge.name}</span>
 
               {/* Tooltip — appears above the card on hover */}
               <div className="pointer-events-none absolute bottom-full left-1/2 z-10 mb-2 w-44 -translate-x-1/2 rounded-lg border border-slate-200 bg-white p-3 shadow-lg opacity-0 transition-opacity group-hover/badge:opacity-100">
                 <p className="text-xs text-slate-700">{badge.description}</p>
-                <p className="mt-1 text-xs text-slate-400">
-                  Earned: {formatDate(badge.awardedAt)}
-                </p>
+                <p className="mt-1 text-xs text-slate-400">Earned: {formatDate(badge.awardedAt)}</p>
               </div>
             </div>
           ))}

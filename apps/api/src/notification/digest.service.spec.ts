@@ -3,12 +3,16 @@ import { DigestService } from './digest.service';
 import { EmailService } from './email.service';
 import { PrismaService } from '../prisma/prisma.service';
 
-const makeParent = (overrides: Partial<{
-  id: string;
-  email: string | null;
-  displayName: string;
-  parentLinks: { child: { id: string; displayName: string; grade: number; streakCount: number } }[];
-}> = {}) => ({
+const makeParent = (
+  overrides: Partial<{
+    id: string;
+    email: string | null;
+    displayName: string;
+    parentLinks: {
+      child: { id: string; displayName: string; grade: number; streakCount: number };
+    }[];
+  }> = {},
+) => ({
   id: 'parent-1',
   email: 'parent@example.com',
   displayName: 'Jane Doe',
@@ -48,9 +52,7 @@ describe('DigestService', () => {
   });
 
   it('skips parents with null email', async () => {
-    prisma.user.findMany.mockResolvedValue([
-      makeParent({ email: null }),
-    ]);
+    prisma.user.findMany.mockResolvedValue([makeParent({ email: null })]);
 
     await service.sendWeeklyDigests();
 
@@ -59,9 +61,7 @@ describe('DigestService', () => {
 
   it('calls sendWeeklyDigest once per parent with linked children', async () => {
     const child = { id: 'child-1', displayName: 'Alice', grade: 2, streakCount: 5 };
-    prisma.user.findMany.mockResolvedValue([
-      makeParent({ parentLinks: [{ child }] }),
-    ]);
+    prisma.user.findMany.mockResolvedValue([makeParent({ parentLinks: [{ child }] })]);
     prisma.studentProblemAttempt.findMany.mockResolvedValue([
       { correct: true },
       { correct: false },
@@ -72,21 +72,17 @@ describe('DigestService', () => {
     await service.sendWeeklyDigests();
 
     expect(emailService.sendWeeklyDigest).toHaveBeenCalledTimes(1);
-    expect(emailService.sendWeeklyDigest).toHaveBeenCalledWith(
-      'parent@example.com',
-      'Jane Doe',
-      [
-        expect.objectContaining({
-          name: 'Alice',
-          grade: 2,
-          xpEarned: 15,
-          attemptsCount: 2,
-          correctCount: 1,
-          badgesEarned: ['FIRST_CORRECT'],
-          streakCount: 5,
-        }),
-      ],
-    );
+    expect(emailService.sendWeeklyDigest).toHaveBeenCalledWith('parent@example.com', 'Jane Doe', [
+      expect.objectContaining({
+        name: 'Alice',
+        grade: 2,
+        xpEarned: 15,
+        attemptsCount: 2,
+        correctCount: 1,
+        badgesEarned: ['FIRST_CORRECT'],
+        streakCount: 5,
+      }),
+    ]);
   });
 
   it('sends empty summaries when parent has no linked children', async () => {

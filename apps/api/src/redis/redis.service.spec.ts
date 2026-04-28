@@ -36,12 +36,7 @@ describe('RedisService', () => {
       await service.addToRevocationList('token-hash-123', 3600);
 
       const client = service.getClient();
-      expect(client.set).toHaveBeenCalledWith(
-        'revoked:token-hash-123',
-        '1',
-        'EX',
-        3600,
-      );
+      expect(client.set).toHaveBeenCalledWith('revoked:token-hash-123', '1', 'EX', 3600);
     });
   });
 
@@ -65,12 +60,7 @@ describe('RedisService', () => {
       await service.storeRefreshToken('user-1', 'token-hash', 604800);
 
       const client = service.getClient();
-      expect(client.set).toHaveBeenCalledWith(
-        'refresh:user-1:token-hash',
-        '1',
-        'EX',
-        604800,
-      );
+      expect(client.set).toHaveBeenCalledWith('refresh:user-1:token-hash', '1', 'EX', 604800);
     });
   });
 

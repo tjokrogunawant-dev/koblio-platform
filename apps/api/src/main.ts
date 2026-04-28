@@ -24,9 +24,7 @@ async function bootstrap() {
     origin: process.env.WEB_URL ?? 'http://localhost:3000',
   });
   app.setGlobalPrefix('api');
-  app.useGlobalPipes(
-    new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }),
-  );
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
 
   const config = new DocumentBuilder()
     .setTitle('Koblio API')

@@ -95,9 +95,7 @@ describe('AuthController', () => {
         new ConflictException('Email already registered'),
       );
 
-      await expect(controller.registerParent(dto, res)).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(controller.registerParent(dto, res)).rejects.toThrow(ConflictException);
     });
   });
 
@@ -157,13 +155,9 @@ describe('AuthController', () => {
 
     it('should propagate UnauthorizedException for bad credentials', async () => {
       const res = mockResponse();
-      authService.login.mockRejectedValue(
-        new UnauthorizedException('Invalid credentials'),
-      );
+      authService.login.mockRejectedValue(new UnauthorizedException('Invalid credentials'));
 
-      await expect(controller.login(dto, res)).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(controller.login(dto, res)).rejects.toThrow(UnauthorizedException);
     });
   });
 
@@ -198,9 +192,7 @@ describe('AuthController', () => {
       await controller.refresh(req, res);
 
       expect(res.status).toHaveBeenCalledWith(401);
-      expect(res.json).toHaveBeenCalledWith(
-        expect.objectContaining({ status: 401 }),
-      );
+      expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ status: 401 }));
     });
   });
 

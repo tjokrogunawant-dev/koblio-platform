@@ -46,15 +46,11 @@ describe('RolesGuard', () => {
 
   it('should deny access when no user present', () => {
     jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['teacher']);
-    expect(() => guard.canActivate(createContext())).toThrow(
-      ForbiddenException,
-    );
+    expect(() => guard.canActivate(createContext())).toThrow(ForbiddenException);
   });
 
   it('should allow access when user has one of multiple required roles', () => {
-    jest
-      .spyOn(reflector, 'getAllAndOverride')
-      .mockReturnValue(['teacher', 'admin']);
+    jest.spyOn(reflector, 'getAllAndOverride').mockReturnValue(['teacher', 'admin']);
     const context = createContext({
       userId: 'user1',
       roles: ['admin'],

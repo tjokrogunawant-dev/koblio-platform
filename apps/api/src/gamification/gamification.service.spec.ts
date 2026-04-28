@@ -40,10 +40,7 @@ describe('GamificationService', () => {
     );
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        GamificationService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [GamificationService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = module.get<GamificationService>(GamificationService);

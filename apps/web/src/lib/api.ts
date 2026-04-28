@@ -44,10 +44,7 @@ async function handleResponse<T>(res: Response): Promise<T> {
   return res.json() as Promise<T>;
 }
 
-export async function loginParentTeacher(
-  email: string,
-  password: string,
-): Promise<AuthResponse> {
+export async function loginParentTeacher(email: string, password: string): Promise<AuthResponse> {
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -56,10 +53,7 @@ export async function loginParentTeacher(
   return handleResponse<AuthResponse>(res);
 }
 
-export async function loginStudent(
-  username: string,
-  password: string,
-): Promise<AuthResponse> {
+export async function loginStudent(username: string, password: string): Promise<AuthResponse> {
   const res = await fetch(`${API_BASE}/auth/login/student`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -68,9 +62,7 @@ export async function loginStudent(
   return handleResponse<AuthResponse>(res);
 }
 
-export async function registerParent(
-  data: RegisterParentData,
-): Promise<AuthResponse> {
+export async function registerParent(data: RegisterParentData): Promise<AuthResponse> {
   const res = await fetch(`${API_BASE}/auth/register/parent`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -79,9 +71,7 @@ export async function registerParent(
   return handleResponse<AuthResponse>(res);
 }
 
-export async function registerTeacher(
-  data: RegisterTeacherData,
-): Promise<AuthResponse> {
+export async function registerTeacher(data: RegisterTeacherData): Promise<AuthResponse> {
   const res = await fetch(`${API_BASE}/auth/register/teacher`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -97,9 +87,7 @@ export interface RegisterStudentData {
   password: string;
 }
 
-export async function registerStudent(
-  data: RegisterStudentData,
-): Promise<AuthResponse> {
+export async function registerStudent(data: RegisterStudentData): Promise<AuthResponse> {
   const res = await fetch(`${API_BASE}/auth/register/student`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -156,10 +144,7 @@ export async function getProblems(
   const headers: Record<string, string> = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
-  const res = await fetch(
-    `${API_BASE}/content/problems?${params.toString()}`,
-    { headers },
-  );
+  const res = await fetch(`${API_BASE}/content/problems?${params.toString()}`, { headers });
   return handleResponse<ProblemsResponse>(res);
 }
 
@@ -181,10 +166,7 @@ export interface CreateProblemData {
 
 export type UpdateProblemData = Partial<CreateProblemData>;
 
-export async function createProblem(
-  data: CreateProblemData,
-  token: string,
-): Promise<Problem> {
+export async function createProblem(data: CreateProblemData, token: string): Promise<Problem> {
   const res = await fetch(`${API_BASE}/content/problems`, {
     method: 'POST',
     headers: {
@@ -212,10 +194,7 @@ export async function updateProblem(
   return handleResponse<Problem>(res);
 }
 
-export async function getProblemsByGrade(
-  grade: number,
-  token?: string,
-): Promise<Problem[]> {
+export async function getProblemsByGrade(grade: number, token?: string): Promise<Problem[]> {
   const headers: Record<string, string> = {};
   if (token) headers['Authorization'] = `Bearer ${token}`;
 
@@ -292,9 +271,7 @@ export interface LeaderboardResponse {
   leaderboard: LeaderboardEntry[];
 }
 
-export async function getStudentProfile(
-  token: string,
-): Promise<StudentGamificationProfile> {
+export async function getStudentProfile(token: string): Promise<StudentGamificationProfile> {
   const res = await fetch(`${API_BASE}/gamification/me`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -305,18 +282,15 @@ export async function getLeaderboard(
   classroomId: string,
   token: string,
 ): Promise<LeaderboardResponse> {
-  const res = await fetch(
-    `${API_BASE}/gamification/leaderboard/${classroomId}`,
-    { headers: { Authorization: `Bearer ${token}` } },
-  );
+  const res = await fetch(`${API_BASE}/gamification/leaderboard/${classroomId}`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   return handleResponse<LeaderboardResponse>(res);
 }
 
 export async function getDailyChallenge(grade: number): Promise<Problem | null> {
   try {
-    const res = await fetch(
-      `${API_BASE}/gamification/daily-challenge/${grade}`,
-    );
+    const res = await fetch(`${API_BASE}/gamification/daily-challenge/${grade}`);
     if (res.status === 404) return null;
     return handleResponse<Problem>(res);
   } catch {
@@ -504,10 +478,7 @@ export async function getClassroomProgress(
   return handleResponse<ClassroomProgress>(res);
 }
 
-export async function getChildProgress(
-  childId: string,
-  token: string,
-): Promise<ChildProgress> {
+export async function getChildProgress(childId: string, token: string): Promise<ChildProgress> {
   const res = await fetch(`${API_BASE}/parent/children/${childId}/progress`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -576,9 +547,7 @@ export interface UpdateAvatarResponse {
   avatarSlug: string | null;
 }
 
-export async function getMyStudentProfile(
-  token: string,
-): Promise<StudentProfile> {
+export async function getMyStudentProfile(token: string): Promise<StudentProfile> {
   const res = await fetch(`${API_BASE}/me/profile`, {
     headers: { Authorization: `Bearer ${token}` },
   });
@@ -623,9 +592,7 @@ export async function updateAvatar(
 
 // ─── Stripe / Subscriptions ───────────────────────────────────────────────────
 
-export async function createCheckoutSession(
-  token: string,
-): Promise<{ url: string | null }> {
+export async function createCheckoutSession(token: string): Promise<{ url: string | null }> {
   const res = await fetch(`${API_BASE}/stripe/create-checkout`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${token}` },

@@ -13,7 +13,7 @@ export class MasteryController {
 
   @Get('me')
   @Roles(UserRole.STUDENT)
-  @ApiOperation({ summary: "Get all skill masteries for the current student" })
+  @ApiOperation({ summary: 'Get all skill masteries for the current student' })
   async getMyMasteries(@CurrentUser() user: AuthenticatedUser) {
     const masteries = await this.masteryService.getStudentMasteries(user.userId);
     return {

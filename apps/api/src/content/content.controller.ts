@@ -94,10 +94,7 @@ export class ContentController {
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Update an existing problem (teacher/admin only)' })
   @ApiParam({ name: 'id', type: String, description: 'Problem UUID' })
-  async updateProblem(
-    @Param('id', ParseUUIDPipe) id: string,
-    @Body() dto: UpdateProblemDto,
-  ) {
+  async updateProblem(@Param('id', ParseUUIDPipe) id: string, @Body() dto: UpdateProblemDto) {
     return this.contentService.updateProblem(id, dto);
   }
 }

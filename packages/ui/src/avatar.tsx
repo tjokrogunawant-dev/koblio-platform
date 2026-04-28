@@ -29,41 +29,39 @@ const Avatar = forwardRef<HTMLDivElement, AvatarProps>(
 );
 Avatar.displayName = 'Avatar';
 
-const AvatarImage = forwardRef<
-  HTMLImageElement,
-  ImgHTMLAttributes<HTMLImageElement>
->(({ className, alt, ...props }, ref) => {
-  const [hasError, setHasError] = useState(false);
+const AvatarImage = forwardRef<HTMLImageElement, ImgHTMLAttributes<HTMLImageElement>>(
+  ({ className, alt, ...props }, ref) => {
+    const [hasError, setHasError] = useState(false);
 
-  if (hasError) {
-    return null;
-  }
+    if (hasError) {
+      return null;
+    }
 
-  return (
-    <img
-      ref={ref}
-      alt={alt}
-      className={cn('aspect-square h-full w-full object-cover', className)}
-      onError={() => setHasError(true)}
-      {...props}
-    />
-  );
-});
+    return (
+      <img
+        ref={ref}
+        alt={alt}
+        className={cn('aspect-square h-full w-full object-cover', className)}
+        onError={() => setHasError(true)}
+        {...props}
+      />
+    );
+  },
+);
 AvatarImage.displayName = 'AvatarImage';
 
-const AvatarFallback = forwardRef<
-  HTMLDivElement,
-  HTMLAttributes<HTMLDivElement>
->(({ className, ...props }, ref) => (
-  <div
-    ref={ref}
-    className={cn(
-      'flex h-full w-full items-center justify-center rounded-full bg-primary text-primary-foreground font-bold',
-      className,
-    )}
-    {...props}
-  />
-));
+const AvatarFallback = forwardRef<HTMLDivElement, HTMLAttributes<HTMLDivElement>>(
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        'flex h-full w-full items-center justify-center rounded-full bg-primary text-primary-foreground font-bold',
+        className,
+      )}
+      {...props}
+    />
+  ),
+);
 AvatarFallback.displayName = 'AvatarFallback';
 
 export { Avatar, AvatarImage, AvatarFallback };

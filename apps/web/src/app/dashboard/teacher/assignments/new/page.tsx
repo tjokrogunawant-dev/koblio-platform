@@ -151,13 +151,13 @@ export default function NewAssignmentPage() {
         </div>
 
         <form
-          onSubmit={(e) => { void handleSubmit(e); }}
+          onSubmit={(e) => {
+            void handleSubmit(e);
+          }}
           className="space-y-6 rounded-xl border border-slate-200 bg-white p-6 shadow-sm"
         >
           {submitError && (
-            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">
-              {submitError}
-            </div>
+            <div className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">{submitError}</div>
           )}
 
           {/* Classroom */}
@@ -187,9 +187,7 @@ export default function NewAssignmentPage() {
           {/* Grade (read-only from classroom) */}
           {selectedClassroom && (
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-700">
-                Grade
-              </label>
+              <label className="mb-1.5 block text-sm font-medium text-slate-700">Grade</label>
               <div className="inline-flex items-center rounded-lg border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-medium text-slate-700">
                 Grade {selectedClassroom.grade}
               </div>
@@ -233,9 +231,7 @@ export default function NewAssignmentPage() {
 
           {/* Topic */}
           <div>
-            <label className="mb-1.5 block text-sm font-medium text-slate-700">
-              Topic
-            </label>
+            <label className="mb-1.5 block text-sm font-medium text-slate-700">Topic</label>
             <input
               type="text"
               value={topic}
@@ -286,9 +282,7 @@ export default function NewAssignmentPage() {
             <div className="mb-2 flex items-center justify-between">
               <label className="text-sm font-medium text-slate-700">
                 Problems <span className="text-red-500">*</span>{' '}
-                <span className="font-normal text-slate-400">
-                  (select up to 10)
-                </span>
+                <span className="font-normal text-slate-400">(select up to 10)</span>
               </label>
               <Button
                 type="button"
@@ -307,9 +301,7 @@ export default function NewAssignmentPage() {
               </p>
             )}
 
-            {problemsError && (
-              <p className="mb-2 text-sm text-red-500">{problemsError}</p>
-            )}
+            {problemsError && <p className="mb-2 text-sm text-red-500">{problemsError}</p>}
 
             {!strand && (
               <p className="text-sm text-slate-400">

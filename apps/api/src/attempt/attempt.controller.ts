@@ -23,10 +23,7 @@ export class AttemptController {
   @Post()
   @Roles('student')
   @ApiOperation({ summary: 'Submit an answer to a problem' })
-  async submitAnswer(
-    @CurrentUser() user: AuthenticatedUser,
-    @Body() dto: SubmitAnswerDto,
-  ) {
+  async submitAnswer(@CurrentUser() user: AuthenticatedUser, @Body() dto: SubmitAnswerDto) {
     return this.attemptService.submitAnswer(user.userId, dto);
   }
 
@@ -41,11 +38,7 @@ export class AttemptController {
     @Query('offset', new ParseIntPipe({ optional: true })) offset?: number,
   ) {
     const cappedLimit = Math.min(limit ?? 20, 100);
-    const result = await this.attemptService.getStudentAttempts(
-      user.userId,
-      cappedLimit,
-      offset,
-    );
+    const result = await this.attemptService.getStudentAttempts(user.userId, cappedLimit, offset);
     return {
       data: result.data,
       total: result.total,
@@ -69,9 +62,6 @@ export class AttemptController {
     @CurrentUser() user: AuthenticatedUser,
     @Param('problemId', ParseUUIDPipe) problemId: string,
   ) {
-    return this.attemptService.getStudentProblemAttempts(
-      user.userId,
-      problemId,
-    );
+    return this.attemptService.getStudentProblemAttempts(user.userId, problemId);
   }
 }

@@ -61,10 +61,7 @@ export class LeaderboardService {
    * Falls back to an empty array on Redis error (caller handles cold-start
    * fallback to SQL).
    */
-  async getClassroomLeaderboard(
-    classroomId: string,
-    limit = 10,
-  ): Promise<LeaderboardEntry[]> {
+  async getClassroomLeaderboard(classroomId: string, limit = 10): Promise<LeaderboardEntry[]> {
     const weekKey = this.getWeekKey();
     const classKey = `leaderboard:weekly:classroom:${classroomId}:${weekKey}`;
 
@@ -85,10 +82,7 @@ export class LeaderboardService {
    * 0-indexed ZREVRANK for a student in their classroom leaderboard.
    * Returns null if the student has no score yet.
    */
-  async getStudentRank(
-    classroomId: string,
-    studentId: string,
-  ): Promise<number | null> {
+  async getStudentRank(classroomId: string, studentId: string): Promise<number | null> {
     const weekKey = this.getWeekKey();
     const classKey = `leaderboard:weekly:classroom:${classroomId}:${weekKey}`;
 
@@ -97,9 +91,7 @@ export class LeaderboardService {
       const rank = await client.zrevrank(classKey, studentId);
       return rank; // ioredis returns null when member is absent
     } catch (err) {
-      this.logger.error(
-        `LeaderboardService.getStudentRank failed: ${(err as Error).message}`,
-      );
+      this.logger.error(`LeaderboardService.getStudentRank failed: ${(err as Error).message}`);
       return null;
     }
   }
@@ -142,8 +134,7 @@ export class LeaderboardService {
 
     // Week number: ordinal day in the year, divided by 7
     const startOfYear = new Date(year, 0, 1);
-    const dayOfYear =
-      Math.floor((target.getTime() - startOfYear.getTime()) / 86400000) + 1;
+    const dayOfYear = Math.floor((target.getTime() - startOfYear.getTime()) / 86400000) + 1;
     const weekNum = Math.ceil(dayOfYear / 7);
 
     const paddedWeek = String(weekNum).padStart(2, '0');

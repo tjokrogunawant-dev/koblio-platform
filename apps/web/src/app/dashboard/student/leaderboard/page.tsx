@@ -4,10 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/components/providers/auth-provider';
 import { LeaderboardWidget } from '@/components/gamification/leaderboard-widget';
-import {
-  getLeaderboard,
-  type LeaderboardEntry,
-} from '@/lib/api';
+import { getLeaderboard, type LeaderboardEntry } from '@/lib/api';
 
 interface LeaderboardState {
   rank: number;
@@ -23,8 +20,7 @@ export default function LeaderboardPage() {
 
   // classroomId is expected on the AuthUser when the student is enrolled in a class.
   // If it's absent (e.g. no class joined yet), we show a helpful message.
-  const classroomId = (user as (typeof user & { classroomId?: string }) | null)
-    ?.classroomId;
+  const classroomId = (user as (typeof user & { classroomId?: string }) | null)?.classroomId;
 
   useEffect(() => {
     if (!token || !classroomId) return;
@@ -58,9 +54,7 @@ export default function LeaderboardPage() {
         {!classroomId ? (
           <div className="rounded-xl border border-slate-200 bg-white p-8 text-center">
             <p className="text-2xl">🏫</p>
-            <p className="mt-2 font-semibold text-slate-700">
-              Join a class to see the leaderboard
-            </p>
+            <p className="mt-2 font-semibold text-slate-700">Join a class to see the leaderboard</p>
             <p className="mt-1 text-sm text-slate-500">
               Ask your teacher for a class code to get started.
             </p>
@@ -68,9 +62,7 @@ export default function LeaderboardPage() {
         ) : loading ? (
           <p className="text-center text-slate-500">Loading leaderboard…</p>
         ) : error ? (
-          <div className="rounded-xl bg-red-50 p-6 text-center text-red-600">
-            {error}
-          </div>
+          <div className="rounded-xl bg-red-50 p-6 text-center text-red-600">{error}</div>
         ) : state ? (
           <LeaderboardWidget
             leaderboard={state.leaderboard}

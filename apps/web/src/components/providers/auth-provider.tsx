@@ -1,19 +1,7 @@
 'use client';
 
-import {
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-  useCallback,
-  type ReactNode,
-} from 'react';
-import {
-  getStoredToken,
-  setStoredToken,
-  clearStoredToken,
-  isTokenExpired,
-} from '@/lib/auth';
+import { createContext, useContext, useEffect, useState, useCallback, type ReactNode } from 'react';
+import { getStoredToken, setStoredToken, clearStoredToken, isTokenExpired } from '@/lib/auth';
 import type { AuthUser } from '@/lib/api';
 
 interface AuthContextValue {
@@ -59,17 +47,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const login = useCallback(
-    (newToken: string, newUser: AuthUser, expiresIn: number) => {
-      setStoredToken(newToken, expiresIn);
-      localStorage.setItem(USER_KEY, JSON.stringify(newUser));
-      // Set session cookie so middleware can detect auth
-      document.cookie = 'koblio_session=1; path=/; SameSite=Lax';
-      setToken(newToken);
-      setUser(newUser);
-    },
-    [],
-  );
+  const login = useCallback((newToken: string, newUser: AuthUser, expiresIn: number) => {
+    setStoredToken(newToken, expiresIn);
+    localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+    // Set session cookie so middleware can detect auth
+    document.cookie = 'koblio_session=1; path=/; SameSite=Lax';
+    setToken(newToken);
+    setUser(newUser);
+  }, []);
 
   const logout = useCallback(() => {
     clearStoredToken();

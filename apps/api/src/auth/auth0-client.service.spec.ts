@@ -40,9 +40,7 @@ describe('Auth0ClientService', () => {
               };
               return config[key];
             }),
-            get: jest.fn(
-              (_key: string, defaultVal: string) => defaultVal,
-            ),
+            get: jest.fn((_key: string, defaultVal: string) => defaultVal),
           },
         },
       ],
@@ -68,12 +66,9 @@ describe('Auth0ClientService', () => {
           }),
         );
 
-      const result = await service.createUser(
-        'test@example.com',
-        'password123',
-        'Test User',
-        { role: 'parent' },
-      );
+      const result = await service.createUser('test@example.com', 'password123', 'Test User', {
+        role: 'parent',
+      });
 
       expect(result.user_id).toBe('auth0|new-user');
       expect(mockFetch).toHaveBeenCalledTimes(2);
@@ -87,17 +82,10 @@ describe('Auth0ClientService', () => {
             expires_in: 86400,
           }),
         )
-        .mockResolvedValueOnce(
-          jsonResponse(409, { message: 'User already exists' }),
-        );
+        .mockResolvedValueOnce(jsonResponse(409, { message: 'User already exists' }));
 
       await expect(
-        service.createUser(
-          'existing@example.com',
-          'password',
-          'User',
-          {},
-        ),
+        service.createUser('existing@example.com', 'password', 'User', {}),
       ).rejects.toThrow(ConflictException);
     });
 
@@ -111,9 +99,9 @@ describe('Auth0ClientService', () => {
         )
         .mockResolvedValueOnce(jsonResponse(500, { error: 'Server error' }));
 
-      await expect(
-        service.createUser('test@example.com', 'password', 'User', {}),
-      ).rejects.toThrow(InternalServerErrorException);
+      await expect(service.createUser('test@example.com', 'password', 'User', {})).rejects.toThrow(
+        InternalServerErrorException,
+      );
     });
   });
 
@@ -128,10 +116,7 @@ describe('Auth0ClientService', () => {
         }),
       );
 
-      const result = await service.authenticateUser(
-        'test@example.com',
-        'password',
-      );
+      const result = await service.authenticateUser('test@example.com', 'password');
 
       expect(result.access_token).toBe('at-123');
       expect(result.refresh_token).toBe('rt-123');
@@ -144,13 +129,11 @@ describe('Auth0ClientService', () => {
     });
 
     it('should throw UnauthorizedException on 401', async () => {
-      mockFetch.mockResolvedValueOnce(
-        jsonResponse(401, { error: 'invalid_grant' }),
-      );
+      mockFetch.mockResolvedValueOnce(jsonResponse(401, { error: 'invalid_grant' }));
 
-      await expect(
-        service.authenticateUser('test@example.com', 'wrong-password'),
-      ).rejects.toThrow(UnauthorizedException);
+      await expect(service.authenticateUser('test@example.com', 'wrong-password')).rejects.toThrow(
+        UnauthorizedException,
+      );
     });
   });
 
@@ -173,13 +156,9 @@ describe('Auth0ClientService', () => {
     });
 
     it('should throw UnauthorizedException on expired token', async () => {
-      mockFetch.mockResolvedValueOnce(
-        jsonResponse(401, { error: 'invalid_grant' }),
-      );
+      mockFetch.mockResolvedValueOnce(jsonResponse(401, { error: 'invalid_grant' }));
 
-      await expect(service.refreshToken('rt-expired')).rejects.toThrow(
-        UnauthorizedException,
-      );
+      await expect(service.refreshToken('rt-expired')).rejects.toThrow(UnauthorizedException);
     });
   });
 
@@ -198,9 +177,7 @@ describe('Auth0ClientService', () => {
     it('should not throw on revocation failure (non-critical)', async () => {
       mockFetch.mockResolvedValueOnce(jsonResponse(400, { error: 'failed' }));
 
-      await expect(
-        service.revokeRefreshToken('rt-invalid'),
-      ).resolves.toBeUndefined();
+      await expect(service.revokeRefreshToken('rt-invalid')).resolves.toBeUndefined();
     });
   });
 

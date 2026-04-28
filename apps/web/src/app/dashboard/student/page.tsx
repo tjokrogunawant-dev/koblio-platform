@@ -89,15 +89,9 @@ export default function StudentDashboardPage() {
       <main className="mx-auto max-w-4xl space-y-6 p-8">
         {/* Welcome row */}
         <div className="flex items-center gap-4">
-          <Avatar
-            slug={user?.avatarSlug}
-            size="lg"
-            name={displayName}
-          />
+          <Avatar slug={user?.avatarSlug} size="lg" name={displayName} />
           <div>
-            <h1 className="text-3xl font-bold text-slate-800">
-              Welcome back, {displayName}!
-            </h1>
+            <h1 className="text-3xl font-bold text-slate-800">Welcome back, {displayName}!</h1>
             <p className="mt-1 text-slate-500">Grade {grade}</p>
             {!user?.avatarSlug && (
               <Link
@@ -139,11 +133,7 @@ export default function StudentDashboardPage() {
         )}
 
         {/* Daily Challenge */}
-        <DailyChallengeCard
-          problem={dailyChallenge}
-          grade={grade}
-          onStart={handleStartChallenge}
-        />
+        <DailyChallengeCard problem={dailyChallenge} grade={grade} onStart={handleStartChallenge} />
 
         {/* Start Learning CTA */}
         <div>
@@ -160,9 +150,7 @@ export default function StudentDashboardPage() {
 
         {/* Assignments section */}
         <section>
-          <h2 className="mb-4 text-xl font-semibold text-slate-800">
-            Assignments
-          </h2>
+          <h2 className="mb-4 text-xl font-semibold text-slate-800">Assignments</h2>
           {loadingAssignments && assignments.length === 0 ? (
             <p className="text-sm text-slate-400">Loading assignments…</p>
           ) : assignments.length === 0 ? (

@@ -87,15 +87,9 @@ export class DigestService {
       }
 
       try {
-        await this.emailService.sendWeeklyDigest(
-          parent.email,
-          parent.displayName,
-          summaries,
-        );
+        await this.emailService.sendWeeklyDigest(parent.email, parent.displayName, summaries);
       } catch (err) {
-        this.logger.error(
-          `Failed to send digest to parent ${parent.id}: ${String(err)}`,
-        );
+        this.logger.error(`Failed to send digest to parent ${parent.id}: ${String(err)}`);
       }
     }
 

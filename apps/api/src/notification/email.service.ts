@@ -48,9 +48,7 @@ export class EmailService {
     children: WeeklyChildSummary[],
   ): Promise<void> {
     if (!this.enabled) {
-      this.logger.warn(
-        `EmailService disabled (no SENDGRID_API_KEY). Would send to ${to}`,
-      );
+      this.logger.warn(`EmailService disabled (no SENDGRID_API_KEY). Would send to ${to}`);
       return;
     }
 
@@ -84,10 +82,7 @@ export class EmailService {
     });
   }
 
-  private buildDigestHtml(
-    parentName: string,
-    children: WeeklyChildSummary[],
-  ): string {
+  private buildDigestHtml(parentName: string, children: WeeklyChildSummary[]): string {
     const childRows = children
       .map((c) => {
         const accuracy =
@@ -95,8 +90,7 @@ export class EmailService {
             ? 'N/A'
             : `${Math.round((c.correctCount / c.attemptsCount) * 100)}%`;
 
-        const badgeList =
-          c.badgesEarned.length > 0 ? c.badgesEarned.join(', ') : '—';
+        const badgeList = c.badgesEarned.length > 0 ? c.badgesEarned.join(', ') : '—';
 
         return `
         <tr>
@@ -111,9 +105,7 @@ export class EmailService {
       .join('');
 
     const emptyState =
-      children.length === 0
-        ? `<p style="color:#6b7280;">No linked children found.</p>`
-        : '';
+      children.length === 0 ? `<p style="color:#6b7280;">No linked children found.</p>` : '';
 
     return `
 <!DOCTYPE html>

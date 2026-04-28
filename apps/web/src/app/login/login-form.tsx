@@ -71,7 +71,10 @@ export function LoginForm() {
       <div className="mx-6 mb-2 flex rounded-lg bg-slate-100 p-1">
         <button
           type="button"
-          onClick={() => { setTab('adult'); setError(''); }}
+          onClick={() => {
+            setTab('adult');
+            setError('');
+          }}
           className={cn(
             'flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
             tab === 'adult'
@@ -83,7 +86,10 @@ export function LoginForm() {
         </button>
         <button
           type="button"
-          onClick={() => { setTab('student'); setError(''); }}
+          onClick={() => {
+            setTab('student');
+            setError('');
+          }}
           className={cn(
             'flex-1 rounded-md px-3 py-1.5 text-sm font-medium transition-colors',
             tab === 'student'
@@ -165,10 +171,7 @@ export function LoginForm() {
           <div className="flex w-full flex-col items-center gap-2 text-sm text-muted-foreground">
             <span>
               Don&apos;t have an account?{' '}
-              <Link
-                href="/register"
-                className="text-indigo-600 hover:underline"
-              >
+              <Link href="/register" className="text-indigo-600 hover:underline">
                 Sign up
               </Link>
             </span>

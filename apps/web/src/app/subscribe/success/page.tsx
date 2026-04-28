@@ -9,12 +9,9 @@ export default function SubscribeSuccessPage() {
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-green-50 to-emerald-50">
       <div className="w-full max-w-md rounded-2xl bg-white p-10 text-center shadow-xl">
         <span className="text-6xl">🎉</span>
-        <h1 className="mt-5 text-3xl font-bold text-slate-800">
-          Payment Successful!
-        </h1>
+        <h1 className="mt-5 text-3xl font-bold text-slate-800">Payment Successful!</h1>
         <p className="mt-3 text-slate-500">
-          Your account is now Premium. Enjoy unlimited problems and detailed
-          progress reports.
+          Your account is now Premium. Enjoy unlimited problems and detailed progress reports.
         </p>
         <Link
           href="/dashboard/parent"

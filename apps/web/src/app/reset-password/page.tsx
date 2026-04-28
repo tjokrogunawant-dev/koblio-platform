@@ -50,9 +50,7 @@ function ResetPasswordForm() {
       }
       router.push('/login?reset=1');
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : 'Something went wrong. Please try again.',
-      );
+      setError(err instanceof Error ? err.message : 'Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }

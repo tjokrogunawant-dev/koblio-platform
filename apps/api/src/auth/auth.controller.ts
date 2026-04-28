@@ -1,19 +1,5 @@
-import {
-  Body,
-  Controller,
-  Get,
-  HttpCode,
-  HttpStatus,
-  Post,
-  Req,
-  Res,
-} from '@nestjs/common';
-import {
-  ApiBearerAuth,
-  ApiOperation,
-  ApiResponse,
-  ApiTags,
-} from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, Req, Res } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request, Response } from 'express';
 import { UserRole } from '@koblio/shared';
 import { AuthService } from './auth.service';
@@ -65,12 +51,8 @@ export class AuthController {
   @ApiResponse({ status: 201, description: 'Account created' })
   @ApiResponse({ status: 409, description: 'Email already registered' })
   @ApiResponse({ status: 422, description: 'Validation failed' })
-  async registerParent(
-    @Body() dto: RegisterParentDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
-    const { authResult, refreshToken } =
-      await this.authService.registerParent(dto);
+  async registerParent(@Body() dto: RegisterParentDto, @Res({ passthrough: true }) res: Response) {
+    const { authResult, refreshToken } = await this.authService.registerParent(dto);
 
     if (refreshToken) {
       setRefreshCookie(res, refreshToken);
@@ -90,8 +72,7 @@ export class AuthController {
     @Body() dto: RegisterTeacherDto,
     @Res({ passthrough: true }) res: Response,
   ) {
-    const { authResult, refreshToken } =
-      await this.authService.registerTeacher(dto);
+    const { authResult, refreshToken } = await this.authService.registerTeacher(dto);
 
     if (refreshToken) {
       setRefreshCookie(res, refreshToken);
@@ -117,10 +98,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Login (parents and teachers via email)' })
   @ApiResponse({ status: 200, description: 'Login successful' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
-  async login(
-    @Body() dto: EmailLoginDto,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async login(@Body() dto: EmailLoginDto, @Res({ passthrough: true }) res: Response) {
     const { authResult, refreshToken } = await this.authService.login(dto);
 
     if (refreshToken) {
@@ -136,10 +114,7 @@ export class AuthController {
   @ApiOperation({ summary: 'Rotate access token using refresh cookie' })
   @ApiResponse({ status: 200, description: 'New access token issued' })
   @ApiResponse({ status: 401, description: 'Invalid or expired refresh token' })
-  async refresh(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async refresh(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
     if (!refreshToken) {
       return res.status(HttpStatus.UNAUTHORIZED).json({
@@ -166,10 +141,7 @@ export class AuthController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Logout (revokes refresh token, clears cookie)' })
   @ApiResponse({ status: 204, description: 'Logged out' })
-  async logout(
-    @Req() req: Request,
-    @Res({ passthrough: true }) res: Response,
-  ) {
+  async logout(@Req() req: Request, @Res({ passthrough: true }) res: Response) {
     const refreshToken = req.cookies?.[REFRESH_COOKIE_NAME];
     await this.authService.logout(refreshToken);
     clearRefreshCookie(res);

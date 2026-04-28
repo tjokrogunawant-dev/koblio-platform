@@ -17,12 +17,7 @@ type Tab = 'students' | 'progress';
 
 function AccuracyBar({ percent }: { percent: number }) {
   const clamped = Math.max(0, Math.min(100, percent));
-  const color =
-    clamped >= 80
-      ? 'bg-green-500'
-      : clamped >= 50
-        ? 'bg-yellow-400'
-        : 'bg-red-400';
+  const color = clamped >= 80 ? 'bg-green-500' : clamped >= 50 ? 'bg-yellow-400' : 'bg-red-400';
   return (
     <div className="flex items-center gap-2">
       <div className="h-2 w-24 overflow-hidden rounded-full bg-slate-100">
@@ -33,11 +28,7 @@ function AccuracyBar({ percent }: { percent: number }) {
   );
 }
 
-function TopicBreakdownTooltip({
-  breakdown,
-}: {
-  breakdown: StudentProgressRow['topicBreakdown'];
-}) {
+function TopicBreakdownTooltip({ breakdown }: { breakdown: StudentProgressRow['topicBreakdown'] }) {
   const [open, setOpen] = useState(false);
 
   if (!breakdown.length) return <span className="text-xs text-slate-400">—</span>;
@@ -142,9 +133,7 @@ export default function ClassDetailPage() {
         {/* Class header */}
         <div className="flex flex-wrap items-start gap-4">
           <div className="flex-1">
-            <h1 className="text-3xl font-bold text-slate-800">
-              {classroom?.name ?? 'Loading…'}
-            </h1>
+            <h1 className="text-3xl font-bold text-slate-800">{classroom?.name ?? 'Loading…'}</h1>
             {classroom && (
               <p className="mt-1 text-slate-500">
                 Grade {classroom.grade} &middot; {classroom.studentCount} student
@@ -218,9 +207,7 @@ export default function ClassDetailPage() {
                   <tbody className="divide-y divide-slate-100">
                     {students.map((s) => (
                       <tr key={s.id} className="hover:bg-slate-50">
-                        <td className="px-5 py-3 font-medium text-slate-800">
-                          {s.name}
-                        </td>
+                        <td className="px-5 py-3 font-medium text-slate-800">{s.name}</td>
                         <td className="px-5 py-3 text-slate-600">
                           {s.streakCount > 0 ? (
                             <span className="inline-flex items-center gap-1">
@@ -237,9 +224,7 @@ export default function ClassDetailPage() {
                             <span>{s.coins.toLocaleString()}</span>
                           </span>
                         </td>
-                        <td className="px-5 py-3 text-slate-600">
-                          {s.xp.toLocaleString()} XP
-                        </td>
+                        <td className="px-5 py-3 text-slate-600">{s.xp.toLocaleString()} XP</td>
                       </tr>
                     ))}
                   </tbody>
@@ -276,9 +261,7 @@ export default function ClassDetailPage() {
                   <tbody className="divide-y divide-slate-100">
                     {progress.map((row) => (
                       <tr key={row.studentId} className="hover:bg-slate-50">
-                        <td className="px-5 py-3 font-medium text-slate-800">
-                          {row.name}
-                        </td>
+                        <td className="px-5 py-3 font-medium text-slate-800">{row.name}</td>
                         <td className="px-5 py-3 text-slate-600">{row.totalAttempts}</td>
                         <td className="px-5 py-3 text-slate-600">{row.correctAttempts}</td>
                         <td className="px-5 py-3">

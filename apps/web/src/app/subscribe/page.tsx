@@ -74,9 +74,7 @@ export default function SubscribePage() {
           </button>
         )}
 
-        <p className="mt-4 text-center text-xs text-slate-400">
-          Cancel anytime. No hidden fees.
-        </p>
+        <p className="mt-4 text-center text-xs text-slate-400">Cancel anytime. No hidden fees.</p>
       </div>
     </div>
   );

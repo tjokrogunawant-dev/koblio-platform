@@ -36,10 +36,7 @@ describe('ContentService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [
-        ContentService,
-        { provide: PrismaService, useValue: mockPrismaService },
-      ],
+      providers: [ContentService, { provide: PrismaService, useValue: mockPrismaService }],
     }).compile();
 
     service = module.get<ContentService>(ContentService);
@@ -119,9 +116,7 @@ describe('ContentService', () => {
     it('throws NotFoundException when id does not exist', async () => {
       mockPrismaService.problem.findUnique.mockResolvedValue(null);
 
-      await expect(service.findOne('non-existent-id')).rejects.toThrow(
-        NotFoundException,
-      );
+      await expect(service.findOne('non-existent-id')).rejects.toThrow(NotFoundException);
     });
   });
 

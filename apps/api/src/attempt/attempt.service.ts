@@ -40,17 +40,14 @@ export class AttemptService {
     });
 
     if (!problem) {
-      throw new NotFoundException(
-        `Problem with id "${dto.problemId}" not found`,
-      );
+      throw new NotFoundException(`Problem with id "${dto.problemId}" not found`);
     }
 
     const content = problem.content as Record<string, unknown>;
     const correctAnswer = String(content['answer'] ?? '');
     const solution = String(content['solution'] ?? '');
 
-    const correct =
-      dto.answer.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
+    const correct = dto.answer.trim().toLowerCase() === correctAnswer.trim().toLowerCase();
 
     const attempt = await this.prisma.studentProblemAttempt.create({
       data: {
@@ -103,9 +100,7 @@ export class AttemptService {
         streakCount = streakResult.streakCount;
       }
     } catch (err) {
-      this.logger.error(
-        `Gamification side-effects failed for attempt ${attempt.id}: ${err}`,
-      );
+      this.logger.error(`Gamification side-effects failed for attempt ${attempt.id}: ${err}`);
     }
 
     try {
@@ -136,9 +131,7 @@ export class AttemptService {
         classroomRank,
       });
     } catch (err) {
-      this.logger.error(
-        `Badge side-effects failed for attempt ${attempt.id}: ${err}`,
-      );
+      this.logger.error(`Badge side-effects failed for attempt ${attempt.id}: ${err}`);
     }
 
     // Update BKT mastery — failures never block the attempt response
@@ -148,9 +141,7 @@ export class AttemptService {
       const masteryResult = await this.masteryService.recordAttempt(studentId, skill, correct);
       justMastered = masteryResult.justMastered;
     } catch (err) {
-      this.logger.error(
-        `Mastery side-effects failed for attempt ${attempt.id}: ${err}`,
-      );
+      this.logger.error(`Mastery side-effects failed for attempt ${attempt.id}: ${err}`);
     }
 
     // Update FSRS card state — failures never block the attempt response
@@ -158,12 +149,20 @@ export class AttemptService {
       const rating = correct ? 3 : 1; // Good on correct, Again on incorrect
       await this.schedulerService.recordReview(studentId, dto.problemId, rating as 1 | 3);
     } catch (err) {
-      this.logger.error(
-        `FSRS scheduler side-effects failed for attempt ${attempt.id}: ${err}`,
-      );
+      this.logger.error(`FSRS scheduler side-effects failed for attempt ${attempt.id}: ${err}`);
     }
 
-    return { correct, correctAnswer, solution, attemptId: attempt.id, coinsEarned, xpEarned, leveledUp, badgesEarned, justMastered };
+    return {
+      correct,
+      correctAnswer,
+      solution,
+      attemptId: attempt.id,
+      coinsEarned,
+      xpEarned,
+      leveledUp,
+      badgesEarned,
+      justMastered,
+    };
   }
 
   async getStudentAttempts(
@@ -200,28 +199,23 @@ export class AttemptService {
     accuracyPercent: number;
     topicsAttempted: string[];
   }> {
-    const [totalAttempts, correctAttempts, attemptedProblems] =
-      await Promise.all([
-        this.prisma.studentProblemAttempt.count({ where: { studentId } }),
-        this.prisma.studentProblemAttempt.count({
-          where: { studentId, correct: true },
-        }),
-        this.prisma.studentProblemAttempt.findMany({
-          where: { studentId },
-          distinct: ['problemId'],
-          include: { problem: { select: { topic: true } } },
-        }),
-      ]);
+    const [totalAttempts, correctAttempts, attemptedProblems] = await Promise.all([
+      this.prisma.studentProblemAttempt.count({ where: { studentId } }),
+      this.prisma.studentProblemAttempt.count({
+        where: { studentId, correct: true },
+      }),
+      this.prisma.studentProblemAttempt.findMany({
+        where: { studentId },
+        distinct: ['problemId'],
+        include: { problem: { select: { topic: true } } },
+      }),
+    ]);
 
-    const topicsSet = new Set<string>(
-      attemptedProblems.map((a) => a.problem.topic),
-    );
+    const topicsSet = new Set<string>(attemptedProblems.map((a) => a.problem.topic));
     const topicsAttempted = Array.from(topicsSet).sort();
 
     const accuracyPercent =
-      totalAttempts === 0
-        ? 0
-        : Math.round((correctAttempts / totalAttempts) * 100);
+      totalAttempts === 0 ? 0 : Math.round((correctAttempts / totalAttempts) * 100);
 
     return { totalAttempts, correctAttempts, accuracyPercent, topicsAttempted };
   }

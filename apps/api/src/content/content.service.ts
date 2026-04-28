@@ -73,8 +73,7 @@ export class ContentService {
     limit?: number;
     offset?: number;
   }): Promise<{ data: ProblemDto[]; total: number }> {
-    const { grade, strand, topic, difficulty, type, limit = 20, offset = 0 } =
-      filters;
+    const { grade, strand, topic, difficulty, type, limit = 20, offset = 0 } = filters;
 
     const where: Record<string, unknown> = {};
     if (grade !== undefined) where['grade'] = grade;
@@ -142,11 +141,7 @@ export class ContentService {
     grade: number,
     topic: string,
   ): Promise<ProblemDto | null> {
-    const problem = await this.schedulerService.getNextProblemBlended(
-      studentId,
-      grade,
-      topic,
-    );
+    const problem = await this.schedulerService.getNextProblemBlended(studentId, grade, topic);
     if (!problem) return null;
     return mapProblem(problem);
   }

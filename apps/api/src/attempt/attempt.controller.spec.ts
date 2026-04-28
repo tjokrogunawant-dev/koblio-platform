@@ -59,11 +59,7 @@ describe('AttemptController', () => {
 
       const result = await controller.getMyAttempts(mockStudentUser);
 
-      expect(service.getStudentAttempts).toHaveBeenCalledWith(
-        STUDENT_ID,
-        undefined,
-        undefined,
-      );
+      expect(service.getStudentAttempts).toHaveBeenCalledWith(STUDENT_ID, undefined, undefined);
       expect(result).toEqual({ data: [], total: 0, limit: 20, offset: 0 });
     });
 
@@ -72,11 +68,7 @@ describe('AttemptController', () => {
 
       await controller.getMyAttempts(mockStudentUser, 10, 20);
 
-      expect(service.getStudentAttempts).toHaveBeenCalledWith(
-        STUDENT_ID,
-        10,
-        20,
-      );
+      expect(service.getStudentAttempts).toHaveBeenCalledWith(STUDENT_ID, 10, 20);
     });
   });
 
@@ -102,15 +94,9 @@ describe('AttemptController', () => {
     it('should return attempts for a specific problem', async () => {
       service.getStudentProblemAttempts.mockResolvedValue([]);
 
-      const result = await controller.getMyProblemAttempts(
-        mockStudentUser,
-        PROBLEM_ID,
-      );
+      const result = await controller.getMyProblemAttempts(mockStudentUser, PROBLEM_ID);
 
-      expect(service.getStudentProblemAttempts).toHaveBeenCalledWith(
-        STUDENT_ID,
-        PROBLEM_ID,
-      );
+      expect(service.getStudentProblemAttempts).toHaveBeenCalledWith(STUDENT_ID, PROBLEM_ID);
       expect(result).toEqual([]);
     });
   });
