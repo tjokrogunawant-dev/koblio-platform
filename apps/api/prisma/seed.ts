@@ -1,4 +1,4 @@
-import { PrismaClient } from '@prisma/client';
+import { Prisma, PrismaClient } from '@prisma/client';
 import problems from './seed-data/problems.json';
 
 const prisma = new PrismaClient();
@@ -10,7 +10,7 @@ async function main() {
   await prisma.problem.deleteMany({});
 
   const created = await prisma.problem.createMany({
-    data: problems as any[],
+    data: problems as Prisma.ProblemCreateManyInput[],
     skipDuplicates: true,
   });
 

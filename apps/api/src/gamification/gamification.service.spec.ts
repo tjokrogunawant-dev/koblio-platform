@@ -5,7 +5,7 @@ import { PrismaService } from '../prisma/prisma.service';
 const STUDENT_ID = '00000000-0000-0000-0000-000000000001';
 const ATTEMPT_ID = '00000000-0000-0000-0000-000000000020';
 const PROBLEM_ID = '00000000-0000-0000-0000-000000000010';
-const CLASSROOM_ID = '00000000-0000-0000-0000-000000000030';
+const _CLASSROOM_ID = '00000000-0000-0000-0000-000000000030';
 
 describe('GamificationService', () => {
   let service: GamificationService;
