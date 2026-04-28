@@ -59,7 +59,7 @@ describe('AttemptController', () => {
 
       const result = await controller.getMyAttempts(mockStudentUser);
 
-      expect(service.getStudentAttempts).toHaveBeenCalledWith(STUDENT_ID, undefined, undefined);
+      expect(service.getStudentAttempts).toHaveBeenCalledWith(STUDENT_ID, 20, undefined);
       expect(result).toEqual({ data: [], total: 0, limit: 20, offset: 0 });
     });
 

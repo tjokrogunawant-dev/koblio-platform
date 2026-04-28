@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ContentController } from './content.controller';
 import { ContentService } from './content.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { SchedulerService } from '../scheduler/scheduler.service';
 
 const mockPrismaService = {
   problem: {
@@ -17,7 +18,11 @@ describe('ContentController', () => {
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ContentController],
-      providers: [ContentService, { provide: PrismaService, useValue: mockPrismaService }],
+      providers: [
+        ContentService,
+        { provide: PrismaService, useValue: mockPrismaService },
+        { provide: SchedulerService, useValue: { getAdaptiveProblems: jest.fn() } },
+      ],
     }).compile();
 
     controller = module.get<ContentController>(ContentController);

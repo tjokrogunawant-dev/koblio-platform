@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { GamificationService } from './gamification.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { LeaderboardService } from '../leaderboard/leaderboard.service';
 
 const STUDENT_ID = '00000000-0000-0000-0000-000000000001';
 const ATTEMPT_ID = '00000000-0000-0000-0000-000000000020';
@@ -40,7 +41,18 @@ describe('GamificationService', () => {
     );
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [GamificationService, { provide: PrismaService, useValue: prisma }],
+      providers: [
+        GamificationService,
+        { provide: PrismaService, useValue: prisma },
+        {
+          provide: LeaderboardService,
+          useValue: {
+            addScore: jest.fn(),
+            getClassroomLeaderboard: jest.fn().mockResolvedValue([]),
+            getStudentRank: jest.fn().mockResolvedValue(null),
+          },
+        },
+      ],
     }).compile();
 
     service = module.get<GamificationService>(GamificationService);

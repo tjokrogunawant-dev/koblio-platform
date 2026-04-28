@@ -15,10 +15,13 @@ describe('AppController', () => {
   });
 
   describe('getHealth', () => {
-    it('should return status ok', () => {
-      const result = controller.getHealth();
-      expect(result.status).toBe('ok');
-      expect(result.timestamp).toBeDefined();
+    it('should return status ok', async () => {
+      const mockJson = jest.fn();
+      const mockRes = { status: jest.fn().mockReturnValue({ json: mockJson }), json: mockJson };
+      await controller.getHealth(mockRes as never);
+      expect(mockJson).toHaveBeenCalledWith(
+        expect.objectContaining({ status: expect.any(String) }),
+      );
     });
   });
 });

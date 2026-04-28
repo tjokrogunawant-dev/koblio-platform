@@ -2,6 +2,7 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ContentService } from './content.service';
 import { PrismaService } from '../prisma/prisma.service';
+import { SchedulerService } from '../scheduler/scheduler.service';
 
 const mockProblem = {
   id: 'a0000000-0000-0000-0000-000000000001',
@@ -36,7 +37,11 @@ describe('ContentService', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ContentService, { provide: PrismaService, useValue: mockPrismaService }],
+      providers: [
+        ContentService,
+        { provide: PrismaService, useValue: mockPrismaService },
+        { provide: SchedulerService, useValue: { getAdaptiveProblems: jest.fn() } },
+      ],
     }).compile();
 
     service = module.get<ContentService>(ContentService);

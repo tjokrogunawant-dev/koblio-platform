@@ -174,6 +174,7 @@ export class ClassroomService {
     return enrollments.map((e) => ({
       id: e.student.id,
       name: e.student.displayName,
+      role: (e.student.role as string).toLowerCase(),
       grade: e.student.grade,
       streakCount: e.student.streakCount,
       coins: e.student.coins,
