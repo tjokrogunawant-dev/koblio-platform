@@ -8,7 +8,8 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "start": "next start"
+    "start": "next start",
+    "test:e2e": "playwright test"
   },
   "dependencies": {
     "@koblio/shared": "workspace:*",
@@ -45,6 +46,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.3.0",
     "ts-jest": "^29.4.9",
-    "typescript": "^5.8.0"
+    "typescript": "^5.8.0",
+    "@playwright/test": "^1.52.0"
   }
 }

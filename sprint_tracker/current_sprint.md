@@ -29,7 +29,8 @@ The project follows `koblio_mvp_roadmap.md`. Key state as of Sprint 19:
 
 - **TG1-T03**: Forgot password / reset flow — `POST /auth/forgot-password` (generate 1h token, send SendGrid email if key set, else log token), `POST /auth/reset-password` (validate token, bcrypt new hash, invalidate token), plus `/forgot-password` and `/reset-password?token=...` pages.
 
-- **TG1-T04**: Playwright e2e smoke tests — golden path: register teacher → create class → register student with class code → solve one problem → verify XP awarded. Run in CI via `pnpm test:e2e`.
+- **TG1-T04** *(in-progress)*: Playwright e2e smoke tests — golden path: register teacher → create class → register student with class code → solve one problem → verify XP awarded. Run in CI via `pnpm test:e2e`.
+  - Progress: All files created/modified. `playwright.config.ts`, `e2e/golden-path.spec.ts`, package.json scripts, CI `e2e` job all done. Typecheck passes. Awaiting QA CI verification.
 
 ---
 

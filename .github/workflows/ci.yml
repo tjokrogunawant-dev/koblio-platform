@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
   push:
-    branches: [main, master]
+    branches: [main]
 
 concurrency:
   group: ci-${{ github.ref }}
@@ -95,3 +95,67 @@ jobs:
           cache-from: type=gha,scope=web
           cache-to: type=gha,scope=web,mode=max
 
+  e2e:
+    name: E2E Smoke Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: ci
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: koblio
+          POSTGRES_PASSWORD: koblio
+          POSTGRES_DB: koblio_e2e
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    env:
+      DATABASE_URL: postgresql://koblio:koblio@localhost:5432/koblio_e2e
+      JWT_SECRET: ci-e2e-jwt-secret-32chars-abcdefgh
+      JWT_REFRESH_SECRET: ci-e2e-refresh-secret-32chars-abcd
+      NODE_ENV: production
+      PORT: 3001
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build API
+        run: pnpm --filter @koblio/api build
+
+      - name: Run Prisma migrations
+        run: pnpm --filter @koblio/api exec prisma migrate deploy
+
+      - name: Seed database
+        run: node apps/api/prisma/seed.js
+
+      - name: Start API (background)
+        run: node apps/api/dist/main &
+
+      - name: Wait for API health
+        run: |
+          for i in $(seq 1 30); do
+            curl -sf http://localhost:3001/health && break
+            sleep 2
+          done
+
+      - name: Run e2e smoke tests
+        run: pnpm test:e2e
+        env:
+          API_URL: http://localhost:3001
