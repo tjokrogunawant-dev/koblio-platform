@@ -23,7 +23,7 @@
 | Student profile setup page (`/profile/setup`) | ✅ Done |
 | Student home dashboard (`/student/dashboard`) | ✅ Done |
 | Forgot password / reset flow | ✅ Done |
-| Playwright e2e smoke tests | 🔴 Blocked — stats endpoint missing `totalXp` |
+| Playwright e2e smoke tests | 🔴 Blocked — 4 blockers: missing /api prefix, wrong /content/problems path, CI health-wait URL, stats missing totalXp |
 
 **Trial Gate 1 progress: 13 / 14 done**
 
@@ -87,7 +87,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
-| 2026-04-28 | QA | TG1-T04 QC: FAIL — 1 blocker: GET /attempts/me/stats missing totalXp field; test step 8 assertion will always fail |
+| 2026-04-28 | QA | TG1-T04 QC: FAIL (two-pass review) — 4 blockers: all URLs missing /api prefix, /problems→/content/problems, CI health-wait URL wrong, stats missing totalXp |
 | 2026-04-28 | DEV | TG1-T04 Playwright e2e smoke tests — playwright.config.ts, e2e/golden-path.spec.ts, CI e2e job, lockfile updated (a66c435) |
 | 2026-04-28 | PM | CI HEALTH: no new failures — lockfile and ECS fixes from prior run still valid. Brief written for TG1-T04: Playwright e2e smoke tests |
 | 2026-04-28 | QA | TG1-T03 QC: PASS WITH NBI — all 11 ACs pass; 1 cosmetic NBI (method ordering in email.service.ts) |
