@@ -283,7 +283,6 @@ Run `gh run list --limit 5 --json status,conclusion,name,url` to get recent CI s
   3. Log the diagnosis in DASHBOARD.md Recent Activity Log: `| YYYY-MM-DD | PM | CI HEALTH: diagnosed failure — <cause> — action taken: <action> |`
   4. After fixing, continue to the remaining health checks below.
 - If the `docker-publish` job failed → Docker image build broke. Check the failure log. If it's a Dockerfile issue (prisma generate, missing files, etc.), create a `TG1-DOCKER-FIX` task brief for DEV and set `next_role: DEV`.
-- If the `deploy` job failed → VPS deploy broke. Check if it's a secrets/SSH issue (VPS_HOST, VPS_SSH_KEY not set) — log it but do NOT brief DEV (infra issue, not code). If it's a container startup crash, run `docker compose logs api --tail 50` remotely if possible, or note in DASHBOARD.md that the deploy failed and the platform may be down.
 - If `Deploy to ECS` is failing but CI is passing → expected (AWS not provisioned until Section 9). Log once if not already logged, then ignore.
 - If CI and docker-publish are both passing → proceed to the remaining health checks.
 
