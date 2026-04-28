@@ -33,7 +33,7 @@ RUN pnpm --filter @koblio/api build
 # Create a standalone deployment directory with flat (non-symlinked) node_modules.
 # pnpm deploy resolves the workspace symlinks into real files, which lets us
 # copy only the production deps to the runner without breaking pnpm's .pnpm store.
-RUN pnpm --filter @koblio/api deploy --prod /app/api-standalone
+RUN pnpm --filter @koblio/api deploy --prod --legacy /app/api-standalone
 
 # Copy the compiled app (pnpm deploy copies source, not dist)
 RUN cp -r apps/api/dist /app/api-standalone/dist
