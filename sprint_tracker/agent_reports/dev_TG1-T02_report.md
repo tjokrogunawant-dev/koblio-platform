@@ -2,52 +2,50 @@
 
 **Sprint:** 19  
 **Task ID:** TG1-T02  
-**Author:** DEV agent  
-**Date:** 2026-04-27  
-**Commit:** `8c2c9b0`
+**Implemented by:** DEV  
+**Date:** 2026-04-28  
+**Commit:** `26887f4`
 
 ---
 
 ## Summary
 
-Implemented a standalone student home at `/student/dashboard`, outside the `/dashboard/` layout tree so the teacher sidebar is never rendered for students. Extended middleware to protect the new route, and updated profile setup to redirect there on save/skip.
+Created the standalone `/student/dashboard` route so students get a clean home screen without the teacher sidebar, extended middleware to protect the new subtree, and updated the profile setup page to redirect to the new route.
 
 ---
 
 ## Files Created
 
-| File | Description |
-|---|---|
-| `apps/web/src/app/student/layout.tsx` | Minimal pass-through layout — prevents `/student/` from inheriting `dashboard/layout.tsx` |
-| `apps/web/src/app/student/dashboard/page.tsx` | New student home: welcome header (avatar + display name), stats card (CoinCounter, StreakBadge, XPBar), DailyChallengeCard, Practice → link, Sign Out |
+| File | Action | Description |
+|---|---|---|
+| `apps/web/src/app/student/layout.tsx` | Created | Pass-through layout — ensures `/student/` subtree does not inherit `dashboard/layout.tsx` |
+| `apps/web/src/app/student/dashboard/page.tsx` | Created | Student home page: avatar/name header, stats card (CoinCounter + StreakBadge + XPBar), DailyChallengeCard, Practice CTA, logout button |
 
 ## Files Modified
 
-| File | Change |
-|---|---|
-| `apps/web/src/middleware.ts` | Added `\|\| pathname.startsWith('/student')` to the auth guard condition; added `'/student/:path*'` to the `matcher` array |
-| `apps/web/src/app/profile/setup/page.tsx` | `router.push` in `handleSave` changed from `/dashboard/student` → `/student/dashboard`; Skip `<Link href>` changed from `/dashboard/student` → `/student/dashboard` |
+| File | Action | Description |
+|---|---|---|
+| `apps/web/src/middleware.ts` | Modified | Extended `if` guard to include `pathname.startsWith('/student')`; added `'/student/:path*'` to `config.matcher` |
+| `apps/web/src/app/profile/setup/page.tsx` | Modified | Changed `router.push('/dashboard/student')` → `/student/dashboard` in `handleSave`; changed `href="/dashboard/student"` → `/student/dashboard` on Skip link |
 
 ---
 
-## Acceptance Criteria — DEV Self-Check
+## Acceptance Criteria Verification
 
-| # | Criterion | Status |
-|---|---|---|
-| 1 | `/student/dashboard` uses standalone layout, not teacher sidebar | ✅ `student/layout.tsx` is a sibling to `dashboard/` — no sidebar |
-| 2 | Unauthenticated request redirected to `/login?next=/student/dashboard` by middleware | ✅ Middleware extended with `/student` startsWith check + matcher entry |
-| 3 | Welcome header shows avatar + display name | ✅ `<Avatar>` + `<h1>Welcome back, {displayName}!` rendered |
-| 4 | CoinCounter, StreakBadge, XPBar shown with API data | ✅ `getStudentProfile` wired, displayed in stats card |
-| 5 | DailyChallengeCard renders; "Start" navigates to `/learn/problem/:id` | ✅ `getDailyChallenge` wired; `handleStartChallenge` pushes to correct path |
-| 6 | "Practice →" links to `/learn` | ✅ `<Link href="/learn">` present |
-| 7 | "Sign Out" logs out and redirects to `/login` | ✅ `handleLogout` calls `logout()` + `router.push('/login')` |
-| 8 | Profile setup `handleSave` now redirects to `/student/dashboard` | ✅ `router.push('/student/dashboard')` |
-| 9 | Profile setup Skip link points to `/student/dashboard` | ✅ `href="/student/dashboard"` |
+1. ✅ `/student/dashboard` uses `apps/web/src/app/student/layout.tsx` (pass-through) — not `dashboard/layout.tsx`. No teacher sidebar rendered.
+2. ✅ Middleware guards `/student/:path*`: unauthenticated requests (no `koblio_session` cookie) are redirected to `/login?next=/student/dashboard`.
+3. ✅ Page renders welcome header with `Avatar` component and `displayName`.
+4. ✅ `getStudentProfile` is called; CoinCounter, StreakBadge, and XPBar render with profile data.
+5. ✅ `DailyChallengeCard` renders; `handleStartChallenge` pushes to `/learn/problem/:id`.
+6. ✅ "Practice →" link points to `/learn`.
+7. ✅ "Sign Out" button calls `logout()` and pushes to `/login`.
+8. ✅ `handleSave` in profile setup now pushes to `/student/dashboard`.
+9. ✅ Skip `<Link>` in profile setup now points to `/student/dashboard`.
 
 ---
 
 ## Notes
 
-- `apps/web/src/app/dashboard/student/page.tsx` was NOT modified — preserved for any teacher/parent progress links.
-- `getStudentProfile` and `getDailyChallenge` function signatures confirmed in `apps/web/src/lib/api.ts` before wiring.
-- Pre-existing `tsc --noEmit` errors in the monorepo (missing `@koblio/typescript-config` package, deprecated `baseUrl`) are unrelated to this task.
+- `apps/web/src/app/dashboard/student/page.tsx` was deliberately left untouched per brief (may be linked from teacher/parent progress views).
+- `getStudentProfile` confirmed to call `GET /gamification/me` and return `StudentGamificationProfile` (verified in `apps/web/src/lib/api.ts:295–302`).
+- `user?.grade` defaults to `1` when undefined, as required.
