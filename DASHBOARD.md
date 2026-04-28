@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-27 | **By:** PM | **Sprint:** 19
+**Last updated:** 2026-04-28 | **By:** DEV | **Sprint:** 19
 
 ---
 
@@ -21,11 +21,11 @@
 | Badge system (10 badge types) | ✅ Done |
 | Docker Compose VPS deployment + DEPLOY.md | ✅ Done |
 | Student profile setup page (`/profile/setup`) | ✅ Done |
-| Student home dashboard (`/student/dashboard`) | ⏳ Sprint 19 |
+| Student home dashboard (`/student/dashboard`) | ✅ Done |
 | Forgot password / reset flow | ⏳ Sprint 19 |
 | Playwright e2e smoke tests | ⏳ Sprint 19 |
 
-**Trial Gate 1 progress: 11 / 14 done**
+**Trial Gate 1 progress: 12 / 14 done**
 
 ---
 
@@ -36,7 +36,7 @@
 | Task ID | Title | Status | Last Actor |
 |---|---|---|---|
 | TG1-T01 | Student profile setup page | done | QA |
-| TG1-T02 | Student home dashboard | in-progress | PM |
+| TG1-T02 | Student home dashboard | done | DEV |
 | TG1-T03 | Forgot password / reset flow | pending | — |
 | TG1-T04 | Playwright e2e smoke tests | pending | — |
 
@@ -46,7 +46,7 @@
 
 | Field | Value |
 |---|---|
-| Next role | DEV |
+| Next role | QA |
 | Current task | TG1-T02 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
@@ -79,6 +79,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-28 | DEV | TG1-T02 Student home dashboard — /student/dashboard, middleware guard, profile setup redirects (118bf6c) |
 | 2026-04-27 | PM | Brief written for TG1-T02: Student home dashboard |
 | 2026-04-27 | QA | TG1-T01 QC: PASS WITH NBI — all 8 ACs pass; 2 minor cold-load hydration NBIs logged |
 | 2026-04-27 | DEV | TG1-T01 Student profile setup page — PUT /me/profile, display name + avatar, auth guard (`a0e81d2`) |
