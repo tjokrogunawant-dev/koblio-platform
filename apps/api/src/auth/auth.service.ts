@@ -85,6 +85,18 @@ export class AuthService {
     return { authResult: this.issueToken(user.id, user.role.toLowerCase(), user.email ?? undefined, user.displayName), refreshToken: '' };
   }
 
+  async refresh(refreshToken: string): Promise<{ access_token: string; expires_in: number; newRefreshToken?: string }> {
+    try {
+      const payload = this.jwtService.verify(refreshToken);
+      const user = await this.prisma.user.findUnique({ where: { id: payload.sub } });
+      if (!user) throw new UnauthorizedException('User not found');
+      const result = this.issueToken(user.id, user.role.toLowerCase(), user.email ?? undefined, user.displayName);
+      return { access_token: result.access_token, expires_in: result.expires_in };
+    } catch {
+      throw new UnauthorizedException('Invalid refresh token');
+    }
+  }
+
   async logout(_refreshToken: string | undefined): Promise<void> {
     // No-op for MVP — JWTs expire after 1h, no server-side revocation needed
   }

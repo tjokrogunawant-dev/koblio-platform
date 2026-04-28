@@ -9,7 +9,7 @@ export class StripeService {
 
   constructor() {
     const key = process.env.STRIPE_SECRET_KEY;
-    this.stripe = key ? new Stripe(key, { apiVersion: '2024-06-20' }) : null;
+    this.stripe = key ? new Stripe(key, { apiVersion: '2023-10-16' }) : null;
     this.webhookSecret = process.env.STRIPE_WEBHOOK_SECRET ?? null;
   }
 
