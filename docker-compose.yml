@@ -21,6 +21,7 @@ services:
       - redis_data:/data
 
   api:
+    image: ghcr.io/tjokrogunawant-dev/koblio-api:latest
     build:
       context: .
       dockerfile: apps/api/Dockerfile
@@ -43,6 +44,7 @@ services:
       sh -c "npx prisma migrate deploy && node dist/main.js"
 
   web:
+    image: ghcr.io/tjokrogunawant-dev/koblio-web:latest
     build:
       context: .
       dockerfile: apps/web/Dockerfile
