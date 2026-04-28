@@ -35,6 +35,10 @@ RUN pnpm --filter @koblio/api build
 # copy only the production deps to the runner without breaking pnpm's .pnpm store.
 RUN pnpm --filter @koblio/api deploy --prod --legacy /app/api-standalone
 
+# Re-run prisma generate in the standalone dir — pnpm deploy installs a
+# fresh @prisma/client without the generated enums from the build stage.
+RUN cd /app/api-standalone && node ./node_modules/.bin/prisma generate --schema=/app/apps/api/prisma/schema.prisma
+
 # Copy the compiled app (pnpm deploy copies source, not dist)
 RUN cp -r apps/api/dist /app/api-standalone/dist
 
