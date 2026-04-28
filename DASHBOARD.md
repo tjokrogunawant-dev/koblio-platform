@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-28 | **By:** QA | **Sprint:** 19
+**Last updated:** 2026-04-28 | **By:** PM | **Sprint:** 19
 
 ---
 
@@ -38,7 +38,7 @@
 | TG1-T01 | Student profile setup page | done | QA |
 | TG1-T02 | Student home dashboard | done | QA |
 | TG1-T03 | Forgot password / reset flow | done | QA |
-| TG1-T04 | Playwright e2e smoke tests | pending | — |
+| TG1-T04 | Playwright e2e smoke tests | in-progress | PM |
 
 ---
 
@@ -46,8 +46,8 @@
 
 | Field | Value |
 |---|---|
-| Next role | PM |
-| Current task | (none) |
+| Next role | DEV |
+| Current task | TG1-T04 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
 ## CI Status
@@ -87,6 +87,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-28 | PM | Brief written for TG1-T04: Playwright e2e smoke tests |
 | 2026-04-28 | QA | TG1-T03 QC: PASS WITH NBI — all 11 ACs pass; 1 cosmetic NBI (method ordering in email.service.ts) |
 | 2026-04-28 | DEV | TG1-T03 Forgot password / reset flow — Prisma model, migration, DTOs, API endpoints, email method, web pages, login link (b2ff1cc) |
 | 2026-04-28 | PM | Brief written for TG1-T03: Forgot password / reset flow |
