@@ -282,8 +282,9 @@ Run `gh run list --limit 5 --json status,conclusion,name,url` to get recent CI s
      - **Test failures** → Same as above — brief the DEV agent to fix the failing tests.
   3. Log the diagnosis in DASHBOARD.md Recent Activity Log: `| YYYY-MM-DD | PM | CI HEALTH: diagnosed failure — <cause> — action taken: <action> |`
   4. After fixing, continue to the remaining health checks below.
+- If the `docker-publish` job failed → Docker image build broke. Check the failure log. If it's a Dockerfile issue (prisma generate, missing files, etc.), create a `TG1-DOCKER-FIX` task brief for DEV and set `next_role: DEV`.
 - If `Deploy to ECS` is failing but CI is passing → expected (AWS not provisioned until Section 9). Log once if not already logged, then ignore.
-- If CI is passing → proceed to the remaining health checks.
+- If CI and docker-publish are both passing → proceed to the remaining health checks.
 
 ### 1. Orphaned in-progress tasks
 

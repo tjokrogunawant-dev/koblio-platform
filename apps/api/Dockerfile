@@ -11,7 +11,7 @@ COPY packages/ui/package.json ./packages/ui/
 COPY packages/eslint-config/package.json ./packages/eslint-config/
 COPY packages/typescript-config/package.json ./packages/typescript-config/
 
-RUN pnpm install --frozen-lockfile
+RUN pnpm install --frozen-lockfile --ignore-scripts
 
 # ─── Stage 2: Build ───────────────────────────────────────────────────────────
 FROM node:20-alpine AS builder
@@ -33,7 +33,11 @@ RUN pnpm --filter @koblio/api build
 # Create a standalone deployment directory with flat (non-symlinked) node_modules.
 # pnpm deploy resolves the workspace symlinks into real files, which lets us
 # copy only the production deps to the runner without breaking pnpm's .pnpm store.
-RUN pnpm --filter @koblio/api deploy --prod /app/api-standalone
+RUN pnpm --filter @koblio/api deploy --prod --legacy /app/api-standalone
+
+# Re-run prisma generate in the standalone dir — pnpm deploy installs a
+# fresh @prisma/client without the generated enums from the build stage.
+RUN cd /app/api-standalone && node ./node_modules/.bin/prisma generate --schema=/app/apps/api/prisma/schema.prisma
 
 # Copy the compiled app (pnpm deploy copies source, not dist)
 RUN cp -r apps/api/dist /app/api-standalone/dist
