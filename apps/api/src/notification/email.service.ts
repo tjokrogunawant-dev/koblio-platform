@@ -24,6 +24,24 @@ export class EmailService {
     if (apiKey) sgMail.setApiKey(apiKey);
   }
 
+  async sendPasswordReset(to: string, resetUrl: string): Promise<void> {
+    if (!this.enabled) {
+      this.logger.debug(`[DEV] Password reset link for ${to}: ${resetUrl}`);
+      return;
+    }
+    await sgMail.send({
+      to,
+      from: FROM_EMAIL,
+      subject: 'Koblio — Reset your password',
+      html: `<!DOCTYPE html><html><body style="font-family:sans-serif;color:#111827;max-width:600px;margin:0 auto;padding:24px;">
+<h2 style="color:#4f46e5;">Reset your Koblio password</h2>
+<p>Click the button below to choose a new password. This link expires in <strong>1 hour</strong>.</p>
+<p><a href="${resetUrl}" style="display:inline-block;padding:12px 24px;background:#4f46e5;color:#fff;text-decoration:none;border-radius:6px;">Reset Password</a></p>
+<p style="color:#6b7280;font-size:13px;">If you didn't request this, you can safely ignore this email.</p>
+</body></html>`,
+    });
+  }
+
   async sendWeeklyDigest(
     to: string,
     parentName: string,

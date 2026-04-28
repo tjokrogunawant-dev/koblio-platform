@@ -1,5 +1,7 @@
 import * as bcrypt from 'bcrypt';
+import { createHash, randomBytes } from 'crypto';
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   Logger,
@@ -14,6 +16,7 @@ import { RegisterStudentDto } from './dto/register-student.dto';
 import { EmailLoginDto } from './dto/login.dto';
 import { StudentLoginDto } from './dto/student-login.dto';
 import { AuthenticatedUser } from './interfaces/jwt-payload.interface';
+import { EmailService } from '../notification/email.service';
 
 export interface AuthResult {
   access_token: string;
@@ -33,6 +36,7 @@ export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly jwtService: JwtService,
+    private readonly emailService: EmailService,
   ) {}
 
   getStatus() {
@@ -189,6 +193,53 @@ export class AuthService {
         name: user.displayName,
       },
     };
+  }
+
+  async forgotPassword(email: string): Promise<void> {
+    const user = await this.prisma.user.findUnique({ where: { email } });
+
+    if (user && user.email) {
+      const rawToken = randomBytes(32).toString('hex');
+      const tokenHash = createHash('sha256').update(rawToken).digest('hex');
+      const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
+
+      await this.prisma.passwordResetToken.deleteMany({
+        where: { userId: user.id, usedAt: null },
+      });
+
+      await this.prisma.passwordResetToken.create({
+        data: { tokenHash, userId: user.id, expiresAt },
+      });
+
+      const webBase = process.env.WEB_BASE_URL ?? 'http://localhost:3001';
+      const resetUrl = `${webBase}/reset-password?token=${rawToken}`;
+      await this.emailService.sendPasswordReset(user.email, resetUrl);
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string): Promise<void> {
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+
+    const record = await this.prisma.passwordResetToken.findUnique({
+      where: { tokenHash },
+    });
+
+    if (!record || record.usedAt !== null || record.expiresAt < new Date()) {
+      throw new BadRequestException('Invalid or expired reset token');
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+
+    await this.prisma.$transaction([
+      this.prisma.user.update({
+        where: { id: record.userId },
+        data: { passwordHash },
+      }),
+      this.prisma.passwordResetToken.update({
+        where: { id: record.id },
+        data: { usedAt: new Date() },
+      }),
+    ]);
   }
 
   validateUserRoles(user: AuthenticatedUser, requiredRoles: string[]): boolean {
