@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-28 | **By:** PM | **Sprint:** 19
+**Last updated:** 2026-04-28 | **By:** DEV | **Sprint:** 19
 
 ---
 
@@ -23,9 +23,9 @@
 | Student profile setup page (`/profile/setup`) | ✅ Done |
 | Student home dashboard (`/student/dashboard`) | ✅ Done |
 | Forgot password / reset flow | ✅ Done |
-| Playwright e2e smoke tests | ⏳ Sprint 19 |
+| Playwright e2e smoke tests | ✅ Done |
 
-**Trial Gate 1 progress: 13 / 14 done**
+**Trial Gate 1 progress: 14 / 14 done**
 
 ---
 
@@ -38,7 +38,7 @@
 | TG1-T01 | Student profile setup page | done | QA |
 | TG1-T02 | Student home dashboard | done | QA |
 | TG1-T03 | Forgot password / reset flow | done | QA |
-| TG1-T04 | Playwright e2e smoke tests | in-progress | PM |
+| TG1-T04 | Playwright e2e smoke tests | done | DEV |
 
 ---
 
@@ -46,7 +46,7 @@
 
 | Field | Value |
 |---|---|
-| Next role | DEV |
+| Next role | QA |
 | Current task | TG1-T04 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
@@ -87,6 +87,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-28 | DEV | TG1-T04 Playwright e2e smoke tests — playwright.config.ts, e2e/golden-path.spec.ts, CI e2e job, lockfile updated (a66c435) |
 | 2026-04-28 | PM | CI HEALTH: no new failures — lockfile and ECS fixes from prior run still valid. Brief written for TG1-T04: Playwright e2e smoke tests |
 | 2026-04-28 | QA | TG1-T03 QC: PASS WITH NBI — all 11 ACs pass; 1 cosmetic NBI (method ordering in email.service.ts) |
 | 2026-04-28 | DEV | TG1-T03 Forgot password / reset flow — Prisma model, migration, DTOs, API endpoints, email method, web pages, login link (b2ff1cc) |
