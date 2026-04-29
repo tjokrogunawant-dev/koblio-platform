@@ -1,3 +1,4 @@
+# Databases only — API and web run directly via pm2 (see deploy.sh)
 services:
   postgres:
     image: postgres:16-alpine
@@ -8,6 +9,8 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "127.0.0.1:5432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U koblio"]
       interval: 5s
@@ -17,45 +20,10 @@ services:
   redis:
     image: redis:7-alpine
     restart: unless-stopped
+    ports:
+      - "127.0.0.1:6379:6379"
     volumes:
       - redis_data:/data
-
-  api:
-    image: ghcr.io/tjokrogunawant-dev/koblio-api:latest
-    build:
-      context: .
-      dockerfile: apps/api/Dockerfile
-    restart: unless-stopped
-    depends_on:
-      postgres:
-        condition: service_healthy
-      redis:
-        condition: service_started
-    environment:
-      DATABASE_URL: postgresql://koblio:${POSTGRES_PASSWORD}@postgres:5432/koblio
-      REDIS_URL: redis://redis:6379
-      JWT_SECRET: ${JWT_SECRET}
-      WEB_URL: ${WEB_URL}
-      NODE_ENV: production
-      PORT: 3001
-    ports:
-      - "127.0.0.1:3001:3001"
-    command: >
-      sh -c "npx prisma migrate deploy && node dist/main.js"
-
-  web:
-    image: ghcr.io/tjokrogunawant-dev/koblio-web:latest
-    build:
-      context: .
-      dockerfile: apps/web/Dockerfile
-    restart: unless-stopped
-    depends_on:
-      - api
-    environment:
-      NEXT_PUBLIC_API_URL: ${API_URL}/api
-      NODE_ENV: production
-    ports:
-      - "127.0.0.1:3000:3000"
 
 volumes:
   postgres_data:

@@ -1,133 +1,154 @@
-# Deploying Koblio for Testing
+# Deploying Koblio
 
-No external accounts needed. Runs on any VPS with Docker.
-
----
-
-## Requirements
-
-- A VPS (Ubuntu 22.04+ recommended, 1 GB RAM minimum)
-- Docker + Docker Compose installed
-- Ports 3000 and 3001 open (or a reverse proxy like nginx/Caddy in front)
+Databases run in Docker. The API and web app run directly with Node.js + pm2.
+No image rebuilds — `deploy.sh` does `git pull → pnpm build → pm2 reload` in ~3 min.
 
 ---
 
-## 1. Install Docker on the VPS
+## First-time VPS setup
+
+### 1. Install dependencies
 
 ```bash
+# Node.js 20
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# pnpm
+npm install -g pnpm@10
+
+# pm2
+npm install -g pm2
+
+# Docker (for Postgres + Redis)
 curl -fsSL https://get.docker.com | sh
 sudo usermod -aG docker $USER
-# Log out and back in for the group change to take effect
+# Log out and back in
 ```
 
----
-
-## 2. Clone the repo
+### 2. Clone the repo
 
 ```bash
 git clone https://github.com/tjokrogunawant-dev/koblio-platform.git
 cd koblio-platform
 ```
 
----
-
-## 3. Create a `.env` file
+### 3. Create `.env`
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` with these values:
+Fill in all values. The key ones:
 
 ```env
 # Generate with: openssl rand -hex 32
-JWT_SECRET=replace_with_64_char_random_string
+JWT_SECRET=
 
-# Generate with: openssl rand -hex 16
-POSTGRES_PASSWORD=replace_with_random_password
+# Your Postgres password (any random string)
+POSTGRES_PASSWORD=
 
-# The public URL of your API (no trailing slash)
-# If running locally: http://localhost:3001
-# If on a VPS with a domain: https://api.yourdomain.com
+# Where the API is reachable from the browser (no trailing slash)
 API_URL=http://YOUR_VPS_IP:3001
 
-# The public URL of the web app (used for CORS on the API)
-# If running locally: http://localhost:3000
-# If on a VPS with a domain: https://app.yourdomain.com
+# Your VPS IP or domain (used for CORS on the API)
 WEB_URL=http://YOUR_VPS_IP:3000
+
+# Connection strings — localhost because Postgres/Redis run in Docker with host port bindings
+DATABASE_URL=postgresql://koblio:YOUR_POSTGRES_PASSWORD@localhost:5432/koblio
+REDIS_URL=redis://localhost:6379
 ```
 
-To generate secrets:
+### 4. Start databases
+
 ```bash
-openssl rand -hex 32   # for JWT_SECRET
-openssl rand -hex 16   # for POSTGRES_PASSWORD
+docker compose up -d
 ```
 
----
+This starts Postgres (port 5432) and Redis (port 6379), both bound to `127.0.0.1`.
 
-## 4. Deploy
+### 5. Install dependencies and build
 
 ```bash
-docker compose up -d --build
+pnpm install --frozen-lockfile
+pnpm --filter @koblio/shared build
+pnpm --filter @koblio/api build
+pnpm --filter @koblio/web build
 ```
 
-This builds both images and starts postgres, redis, api, and web. The API runs `prisma migrate deploy` automatically on startup.
+### 6. Copy Next.js static files into standalone output
 
-Check logs:
 ```bash
-docker compose logs -f api
-docker compose logs -f web
+cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static
+cp -r apps/web/public apps/web/.next/standalone/apps/web/public
 ```
 
----
-
-## 5. Seed the problems (first deploy only)
+### 7. Run migrations and seed
 
 ```bash
-docker compose exec api npx prisma db seed
+set -a; source .env; set +a
+pnpm --filter @koblio/api exec prisma migrate deploy
+pnpm --filter @koblio/api exec prisma db seed
 ```
 
-This loads 200 math problems (Grades 1–3).
-
----
-
-## 6. Verify
+### 8. Start with pm2
 
 ```bash
-curl http://YOUR_VPS_IP:3001/api/health
+pm2 start pm2.config.js --env production
+pm2 save          # persist across reboots
+pm2 startup       # follow the printed command to enable autostart
+```
+
+Check everything is running:
+
+```bash
+pm2 status
+curl http://localhost:3001/api/health
 # → {"status":"ok","db":"ok"}
 ```
 
-Open `http://YOUR_VPS_IP:3000` in a browser — you should see the Koblio homepage.
+Open `http://YOUR_VPS_IP:3000` in a browser.
 
 ---
 
-## Testing the full flow
+## Updating (every deploy)
 
-1. Go to `/register` → click **I'm a Teacher** → fill in the form
-2. In the teacher dashboard, click **Create Class** → note the **class code** shown
-3. Open an incognito tab → go to `/register` → click **I'm a Student**
-4. Enter the class code → create a username and password → pick an avatar
-5. Start solving problems
-
----
-
-## Updating
+Just run the deploy script:
 
 ```bash
-git pull
-docker compose up -d --build
+bash deploy.sh
 ```
 
-Migrations run automatically on API startup.
+Or it runs automatically via GitHub Actions on every push to `main` (requires the secrets below).
 
 ---
 
-## Optional: Nginx reverse proxy with HTTPS
+## CI/CD — GitHub Actions auto-deploy
 
-If you have a domain, install Caddy (easiest) or Nginx + Certbot.
+Add these secrets in GitHub → Settings → Secrets → Actions:
 
-**Caddy** (auto HTTPS):
+| Secret | Value |
+|---|---|
+| `VPS_HOST` | Your VPS IP or hostname |
+| `VPS_USER` | SSH user (e.g. `ubuntu`) |
+| `VPS_SSH_KEY` | Private key for SSH access (paste the full `-----BEGIN...` block) |
+| `VPS_DEPLOY_PATH` | Absolute path to the repo on the VPS (e.g. `/home/ubuntu/koblio`) |
+
+After that, every push to `main` triggers: lint + typecheck + test → SSH → `deploy.sh`.
+
+To generate an SSH key pair for CI:
+```bash
+ssh-keygen -t ed25519 -C "koblio-ci" -f koblio_ci_key -N ""
+# Add koblio_ci_key.pub to ~/.ssh/authorized_keys on the VPS
+# Paste koblio_ci_key (private) into VPS_SSH_KEY secret
+```
+
+---
+
+## Optional: Nginx + HTTPS
+
+Install Caddy for automatic HTTPS:
+
 ```bash
 sudo apt install -y debian-keyring debian-archive-keyring apt-transport-https
 curl -1sLf 'https://dl.cloudsmith.io/public/caddy/stable/gpg.key' | sudo gpg --dearmor -o /usr/share/keyrings/caddy-stable-archive-keyring.gpg
@@ -146,13 +167,13 @@ api.yourdomain.com {
 }
 ```
 
-Then set in `.env`:
+Update `.env`:
 ```
 API_URL=https://api.yourdomain.com
 WEB_URL=https://app.yourdomain.com
 ```
 
-And redeploy: `docker compose up -d --build`
+Then redeploy: `bash deploy.sh`
 
 ---
 
@@ -162,8 +183,9 @@ And redeploy: `docker compose up -d --build`
 |---|---|---|
 | `JWT_SECRET` | Yes | Signs all JWTs. Min 32 chars. |
 | `POSTGRES_PASSWORD` | Yes | PostgreSQL password. |
-| `API_URL` | Yes | Public URL of the API (used by the web app). |
-| `WEB_URL` | Yes | Public URL of the web app (used for CORS). |
+| `DATABASE_URL` | Yes | `postgresql://koblio:<password>@localhost:5432/koblio` |
+| `REDIS_URL` | Yes | `redis://localhost:6379` |
+| `API_URL` | Yes | Public URL of the API (used by the web app at build time). |
+| `WEB_URL` | Yes | Public URL of the web app (used for CORS on the API). |
 | `SENTRY_DSN` | No | Error tracking. Leave blank to disable. |
-| `SENDGRID_API_KEY` | No | Weekly email digest. Leave blank to disable. |
-| `STRIPE_SECRET_KEY` | No | Subscription payments. Leave blank to disable. |
+| `SENDGRID_API_KEY` | No | Password reset emails. Leave blank to disable. |
