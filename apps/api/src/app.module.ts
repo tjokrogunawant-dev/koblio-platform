@@ -29,7 +29,7 @@ import { LeaderboardModule } from './leaderboard/leaderboard.module';
 @Module({
   imports: [
     SentryModule.forRoot(),
-    ConfigModule.forRoot({ isGlobal: true }),
+    ConfigModule.forRoot({ isGlobal: true, expandVariables: true }),
     ScheduleModule.forRoot(),
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 60 }]),
     PrismaModule,
