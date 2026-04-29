@@ -1,3 +1,5 @@
+import { PaywallError } from './errors';
+
 const API_BASE = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
 
 export interface AuthUser {
@@ -242,6 +244,18 @@ export async function submitAnswer(
     headers,
     body: JSON.stringify(data),
   });
+  if (res.status === 403) {
+    let message = '';
+    try {
+      const body = await res.json();
+      message = Array.isArray(body?.message) ? body.message[0] : (body?.message ?? '');
+    } catch {
+      // ignore parse error
+    }
+    if (message === 'Daily problem limit reached') {
+      throw new PaywallError('Daily problem limit reached');
+    }
+  }
   return handleResponse<SubmitAnswerResponse>(res);
 }
 

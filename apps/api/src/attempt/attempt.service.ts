@@ -1,4 +1,4 @@
-import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { ForbiddenException, Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { StudentProblemAttempt } from '@prisma/client';
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
@@ -35,6 +35,21 @@ export class AttemptService {
     badgesEarned: string[];
     justMastered: boolean;
   }> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: studentId },
+      select: { subscriptionStatus: true },
+    });
+
+    if (!user || user.subscriptionStatus !== 'active') {
+      const todayUtc = new Date(new Date().toISOString().slice(0, 10));
+      const todayCount = await this.prisma.studentProblemAttempt.count({
+        where: { studentId, createdAt: { gte: todayUtc } },
+      });
+      if (todayCount >= 5) {
+        throw new ForbiddenException('Daily problem limit reached');
+      }
+    }
+
     const problem = await this.prisma.problem.findUnique({
       where: { id: dto.problemId },
     });

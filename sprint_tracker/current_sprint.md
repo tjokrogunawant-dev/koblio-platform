@@ -23,7 +23,7 @@ The project follows `koblio_mvp_roadmap.md`. Key state as of Sprint 20:
 
 ## Active Tasks
 
-- **P2-T06** (next): Paywall enforcement — add 5-problems/day daily limit for free-tier students (`subscriptionStatus !== 'active'`) in `AttemptService.submitAnswer`. Return `ForbiddenException('Daily problem limit reached')` (403) when limit exceeded. On the web, catch this 403 as a `PaywallError` in `submitAnswer` (api.ts) and show a paywall modal in `problem/[id]/page.tsx` with "Upgrade to Premium" CTA linking to `/subscribe`. Premium users (subscriptionStatus = 'active') are unaffected.
+- **P2-T06** (in-progress → done): Paywall enforcement — add 5-problems/day daily limit for free-tier students (`subscriptionStatus !== 'active'`) in `AttemptService.submitAnswer`. Return `ForbiddenException('Daily problem limit reached')` (403) when limit exceeded. On the web, catch this 403 as a `PaywallError` in `submitAnswer` (api.ts) and show a paywall modal in `problem/[id]/page.tsx` with "Upgrade to Premium" CTA linking to `/subscribe`. Premium users (subscriptionStatus = 'active') are unaffected. **Status: done — all ACs met, 189/189 API tests pass.**
 
 - **TG1-POLISH-01**: Auth hydration hardening — add `hydrated: boolean` state to `AuthProvider` (set `true` after the `useEffect` reads localStorage); export `hydrated` from `useAuth()`; gate auth guard `useEffect`s in `profile/setup/page.tsx` and `student/dashboard/page.tsx` on `hydrated` before redirecting; add sync `useEffect` to pre-fill `displayName` if `user?.name` is set after hydration.
 

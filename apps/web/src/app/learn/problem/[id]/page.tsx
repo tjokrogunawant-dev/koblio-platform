@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { MathRenderer } from '@koblio/ui';
 import { useAuth } from '@/components/providers/auth-provider';
 import { getProblem, submitAnswer, type Problem, type Difficulty } from '@/lib/api';
+import { PaywallError } from '@/lib/errors';
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -89,6 +90,9 @@ export default function ProblemPage() {
   // Answer result
   const [result, setResult] = useState<AnswerResult | null>(null);
 
+  // Paywall
+  const [paywallHit, setPaywallHit] = useState(false);
+
   const fillInputRef = useRef<HTMLInputElement>(null);
 
   // Load problem
@@ -147,6 +151,8 @@ export default function ProblemPage() {
     // Optimistic local comparison — used if API is unavailable
     const localCorrect = answer.trim().toLowerCase() === problem.correctAnswer.trim().toLowerCase();
 
+    let isPaywallError = false;
+
     try {
       const res = await submitAnswer(
         { problemId: problem.id, answer, timeSpentMs, hintUsed },
@@ -161,18 +167,25 @@ export default function ProblemPage() {
         xpEarned: res.xpEarned,
         leveledUp: res.leveledUp,
       });
-    } catch {
-      // Backend not available — fall back to local comparison
-      setSubmitError('Could not record your answer (server unavailable).');
-      setResult({
-        correct: localCorrect,
-        correctAnswer: problem.correctAnswer,
-        solution: problem.solution,
-        yourAnswer: answer,
-      });
+    } catch (err) {
+      if (err instanceof PaywallError) {
+        setPaywallHit(true);
+        isPaywallError = true;
+      } else {
+        // Backend not available — fall back to local comparison
+        setSubmitError('Could not record your answer (server unavailable).');
+        setResult({
+          correct: localCorrect,
+          correctAnswer: problem.correctAnswer,
+          solution: problem.solution,
+          yourAnswer: answer,
+        });
+      }
     } finally {
       setSubmitting(false);
-      setPageState('ANSWERED');
+      if (!isPaywallError) {
+        setPageState('ANSWERED');
+      }
     }
   }
 
@@ -217,6 +230,33 @@ export default function ProblemPage() {
     hintIndex === -1 ? 'Hint' : hasMoreHints ? `Hint ${hintIndex + 2}` : 'No more hints';
 
   // ── Render ──────────────────────────────────────────────────────────────────
+
+  if (paywallHit) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+        <div className="mx-4 max-w-md rounded-2xl bg-white p-8 text-center shadow-2xl">
+          <h2 className="mb-3 text-2xl font-bold text-slate-800">Daily limit reached</h2>
+          <p className="mb-6 text-slate-600">
+            {"You've used all 5 free problems for today. Upgrade to Premium for unlimited practice."}
+          </p>
+          <div className="flex flex-col gap-3">
+            <Link
+              href="/subscribe"
+              className="rounded-lg bg-indigo-600 px-6 py-3 text-sm font-semibold text-white hover:bg-indigo-700"
+            >
+              Upgrade to Premium
+            </Link>
+            <Link
+              href="/learn"
+              className="text-sm font-medium text-slate-500 hover:text-indigo-600"
+            >
+              Continue Learning Tomorrow
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (loadError) {
     return (

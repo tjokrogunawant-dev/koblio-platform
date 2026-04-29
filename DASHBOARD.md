@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-29 | **By:** PM | **Sprint:** 20
+**Last updated:** 2026-04-29 | **By:** DEV | **Sprint:** 20
 
 ---
 
@@ -38,9 +38,9 @@
 | Weekly email digest (SendGrid) | ✅ Done |
 | Stripe subscriptions (Checkout, webhook) | ✅ Done |
 | 200+ problems across grades 1–3 | ✅ Done |
-| Paywall enforcement (free tier 5-problems/day limit) | 🔄 In progress (P2-T06, Sprint 20) |
+| Paywall enforcement (free tier 5-problems/day limit) | ✅ Done (P2-T06, Sprint 20) |
 
-**Trial Gate 2 progress: 5 / 6 done**
+**Trial Gate 2 progress: 6 / 6 done — COMPLETE ✅**
 
 ---
 
@@ -50,7 +50,7 @@
 
 | Task ID | Title | Status | Last Actor |
 |---|---|---|---|
-| P2-T06 | Paywall enforcement (5-problems/day free tier limit) | in-progress | PM |
+| P2-T06 | Paywall enforcement (5-problems/day free tier limit) | done | DEV |
 | TG1-POLISH-01 | Auth hydration hardening (hydrated flag + displayName cold-load fix) | pending | PM |
 
 ---
@@ -59,7 +59,7 @@
 
 | Field | Value |
 |---|---|
-| Next role | DEV |
+| Next role | QA |
 | Current task | P2-T06 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
@@ -102,6 +102,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-29 | DEV | P2-T06 Paywall enforcement — ForbiddenException in AttemptService, PaywallError in api.ts, paywall modal in problem page (TBD) |
 | 2026-04-29 | PM | Brief written for P2-T06: Paywall enforcement |
 | 2026-04-29 | PM | Sprint 20 launched — paywall enforcement + auth hardening (Trial Gate 2 prep) |
 | 2026-04-29 | PM | Sprint 19 retrospective written — velocity 4/4, Trial Gate 1 14/14 COMPLETE |

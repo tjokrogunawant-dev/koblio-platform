@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
+import { ForbiddenException, NotFoundException } from '@nestjs/common';
 import { AttemptService } from './attempt.service';
 import { PrismaService } from '../prisma/prisma.service';
 import { GamificationService } from '../gamification/gamification.service';
@@ -44,6 +44,7 @@ const CLASSROOM_ID = '00000000-0000-0000-0000-000000000099';
 describe('AttemptService', () => {
   let service: AttemptService;
   let prisma: {
+    user: { findUnique: jest.Mock };
     problem: { findUnique: jest.Mock };
     studentProblemAttempt: { create: jest.Mock; findMany: jest.Mock; count: jest.Mock };
     enrollment: { findFirst: jest.Mock };
@@ -54,6 +55,7 @@ describe('AttemptService', () => {
 
   beforeEach(async () => {
     prisma = {
+      user: { findUnique: jest.fn().mockResolvedValue({ subscriptionStatus: 'free' }) },
       problem: { findUnique: jest.fn() },
       studentProblemAttempt: {
         create: jest.fn(),
@@ -287,6 +289,57 @@ describe('AttemptService', () => {
       expect(result.correct).toBe(true);
       expect(result.coinsEarned).toBe(0);
       expect(result.xpEarned).toBe(0);
+    });
+
+    it('should record attempt when free user is under the daily limit (4 attempts today)', async () => {
+      prisma.user.findUnique.mockResolvedValue({ subscriptionStatus: 'free' });
+      // First count call = daily limit check (4 < 5, proceed)
+      prisma.studentProblemAttempt.count.mockResolvedValueOnce(4);
+      prisma.problem.findUnique.mockResolvedValue(mockProblem);
+      prisma.studentProblemAttempt.create.mockResolvedValue(mockAttempt);
+
+      const result = await service.submitAnswer(STUDENT_ID, {
+        problemId: PROBLEM_ID,
+        answer: '5',
+        timeSpentMs: 3000,
+      });
+
+      expect(result.correct).toBe(true);
+      expect(result.attemptId).toBe(ATTEMPT_ID);
+      expect(prisma.studentProblemAttempt.create).toHaveBeenCalled();
+    });
+
+    it('should throw ForbiddenException when free user has reached the daily limit (5 attempts today)', async () => {
+      prisma.user.findUnique.mockResolvedValue({ subscriptionStatus: 'free' });
+      // First count call = daily limit check (5 >= 5, blocked)
+      prisma.studentProblemAttempt.count.mockResolvedValueOnce(5);
+
+      await expect(
+        service.submitAnswer(STUDENT_ID, {
+          problemId: PROBLEM_ID,
+          answer: '5',
+          timeSpentMs: 3000,
+        }),
+      ).rejects.toThrow(ForbiddenException);
+
+      expect(prisma.studentProblemAttempt.create).not.toHaveBeenCalled();
+    });
+
+    it('should record attempt when premium user has 5 or more attempts today', async () => {
+      prisma.user.findUnique.mockResolvedValue({ subscriptionStatus: 'active' });
+      // No daily count call expected for premium users
+      prisma.problem.findUnique.mockResolvedValue(mockProblem);
+      prisma.studentProblemAttempt.create.mockResolvedValue(mockAttempt);
+
+      const result = await service.submitAnswer(STUDENT_ID, {
+        problemId: PROBLEM_ID,
+        answer: '5',
+        timeSpentMs: 3000,
+      });
+
+      expect(result.correct).toBe(true);
+      expect(result.attemptId).toBe(ATTEMPT_ID);
+      expect(prisma.studentProblemAttempt.create).toHaveBeenCalled();
     });
   });
 
