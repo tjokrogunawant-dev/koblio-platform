@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-29 | **By:** QA | **Sprint:** 19
+**Last updated:** 2026-04-29 | **By:** PM | **Sprint:** 20
 
 ---
 
@@ -25,20 +25,33 @@
 | Forgot password / reset flow | ✅ Done |
 | Playwright e2e smoke tests | ✅ Done |
 
-**Trial Gate 1 progress: 14 / 14 done**
+**Trial Gate 1 progress: 14 / 14 done — COMPLETE ✅**
 
 ---
 
-## Current Sprint: S19 — Trial Gate 1 Polish
+## Trial Gate 2 — Closed Beta Readiness
 
-**Goal:** Complete remaining gaps so the platform is fully testable by real users on VPS.
+| Requirement | Status |
+|---|---|
+| Everything from Trial Gate 1 | ✅ Done |
+| Badges + avatar customization | ✅ Done |
+| Weekly email digest (SendGrid) | ✅ Done |
+| Stripe subscriptions (Checkout, webhook) | ✅ Done |
+| 200+ problems across grades 1–3 | ✅ Done |
+| Paywall enforcement (free tier 5-problems/day limit) | 🔄 In progress (P2-T06, Sprint 20) |
+
+**Trial Gate 2 progress: 5 / 6 done**
+
+---
+
+## Current Sprint: S20 — Paywall Enforcement & Auth Hardening
+
+**Goal:** Close the last Section 6 gap (P2-T06 paywall enforcement) and harden auth hydration for Trial Gate 2.
 
 | Task ID | Title | Status | Last Actor |
 |---|---|---|---|
-| TG1-T01 | Student profile setup page | done | QA |
-| TG1-T02 | Student home dashboard | done | QA |
-| TG1-T03 | Forgot password / reset flow | done | QA |
-| TG1-T04 | Playwright e2e smoke tests | done | QA |
+| P2-T06 | Paywall enforcement (5-problems/day free tier limit) | in-progress | PM |
+| TG1-POLISH-01 | Auth hydration hardening (hydrated flag + displayName cold-load fix) | pending | PM |
 
 ---
 
@@ -46,17 +59,18 @@
 
 | Field | Value |
 |---|---|
-| Next role | PM |
-| Current task | (none) |
+| Next role | DEV |
+| Current task | P2-T06 |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
 ## CI Status
 
 | Check | Status |
 |---|---|
-| pnpm lockfile | ✅ Fixed 2026-04-28 (katex deps added to lockfile) |
-| ECS deploy workflow | ✅ Changed to `workflow_dispatch` only — won't fail on push |
-| CI pipeline (lint/typecheck/test/build) | ⏳ Pending next push to main |
+| pnpm lockfile | ✅ Fixed 2026-04-28 (katex deps added) |
+| ECS deploy workflow | ✅ Changed to `workflow_dispatch` only |
+| CI pipeline (lint/typecheck/test/build) | ⏳ Next push will trigger; gh CLI unavailable in this env — last known state: no failures |
+| Playwright e2e CI job | ⏳ Added in S19 (TG1-T04); first live run on next push to main |
 
 ---
 
@@ -80,6 +94,7 @@
 | S16 | Mood + blended scheduler | Mood detection, FSRS+BKT+mood weights |
 | S17 | Redis leaderboard | ZINCRBY sorted sets, TOP_OF_CLASS badge |
 | S18 | Trial Gate 1 ops | Auth0 removed, student class-code registration, VPS deploy |
+| S19 | Trial Gate 1 polish | Profile setup, student dashboard, forgot password, e2e tests — **TG1 COMPLETE** |
 
 ---
 
@@ -87,6 +102,10 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-29 | PM | Brief written for P2-T06: Paywall enforcement |
+| 2026-04-29 | PM | Sprint 20 launched — paywall enforcement + auth hardening (Trial Gate 2 prep) |
+| 2026-04-29 | PM | Sprint 19 retrospective written — velocity 4/4, Trial Gate 1 14/14 COMPLETE |
+| 2026-04-29 | PM | CI HEALTH: gh CLI unavailable in this environment — skipped live check. Last known state (2026-04-28): no CI failures; lockfile and ECS fixes still valid. |
 | 2026-04-29 | QA | TG1-T04 QC: PASS WITH NBI — 7/8 ACs verified directly; AC6 (live run) deferred to CI; no blocking issues |
 | 2026-04-28 | DEV | TG1-T04 Playwright e2e smoke tests — playwright.config.ts, e2e/golden-path.spec.ts, CI e2e job, lockfile updated (a66c435) |
 | 2026-04-28 | PM | CI HEALTH: no new failures — lockfile and ECS fixes from prior run still valid. Brief written for TG1-T04: Playwright e2e smoke tests |

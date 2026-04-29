@@ -1,35 +1,31 @@
 # Current Sprint State
 
-**Sprint:** 19  
-**Phase:** Trial Gate 1 — Polish & Validation  
-**Start:** 2026-04-27  
+**Sprint:** 20  
+**Phase:** Trial Gate 2 — Paywall Enforcement & Auth Hardening  
+**Start:** 2026-04-29  
 **End:** 2026-05-10  
-**Sprint Goal:** Complete the remaining gaps for Trial Gate 1 — profile setup, student dashboard, password reset, and smoke tests so the platform is ready for real-user testing on VPS.
+**Sprint Goal:** Close the last Section 6 gap (P2-T06 paywall enforcement) and harden auth hydration so the platform is fully ready for Trial Gate 2 closed beta.
 
 ---
 
 ## Roadmap Context
 
-The project follows `koblio_mvp_roadmap.md`. Key state as of Sprint 19:
+The project follows `koblio_mvp_roadmap.md`. Key state as of Sprint 20:
 
-- **Trial Gate 1 deployment is ready** — docker-compose VPS deploy works, no external accounts required
-- **Auth0 removed** — all auth uses internal bcrypt + HS256 JWT (`iss: koblio-internal`)
-- **Student self-registration via class code** — `POST /auth/register/student` + `/register/student` page live
-- **AWS/Terraform written** (S18, commits f17cb46 + cce1cd5) — reference IaC only, not deployed; Railway stays live
+- **Trial Gate 1 complete** — 14/14 requirements met; Docker Compose VPS deploy ready; platform deployable for real-user testing
+- **Section 6 almost complete** — badges (P2-T01), avatars (P2-T02), parent dashboard (P2-T03), email digest (P2-T04), Stripe subscriptions (P2-T05), admin CMS (P2-T07), 200+ problems (P2-T08) all done
+- **Paywall enforcement (P2-T06) is the only remaining Section 6 gap** — free-tier limit exists in Stripe but is not enforced in the API
+- **Auth0 removed** — all auth uses internal bcrypt + HS256 JWT
 - **Web-only until Trial Gate 2** — Flutter/Android stays parked
-- **Redis leaderboard done** — ZINCRBY sorted sets, TOP_OF_CLASS badge wired
+- **Trial Gate 2 target: ~Aug 2026** — closed beta with pilot schools + 100 beta testers
 
 ---
 
 ## Active Tasks
 
-- **TG1-T01** (next): Student profile setup page — `/profile/setup` route; avatar picker (8 slugs), display name confirm, redirect to `/student/dashboard` on save. Students are redirected here after registration but the page is missing.
+- **P2-T06** (next): Paywall enforcement — add 5-problems/day daily limit for free-tier students (`subscriptionStatus !== 'active'`) in `AttemptService.submitAnswer`. Return `ForbiddenException('Daily problem limit reached')` (403) when limit exceeded. On the web, catch this 403 as a `PaywallError` in `submitAnswer` (api.ts) and show a paywall modal in `problem/[id]/page.tsx` with "Upgrade to Premium" CTA linking to `/subscribe`. Premium users (subscriptionStatus = 'active') are unaffected.
 
-- **TG1-T02**: Student home dashboard — `/student/dashboard` with XP bar, coin counter, streak widget, "Today's Challenge" card, and "Practice" button linking to topic browser. Currently no home screen after login.
-
-- **TG1-T03**: Forgot password / reset flow — `POST /auth/forgot-password` (generate 1h token, send SendGrid email if key set, else log token), `POST /auth/reset-password` (validate token, bcrypt new hash, invalidate token), plus `/forgot-password` and `/reset-password?token=...` pages.
-
-- **TG1-T04**: Playwright e2e smoke tests — golden path: register teacher → create class → register student with class code → solve one problem → verify XP awarded. Run in CI via `pnpm test:e2e`.
+- **TG1-POLISH-01**: Auth hydration hardening — add `hydrated: boolean` state to `AuthProvider` (set `true` after the `useEffect` reads localStorage); export `hydrated` from `useAuth()`; gate auth guard `useEffect`s in `profile/setup/page.tsx` and `student/dashboard/page.tsx` on `hydrated` before redirecting; add sync `useEffect` to pre-fill `displayName` if `user?.name` is set after hydration.
 
 ---
 
@@ -37,14 +33,17 @@ The project follows `koblio_mvp_roadmap.md`. Key state as of Sprint 19:
 
 | Task ID | Title | Deferred To | Reason |
 |---|---|---|---|
-| P1-T15 | Admin CMS for Problem Authoring | Section 6 Sprint 10 | Seed problems via JSON files |
-| AWS deploy | AWS ECS Fargate deploy | Section 9 (5K+ MAU) | IaC written; credentials not provisioned. `deploy.yml` changed to `workflow_dispatch` only — won't auto-trigger. |
+| P1-T15 | Admin CMS for Problem Authoring | Section 6 Sprint 10 | Seed problems via JSON files; P2-T07 covers this |
+| AWS deploy | AWS ECS Fargate deploy | Section 9 (5K+ MAU) | IaC written; credentials not provisioned. `deploy.yml` is `workflow_dispatch` only. |
+| NBI-TG1-T03-1 | Method ordering in email.service.ts | Backlog | Cosmetic only; no functional impact |
 
 ---
 
 ## Routine Eligibility
 
-Tasks in this sprint are all **routine-eligible** — the DEV agent can implement them without human intervention. Infrastructure-phase tasks (ECS setup, domain/DNS, SSL, AWS account provisioning) are NOT routine-eligible and are deferred to Section 9. If the PM agent encounters a task that requires external credentials, a live VPS, or manual DNS changes, it must defer it and note why.
+Tasks in this sprint are all **routine-eligible** — the DEV agent can implement them without human intervention. No external credentials are required:
+- P2-T06 uses the existing `subscriptionStatus` field on `User` (already set by Stripe webhook); paywall enforcement works in test mode without a live Stripe key.
+- TG1-POLISH-01 is pure frontend TypeScript.
 
 ---
 
@@ -113,14 +112,19 @@ Tasks in this sprint are all **routine-eligible** — the DEV agent can implemen
 | P7-T01 | Terraform AWS infrastructure (VPC, ECS, RDS, Redis, S3, IAM) — reference IaC | S18 | `f17cb46` |
 | P7-T02 | GitHub Actions ECS CD pipeline — ECR push + rolling deploy | S18 | `cce1cd5` |
 | TG1-OPS | Docker Compose VPS deployment — localhost port binding, DEPLOY.md, .env.example | S18 | `87bed8e` |
+| TG1-T01 | Student profile setup page (`/profile/setup`) | S19 | `a0e81d2` |
+| TG1-T02 | Student home dashboard (`/student/dashboard`) | S19 | `118bf6c` |
+| TG1-T03 | Forgot password / reset flow | S19 | `b2ff1cc` |
+| TG1-T04 | Playwright e2e smoke tests — golden path CI job | S19 | `a66c435` |
 
 ---
 
 ## Sprint Blockers
 
-None. VPS deployment is live and ready for user testing.
+None. No external credentials required for Sprint 20 tasks.
 
 ---
 
 ## Last Updated
-2026-04-27 by PM — Trial Gate 1 deployment complete. Sprint 19 launched: student profile setup, home dashboard, password reset, e2e smoke tests.
+
+2026-04-29 by PM — Trial Gate 1 complete (14/14). Sprint 19 retro written. Sprint 20 launched: paywall enforcement (P2-T06) + auth hydration hardening (TG1-POLISH-01).
