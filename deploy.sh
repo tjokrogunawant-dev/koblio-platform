@@ -10,6 +10,7 @@ pnpm install --frozen-lockfile
 
 echo "==> Building packages..."
 pnpm --filter @koblio/shared build
+pnpm --filter @koblio/ui build
 pnpm --filter @koblio/api build
 pnpm --filter @koblio/web build
 
