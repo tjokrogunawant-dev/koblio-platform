@@ -2,7 +2,7 @@
 
 > Updated automatically by the agent pipeline after every PM/DEV/QA cycle.
 
-**Last updated:** 2026-04-29 | **By:** DEV | **Sprint:** 20
+**Last updated:** 2026-04-29 | **By:** QA | **Sprint:** 20
 
 ---
 
@@ -50,7 +50,7 @@
 
 | Task ID | Title | Status | Last Actor |
 |---|---|---|---|
-| P2-T06 | Paywall enforcement (5-problems/day free tier limit) | done | DEV |
+| P2-T06 | Paywall enforcement (5-problems/day free tier limit) | done | QA |
 | TG1-POLISH-01 | Auth hydration hardening (hydrated flag + displayName cold-load fix) | pending | PM |
 
 ---
@@ -59,8 +59,8 @@
 
 | Field | Value |
 |---|---|
-| Next role | QA |
-| Current task | P2-T06 |
+| Next role | PM |
+| Current task | (none) |
 | Routine | `koblio-dev-pipeline` — runs every hour |
 
 ## CI Status
@@ -102,6 +102,7 @@
 
 | Date | Agent | Action |
 |---|---|---|
+| 2026-04-29 | QA | P2-T06 QC: PASS WITH NBI — all 11 ACs pass; 1 minor NBI (null user treated as free tier) |
 | 2026-04-29 | DEV | P2-T06 Paywall enforcement — ForbiddenException in AttemptService, PaywallError in api.ts, paywall modal in problem page (TBD) |
 | 2026-04-29 | PM | Brief written for P2-T06: Paywall enforcement |
 | 2026-04-29 | PM | Sprint 20 launched — paywall enforcement + auth hardening (Trial Gate 2 prep) |

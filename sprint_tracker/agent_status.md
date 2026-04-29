@@ -1,5 +1,5 @@
 # Agent Pipeline Status
 
-**next_role:** QA
-**current_task:** P2-T06
+**next_role:** PM
+**current_task:** (none)
 **last_updated:** 2026-04-29
