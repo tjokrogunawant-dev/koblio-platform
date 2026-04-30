@@ -57,7 +57,7 @@ export async function loginStudent(username: string, password: string): Promise<
   const res = await fetch(`${API_BASE}/auth/login/student`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ kind: 'student', username, password }),
+    body: JSON.stringify({ username, password }),
   });
   return handleResponse<AuthResponse>(res);
 }
