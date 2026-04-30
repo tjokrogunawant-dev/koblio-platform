@@ -8,6 +8,9 @@ git pull origin master
 echo "==> Installing dependencies..."
 pnpm install --frozen-lockfile
 
+echo "==> Symlinking root .env into web app (Next.js reads .env from its own dir)..."
+ln -sf "$(pwd)/.env" apps/web/.env
+
 echo "==> Building packages..."
 pnpm --filter @koblio/shared build
 pnpm --filter @koblio/ui build
