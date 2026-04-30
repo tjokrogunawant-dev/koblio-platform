@@ -24,7 +24,7 @@ function setRefreshCookie(res: Response, token: string): void {
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'strict',
     maxAge: REFRESH_COOKIE_MAX_AGE_MS,
-    path: '/api/auth',
+    path: '/auth',
   });
 }
 

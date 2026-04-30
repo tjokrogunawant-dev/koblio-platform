@@ -13,7 +13,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bodyParser: false });
   const logger = new Logger('Bootstrap');
 
-  app.use('/api/stripe/webhook', express.raw({ type: 'application/json' }));
+  app.use('/stripe/webhook', express.raw({ type: 'application/json' }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
@@ -23,7 +23,7 @@ async function bootstrap() {
     credentials: true,
     origin: process.env.WEB_URL ?? 'http://localhost:3000',
   });
-  app.setGlobalPrefix('api');
+
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
 
   const config = new DocumentBuilder()
@@ -34,7 +34,7 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document);
+  SwaggerModule.setup('docs', app, document);
 
   const port = process.env.PORT ?? 3001;
   await app.listen(port);

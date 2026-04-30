@@ -84,7 +84,7 @@ describe('AuthController', () => {
         expect.objectContaining({
           httpOnly: true,
           sameSite: 'strict',
-          path: '/api/auth',
+          path: '/auth',
         }),
       );
     });
@@ -205,7 +205,7 @@ describe('AuthController', () => {
 
       expect(authService.logout).toHaveBeenCalledWith('rt-active');
       expect(res.clearCookie).toHaveBeenCalledWith('koblio_refresh', {
-        path: '/api/auth',
+        path: '/auth',
       });
     });
 
