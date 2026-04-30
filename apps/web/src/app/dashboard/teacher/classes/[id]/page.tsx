@@ -122,7 +122,7 @@ export default function ClassDetailPage() {
     <div className="min-h-screen bg-slate-50">
       <header className="flex items-center gap-4 border-b border-slate-200 bg-white px-6 py-4">
         <Link
-          href="/dashboard/teacher"
+          href="/dashboard/classes"
           className="text-sm font-medium text-slate-500 hover:text-indigo-600"
         >
           ← Teacher Dashboard

@@ -126,7 +126,7 @@ export default function NewAssignmentPage() {
         },
         token,
       );
-      router.push('/dashboard/teacher');
+      router.push('/dashboard/assignments');
     } catch (err) {
       setSubmitError(err instanceof Error ? err.message : 'Failed to create assignment.');
       setSubmitting(false);
@@ -137,7 +137,7 @@ export default function NewAssignmentPage() {
     <div className="min-h-screen bg-slate-50">
       <header className="flex items-center gap-4 border-b border-slate-200 bg-white px-6 py-4">
         <Link
-          href="/dashboard/teacher"
+          href="/dashboard/assignments"
           className="text-sm font-medium text-slate-500 hover:text-indigo-600"
         >
           ← Teacher Dashboard
@@ -359,7 +359,7 @@ export default function NewAssignmentPage() {
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push('/dashboard/teacher')}
+              onClick={() => router.push('/dashboard/assignments')}
               disabled={submitting}
             >
               Cancel
