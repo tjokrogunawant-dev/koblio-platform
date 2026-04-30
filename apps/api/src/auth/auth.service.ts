@@ -96,11 +96,11 @@ export class AuthService {
           role: PrismaUserRole.TEACHER,
           displayName: dto.name,
           passwordHash,
-          country: dto.school_country,
+          country: dto.country,
         },
       });
       const school = await tx.school.create({
-        data: { name: dto.school_name, country: dto.school_country },
+        data: { name: dto.schoolName, country: dto.country },
       });
       await tx.schoolTeacher.create({
         data: { teacherId: newUser.id, schoolId: school.id, role: 'SCHOOL_ADMIN' },

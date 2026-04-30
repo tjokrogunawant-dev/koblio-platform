@@ -17,10 +17,10 @@ export class RegisterTeacherDto {
 
   @ApiProperty({ example: 'Springfield Elementary' })
   @IsString()
-  school_name!: string;
+  schoolName!: string;
 
   @ApiProperty({ example: 'SG', required: false })
   @IsOptional()
   @IsString()
-  school_country?: string;
+  country?: string;
 }
