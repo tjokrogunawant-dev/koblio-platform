@@ -1,12 +1,20 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { useAuth } from '@/components/providers/auth-provider';
 import { getMyClassrooms, getMyAssignments } from '@/lib/api';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function DashboardOverviewPage() {
+  const router = useRouter();
   const { token, user } = useAuth();
+
+  useEffect(() => {
+    if (!user) return;
+    if (user.role === 'student') router.replace('/dashboard/student');
+    else if (user.role === 'parent') router.replace('/dashboard/parent');
+  }, [user, router]);
   const [totalStudents, setTotalStudents] = useState<number | null>(null);
   const [activeClasses, setActiveClasses] = useState<number | null>(null);
   const [assignmentCount, setAssignmentCount] = useState<number | null>(null);

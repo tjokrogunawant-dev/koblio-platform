@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'koblio-api',
-      script: 'apps/api/dist/src/main.js',
+      script: 'apps/api/dist/main.js',
       instances: 1,
       autorestart: true,
       watch: false,

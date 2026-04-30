@@ -8,8 +8,8 @@ git pull origin master
 echo "==> Symlinking root .env into web app..."
 ln -sf "$(pwd)/.env" apps/web/.env
 
-echo "==> Building web..."
-pnpm --filter @koblio/web build
+echo "==> Building web (including UI deps)..."
+pnpm turbo build --filter=@koblio/web...
 
 echo "==> Copying Next.js static assets..."
 cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static

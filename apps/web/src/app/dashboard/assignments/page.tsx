@@ -20,13 +20,15 @@ export default function AssignmentsPage() {
   const { token } = useAuth();
   const [assignments, setAssignments] = useState<AssignmentSummary[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (!token) return;
     setLoading(true);
+    setError(null);
     getMyAssignments(token)
       .then(setAssignments)
-      .catch(() => {})
+      .catch(() => setError('Could not load assignments. Please try again.'))
       .finally(() => setLoading(false));
   }, [token]);
 
@@ -47,6 +49,8 @@ export default function AssignmentsPage() {
 
       {loading ? (
         <p className="text-sm text-slate-400">Loading assignments…</p>
+      ) : error ? (
+        <p className="text-sm text-red-500">{error}</p>
       ) : assignments.length === 0 ? (
         <div className="rounded-xl border border-dashed border-slate-300 bg-white px-6 py-10 text-center">
           <p className="text-slate-500">

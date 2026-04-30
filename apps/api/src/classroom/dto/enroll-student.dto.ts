@@ -4,5 +4,5 @@ import { IsUUID } from 'class-validator';
 export class EnrollStudentDto {
   @ApiProperty({ description: 'Student user ID to enroll' })
   @IsUUID()
-  student_id!: string;
+  studentId!: string;
 }

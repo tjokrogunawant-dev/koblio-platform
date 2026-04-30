@@ -55,22 +55,23 @@ export default function NewAssignmentPage() {
 
   const selectedClassroom = classrooms.find((c) => c.id === selectedClassroomId);
 
-  // Load classrooms
+  // Load classrooms once on mount
   useEffect(() => {
     if (!token) return;
     setLoadingClassrooms(true);
     getMyClassrooms(token)
       .then((data) => {
         setClassrooms(data);
-        if (data.length > 0 && !selectedClassroomId) {
-          setSelectedClassroomId(data[0].id);
+        if (data.length > 0) {
+          setSelectedClassroomId((prev) => prev || data[0].id);
         }
       })
       .catch(() => {
         // silently degrade
       })
       .finally(() => setLoadingClassrooms(false));
-  }, [token, selectedClassroomId]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [token]);
 
   // Fetch problems when grade/strand/topic/difficulty are ready
   function handleFetchProblems() {

@@ -39,10 +39,11 @@ export class ClassroomController {
   @Roles(UserRole.TEACHER, UserRole.ADMIN)
   @ApiOperation({ summary: 'Enroll a student in a classroom' })
   enrollStudent(
+    @CurrentUser() user: AuthenticatedUser,
     @Param('classroomId', ParseUUIDPipe) classroomId: string,
     @Body() dto: EnrollStudentDto,
   ) {
-    return this.classroomService.enrollStudent(classroomId, dto);
+    return this.classroomService.enrollStudent(classroomId, user.userId, dto);
   }
 
   @Get('classrooms/:classroomId/students')

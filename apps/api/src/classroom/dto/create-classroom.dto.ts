@@ -15,5 +15,5 @@ export class CreateClassroomDto {
   @ApiProperty({ required: false, description: 'School to associate this classroom with' })
   @IsOptional()
   @IsUUID()
-  school_id?: string;
+  schoolId?: string;
 }

@@ -7,6 +7,7 @@ export interface AuthUser {
   username?: string;
   grade?: number;
   avatarSlug?: string | null;
+  classroomId?: string;
 }
 
 export interface AuthResponse {
@@ -305,7 +306,6 @@ export interface Classroom {
   name: string;
   grade: number;
   classCode: string;
-  createdAt: string;
 }
 
 export interface ClassroomSummary extends Classroom {

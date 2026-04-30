@@ -29,7 +29,7 @@ function setRefreshCookie(res: Response, token: string): void {
 }
 
 function clearRefreshCookie(res: Response): void {
-  res.clearCookie(REFRESH_COOKIE_NAME, { path: '/api/auth' });
+  res.clearCookie(REFRESH_COOKIE_NAME, { path: '/auth' });
 }
 
 @ApiTags('Auth')
@@ -137,7 +137,7 @@ export class AuthController {
   }
 
   @Post('logout')
-  @ApiBearerAuth()
+  @Public()
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Logout (revokes refresh token, clears cookie)' })
   @ApiResponse({ status: 204, description: 'Logged out' })

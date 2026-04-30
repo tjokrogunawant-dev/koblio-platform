@@ -33,12 +33,12 @@ export class ClassroomService {
       throw new ForbiddenException('Only teachers can create classrooms');
     }
 
-    if (dto.school_id) {
+    if (dto.schoolId) {
       const schoolTeacher = await this.prisma.schoolTeacher.findUnique({
         where: {
           teacherId_schoolId: {
             teacherId: teacher.id,
-            schoolId: dto.school_id,
+            schoolId: dto.schoolId,
           },
         },
       });
@@ -55,7 +55,7 @@ export class ClassroomService {
         grade: dto.grade,
         classCode,
         teacherId: teacher.id,
-        schoolId: dto.school_id ?? null,
+        schoolId: dto.schoolId ?? null,
       },
     });
 
@@ -97,7 +97,7 @@ export class ClassroomService {
     }));
   }
 
-  async enrollStudent(classroomId: string, dto: EnrollStudentDto) {
+  async enrollStudent(classroomId: string, teacherId: string, dto: EnrollStudentDto) {
     const classroom = await this.prisma.classroom.findUnique({
       where: { id: classroomId },
     });
@@ -106,8 +106,13 @@ export class ClassroomService {
       throw new NotFoundException('Classroom not found');
     }
 
+    const teacher = await this.prisma.user.findUnique({ where: { id: teacherId } });
+    if (!teacher || classroom.teacherId !== teacher.id) {
+      throw new ForbiddenException('You do not own this classroom');
+    }
+
     const student = await this.prisma.user.findUnique({
-      where: { id: dto.student_id },
+      where: { id: dto.studentId },
     });
 
     if (!student) {
@@ -121,7 +126,7 @@ export class ClassroomService {
     const existing = await this.prisma.enrollment.findUnique({
       where: {
         studentId_classroomId: {
-          studentId: dto.student_id,
+          studentId: dto.studentId,
           classroomId,
         },
       },
@@ -133,18 +138,18 @@ export class ClassroomService {
 
     const enrollment = await this.prisma.enrollment.create({
       data: {
-        studentId: dto.student_id,
+        studentId: dto.studentId,
         classroomId,
       },
     });
 
-    this.logger.log(`Student ${dto.student_id} enrolled in classroom ${classroomId}`);
+    this.logger.log(`Student ${dto.studentId} enrolled in classroom ${classroomId}`);
 
     return {
       id: enrollment.id,
-      student_id: enrollment.studentId,
-      classroom_id: enrollment.classroomId,
-      enrolled_at: enrollment.enrolledAt.toISOString(),
+      studentId: enrollment.studentId,
+      classroomId: enrollment.classroomId,
+      enrolledAt: enrollment.enrolledAt.toISOString(),
     };
   }
 
@@ -179,7 +184,6 @@ export class ClassroomService {
       streakCount: e.student.streakCount,
       coins: e.student.coins,
       xp: e.student.xp,
-      enrolled_at: e.enrolledAt.toISOString(),
     }));
   }
 

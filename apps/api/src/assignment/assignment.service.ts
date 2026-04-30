@@ -130,7 +130,7 @@ export class AssignmentService {
         ).length;
 
         return {
-          id: a.id,
+          assignmentId: a.id,
           title: a.title,
           classroomName: a.classroom.name,
           topic: a.topic,

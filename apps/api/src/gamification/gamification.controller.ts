@@ -1,5 +1,6 @@
 import { Controller, Get, Param, ParseIntPipe, ParseUUIDPipe } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiTags } from '@nestjs/swagger';
+import { UserRole } from '@koblio/shared';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Public } from '../auth/decorators/public.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -19,14 +20,14 @@ export class GamificationController {
   }
 
   @Get('me')
-  @Roles('student')
+  @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: "Get student's gamification profile (coins, XP, level, streak)" })
   async getMyProfile(@CurrentUser() user: AuthenticatedUser) {
     return this.gamificationService.getStudentProfile(user.userId);
   }
 
   @Get('leaderboard/:classroomId')
-  @Roles('student')
+  @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'Get weekly class leaderboard (top 10 + own rank)' })
   @ApiParam({ name: 'classroomId', type: String, description: 'Classroom UUID' })
   async getLeaderboard(

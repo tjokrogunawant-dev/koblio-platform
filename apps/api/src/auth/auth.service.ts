@@ -5,6 +5,7 @@ import {
   ConflictException,
   Injectable,
   Logger,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -26,6 +27,9 @@ export interface AuthResult {
     role: string;
     email?: string;
     name: string;
+    username?: string;
+    grade?: number;
+    classroomId?: string;
   };
 }
 
@@ -161,7 +165,7 @@ export class AuthService {
       where: { classCode: dto.classCode.toUpperCase() },
     });
     if (!classroom) {
-      throw new ConflictException('Class code not found');
+      throw new NotFoundException('Class code not found');
     }
 
     const existing = await this.prisma.user.findUnique({
@@ -202,7 +206,14 @@ export class AuthService {
     return {
       access_token: this.jwtService.sign(payload),
       expires_in: 3600,
-      user: { id: student.id, role: 'student', name: student.displayName },
+      user: {
+        id: student.id,
+        role: 'student',
+        name: student.displayName,
+        username: student.username ?? undefined,
+        grade: student.grade ?? undefined,
+        classroomId: classroom.id,
+      },
     };
   }
 
@@ -224,6 +235,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    const enrollment = await this.prisma.enrollment.findFirst({
+      where: { studentId: user.id },
+      select: { classroomId: true },
+    });
+
     const payload = {
       sub: user.id,
       roles: ['student'],
@@ -242,6 +258,9 @@ export class AuthService {
         id: user.id,
         role: 'student',
         name: user.displayName,
+        username: user.username ?? undefined,
+        grade: user.grade ?? undefined,
+        classroomId: enrollment?.classroomId,
       },
     };
   }
@@ -262,7 +281,7 @@ export class AuthService {
         data: { tokenHash, userId: user.id, expiresAt },
       });
 
-      const webBase = process.env.WEB_BASE_URL ?? 'http://localhost:3001';
+      const webBase = process.env.WEB_URL ?? 'http://localhost:3000';
       const resetUrl = `${webBase}/reset-password?token=${rawToken}`;
       await this.emailService.sendPasswordReset(user.email, resetUrl);
     }
@@ -298,6 +317,6 @@ export class AuthService {
   }
 
   isStudentAccount(user: AuthenticatedUser): boolean {
-    return user.roles.includes('student') && !user.email;
+    return user.roles.includes('student');
   }
 }

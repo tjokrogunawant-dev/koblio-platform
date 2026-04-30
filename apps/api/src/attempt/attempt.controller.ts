@@ -9,6 +9,7 @@ import {
   Query,
 } from '@nestjs/common';
 import { ApiOperation, ApiParam, ApiQuery, ApiTags } from '@nestjs/swagger';
+import { UserRole } from '@koblio/shared';
 import { CurrentUser } from '../auth/decorators/current-user.decorator';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { AuthenticatedUser } from '../auth/interfaces/jwt-payload.interface';
@@ -21,14 +22,14 @@ export class AttemptController {
   constructor(private readonly attemptService: AttemptService) {}
 
   @Post()
-  @Roles('student')
+  @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'Submit an answer to a problem' })
   async submitAnswer(@CurrentUser() user: AuthenticatedUser, @Body() dto: SubmitAnswerDto) {
     return this.attemptService.submitAnswer(user.userId, dto);
   }
 
   @Get('me')
-  @Roles('student')
+  @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: "Get student's own attempt history (paginated)" })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'offset', required: false, type: Number })
@@ -48,14 +49,14 @@ export class AttemptController {
   }
 
   @Get('me/stats')
-  @Roles('student')
+  @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: "Get student's aggregate stats" })
   async getMyStats(@CurrentUser() user: AuthenticatedUser) {
     return this.attemptService.getStudentStats(user.userId);
   }
 
   @Get('me/problem/:problemId')
-  @Roles('student')
+  @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: "Get student's attempts for a specific problem" })
   @ApiParam({ name: 'problemId', type: String, description: 'Problem UUID' })
   async getMyProblemAttempts(

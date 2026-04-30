@@ -213,12 +213,13 @@ export class BadgeService {
    */
   async getStudentBadges(studentId: string): Promise<
     Array<{
+      id: string;
       type: BadgeType;
       slug: string;
       name: string;
       description: string;
       iconEmoji: string;
-      awardedAt: Date;
+      awardedAt: string;
     }>
   > {
     const badges = await this.prisma.badge.findMany({
@@ -227,10 +228,11 @@ export class BadgeService {
     });
 
     return badges.map((b) => ({
+      id: b.id,
       type: b.type,
       slug: BADGE_SLUG[b.type],
       ...BADGE_META[b.type],
-      awardedAt: b.awardedAt,
+      awardedAt: b.awardedAt.toISOString(),
     }));
   }
 }
