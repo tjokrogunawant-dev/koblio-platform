@@ -11,11 +11,8 @@ pnpm install --frozen-lockfile
 echo "==> Symlinking root .env into web app (Next.js reads .env from its own dir)..."
 ln -sf "$(pwd)/.env" apps/web/.env
 
-echo "==> Building packages..."
-pnpm --filter @koblio/shared build
-pnpm --filter @koblio/ui build
-pnpm --filter @koblio/api build
-pnpm --filter @koblio/web build
+echo "==> Building packages (turbo caches unchanged packages)..."
+pnpm turbo build
 
 echo "==> Copying Next.js static assets into standalone output..."
 cp -r apps/web/.next/static apps/web/.next/standalone/apps/web/.next/static
