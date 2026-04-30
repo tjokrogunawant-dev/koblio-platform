@@ -48,7 +48,7 @@ export async function loginParentTeacher(email: string, password: string): Promi
   const res = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
+    body: JSON.stringify({ kind: 'email', email, password }),
   });
   return handleResponse<AuthResponse>(res);
 }
@@ -57,7 +57,7 @@ export async function loginStudent(username: string, password: string): Promise<
   const res = await fetch(`${API_BASE}/auth/login/student`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ username, password }),
+    body: JSON.stringify({ kind: 'student', username, password }),
   });
   return handleResponse<AuthResponse>(res);
 }
