@@ -28,7 +28,7 @@ export class UserController {
   @Roles(UserRole.STUDENT)
   @ApiOperation({ summary: 'Get student profile (avatar, coins, xp, level, streak)' })
   getProfile(@CurrentUser() user: AuthenticatedUser) {
-    return this.userService.getStudentProfileByAuth0Id(user.userId);
+    return this.userService.getStudentProfile(user.userId);
   }
 
   @Put('me/avatar')

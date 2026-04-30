@@ -24,13 +24,13 @@ export class UserService {
     return { module: 'user', status: 'operational' };
   }
 
-  async findByAuth0Id(auth0Id: string) {
-    return this.prisma.user.findUnique({ where: { auth0Id } });
+  async findById(userId: string) {
+    return this.prisma.user.findUnique({ where: { id: userId } });
   }
 
-  async createChildAccount(parentAuth0Id: string, dto: CreateChildAccountDto, ipAddress: string) {
+  async createChildAccount(parentId: string, dto: CreateChildAccountDto, ipAddress: string) {
     const parent = await this.prisma.user.findUnique({
-      where: { auth0Id: parentAuth0Id },
+      where: { id: parentId },
     });
 
     if (!parent) {
@@ -59,7 +59,6 @@ export class UserService {
 
       const newChild = await tx.user.create({
         data: {
-          auth0Id: `child_${parent.id}_${Date.now()}`,
           role: PrismaUserRole.STUDENT,
           displayName: dto.name,
           username,
@@ -103,9 +102,9 @@ export class UserService {
     };
   }
 
-  async listChildren(parentAuth0Id: string) {
+  async listChildren(parentId: string) {
     const parent = await this.prisma.user.findUnique({
-      where: { auth0Id: parentAuth0Id },
+      where: { id: parentId },
       include: {
         parentLinks: {
           include: {
@@ -135,9 +134,9 @@ export class UserService {
     }));
   }
 
-  async createSchool(teacherAuth0Id: string, dto: CreateSchoolDto) {
+  async createSchool(teacherId: string, dto: CreateSchoolDto) {
     const teacher = await this.prisma.user.findUnique({
-      where: { auth0Id: teacherAuth0Id },
+      where: { id: teacherId },
     });
 
     if (!teacher) {
@@ -176,9 +175,9 @@ export class UserService {
     };
   }
 
-  async getChild(parentAuth0Id: string, childId: string) {
+  async getChild(parentId: string, childId: string) {
     const parent = await this.prisma.user.findUnique({
-      where: { auth0Id: parentAuth0Id },
+      where: { id: parentId },
     });
 
     if (!parent) {
@@ -220,9 +219,9 @@ export class UserService {
     };
   }
 
-  async joinClassByCode(parentAuth0Id: string, childId: string, dto: JoinClassDto) {
+  async joinClassByCode(parentId: string, childId: string, dto: JoinClassDto) {
     const parent = await this.prisma.user.findUnique({
-      where: { auth0Id: parentAuth0Id },
+      where: { id: parentId },
     });
 
     if (!parent) {
@@ -306,8 +305,8 @@ export class UserService {
     };
   }
 
-  async updateProfile(auth0Id: string, dto: UpdateProfileDto) {
-    const user = await this.prisma.user.findUnique({ where: { auth0Id } });
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundException('User not found');
 
     const data: { displayName?: string; avatarSlug?: string } = {};
@@ -322,8 +321,8 @@ export class UserService {
     };
   }
 
-  async updateAvatar(auth0Id: string, avatarSlug: AvatarSlug) {
-    const user = await this.prisma.user.findUnique({ where: { auth0Id } });
+  async updateAvatar(userId: string, avatarSlug: AvatarSlug) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }
@@ -338,8 +337,8 @@ export class UserService {
     };
   }
 
-  async getStudentProfileByAuth0Id(auth0Id: string) {
-    const user = await this.prisma.user.findUnique({ where: { auth0Id } });
+  async getStudentProfile(userId: string) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
     if (!user) {
       throw new NotFoundException('User not found');
     }

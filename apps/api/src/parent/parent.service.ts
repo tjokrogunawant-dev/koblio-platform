@@ -9,9 +9,9 @@ export class ParentService {
 
   // ─── P1-T33: List linked children ────────────────────────────────────────
 
-  async getLinkedChildren(parentAuth0Id: string) {
+  async getLinkedChildren(parentId: string) {
     const parent = await this.prisma.user.findUnique({
-      where: { auth0Id: parentAuth0Id },
+      where: { id: parentId },
     });
 
     if (!parent) {
@@ -34,9 +34,9 @@ export class ParentService {
 
   // ─── P1-T33: Parent views child progress ─────────────────────────────────
 
-  async getChildProgress(parentAuth0Id: string, childId: string) {
+  async getChildProgress(parentId: string, childId: string) {
     const parent = await this.prisma.user.findUnique({
-      where: { auth0Id: parentAuth0Id },
+      where: { id: parentId },
     });
 
     if (!parent) {

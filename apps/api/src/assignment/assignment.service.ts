@@ -15,9 +15,9 @@ export class AssignmentService {
 
   // ─── P1-T30: Create assignment ────────────────────────────────────────────
 
-  async createAssignment(teacherAuth0Id: string, dto: CreateAssignmentDto) {
+  async createAssignment(teacherId: string, dto: CreateAssignmentDto) {
     const teacher = await this.prisma.user.findUnique({
-      where: { auth0Id: teacherAuth0Id },
+      where: { id: teacherId },
     });
 
     if (!teacher) {
@@ -57,9 +57,9 @@ export class AssignmentService {
 
   // ─── P1-T30: List teacher's assignments ──────────────────────────────────
 
-  async listTeacherAssignments(teacherAuth0Id: string) {
+  async listTeacherAssignments(teacherId: string) {
     const teacher = await this.prisma.user.findUnique({
-      where: { auth0Id: teacherAuth0Id },
+      where: { id: teacherId },
     });
 
     if (!teacher) {
@@ -86,9 +86,9 @@ export class AssignmentService {
 
   // ─── P1-T31: Student pending assignments ─────────────────────────────────
 
-  async getStudentAssignments(studentAuth0Id: string) {
+  async getStudentAssignments(studentId: string) {
     const student = await this.prisma.user.findUnique({
-      where: { auth0Id: studentAuth0Id },
+      where: { id: studentId },
     });
 
     if (!student) {
@@ -152,9 +152,9 @@ export class AssignmentService {
 
   // ─── P1-T31: Submit assignment ────────────────────────────────────────────
 
-  async submitAssignment(studentAuth0Id: string, assignmentId: string, dto: SubmitAssignmentDto) {
+  async submitAssignment(studentId: string, assignmentId: string, dto: SubmitAssignmentDto) {
     const student = await this.prisma.user.findUnique({
-      where: { auth0Id: studentAuth0Id },
+      where: { id: studentId },
     });
 
     if (!student) {

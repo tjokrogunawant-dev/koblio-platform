@@ -20,9 +20,9 @@ export class ClassroomService {
     return { module: 'classroom', status: 'operational' };
   }
 
-  async createClassroom(teacherAuth0Id: string, dto: CreateClassroomDto) {
+  async createClassroom(teacherId: string, dto: CreateClassroomDto) {
     const teacher = await this.prisma.user.findUnique({
-      where: { auth0Id: teacherAuth0Id },
+      where: { id: teacherId },
     });
 
     if (!teacher) {
@@ -65,16 +65,16 @@ export class ClassroomService {
       id: classroom.id,
       name: classroom.name,
       grade: classroom.grade,
-      class_code: classroom.classCode,
-      teacher_id: classroom.teacherId,
-      school_id: classroom.schoolId,
-      student_count: 0,
+      classCode: classroom.classCode,
+      teacherId: classroom.teacherId,
+      schoolId: classroom.schoolId,
+      studentCount: 0,
     };
   }
 
-  async listTeacherClassrooms(teacherAuth0Id: string) {
+  async listTeacherClassrooms(teacherId: string) {
     const teacher = await this.prisma.user.findUnique({
-      where: { auth0Id: teacherAuth0Id },
+      where: { id: teacherId },
     });
 
     if (!teacher) {
@@ -90,10 +90,10 @@ export class ClassroomService {
       id: c.id,
       name: c.name,
       grade: c.grade,
-      class_code: c.classCode,
-      teacher_id: c.teacherId,
-      school_id: c.schoolId,
-      student_count: c._count.enrollments,
+      classCode: c.classCode,
+      teacherId: c.teacherId,
+      schoolId: c.schoolId,
+      studentCount: c._count.enrollments,
     }));
   }
 
@@ -148,7 +148,7 @@ export class ClassroomService {
     };
   }
 
-  async listClassroomStudents(classroomId: string, teacherAuth0Id?: string) {
+  async listClassroomStudents(classroomId: string, teacherId?: string) {
     const classroom = await this.prisma.classroom.findUnique({
       where: { id: classroomId },
     });
@@ -157,9 +157,9 @@ export class ClassroomService {
       throw new NotFoundException('Classroom not found');
     }
 
-    if (teacherAuth0Id) {
+    if (teacherId) {
       const teacher = await this.prisma.user.findUnique({
-        where: { auth0Id: teacherAuth0Id },
+        where: { id: teacherId },
       });
       if (!teacher || classroom.teacherId !== teacher.id) {
         throw new ForbiddenException('You do not own this classroom');
@@ -183,7 +183,7 @@ export class ClassroomService {
     }));
   }
 
-  async getClassroomProgress(classroomId: string, teacherAuth0Id: string) {
+  async getClassroomProgress(classroomId: string, teacherId: string) {
     const classroom = await this.prisma.classroom.findUnique({
       where: { id: classroomId },
     });
@@ -193,7 +193,7 @@ export class ClassroomService {
     }
 
     const teacher = await this.prisma.user.findUnique({
-      where: { auth0Id: teacherAuth0Id },
+      where: { id: teacherId },
     });
 
     if (!teacher || classroom.teacherId !== teacher.id) {
