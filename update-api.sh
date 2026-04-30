@@ -8,7 +8,8 @@ git pull origin master
 echo "==> Installing dependencies..."
 pnpm install --frozen-lockfile
 
-echo "==> Building API..."
+echo "==> Building API (clean)..."
+rm -rf apps/api/dist
 pnpm --filter @koblio/api build
 
 echo "==> Reloading koblio-api..."

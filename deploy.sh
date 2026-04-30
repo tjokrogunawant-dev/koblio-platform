@@ -11,7 +11,8 @@ pnpm install --frozen-lockfile
 echo "==> Symlinking root .env into web app (Next.js reads .env from its own dir)..."
 ln -sf "$(pwd)/.env" apps/web/.env
 
-echo "==> Building packages (turbo caches unchanged packages)..."
+echo "==> Building packages (clean API dist, turbo caches web)..."
+rm -rf apps/api/dist
 pnpm turbo build
 
 echo "==> Copying Next.js static assets into standalone output..."
